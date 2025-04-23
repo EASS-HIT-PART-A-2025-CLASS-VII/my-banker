@@ -1,71 +1,112 @@
-# My Banker - Private Financial Assistant
+```markdown
+# 💰 MyBanker – Personal Financial Intelligence
 
-## Introduction
-My Banker is an AI-powered private banking assistant designed to provide personalized financial recommendations and credit offers based on user account activity. Built as a **microservices-based** system running on **Node.js** and **Docker**, it integrates **generative AI** and **blockchain** for enhanced data security and transparency.
+🎯 **Project Purpose**  
+This project was created for the Engineering of Advanced Software Solutions course at HIT.  
+It aims to provide a personalized financial assistant that analyzes user data and delivers comprehensive reports — as if written by a private banker and senior accountant.
 
-## Features
-- **Secure Authentication**: User authentication system to ensure secure access.
-- **Financial Data Analysis**: Upload bank statements for AI-driven financial insights.
-- **Credit Score & Offers**: AI evaluates user financial behavior and suggests tailored credit solutions.
-- **Blockchain Integration**: Uses blockchain to store transaction records for transparency and security.
-- **Intelligent Chatbot**: AI-powered assistant for financial advice and real-time support.
-- **Modular Microservices Architecture**: Enables scalability and seamless service integration.
+⚙️ **Tech Stack**  
+- **Backend:** Node.js (Express)  
+- **Authentication Service:** MongoDB  
+- **AI Engine:** Python (planned)  
+- **Crypto Wallet Integration:** Planned  
+- **Containerization:** Docker  
+- **Testing:** Python (Pytest)  
+- **Frontend:** React (planned)
 
-## Technology Stack
-- **Backend**: Node.js (Express.js)
-- **AI & ML**: Generative AI models for financial recommendations
-- **Database**: PostgreSQL / MongoDB
-- **Blockchain**: Custom blockchain for secure financial record storage
-- **Containerization**: Docker & Docker Compose
-- **Deployment**: AWS / Azure / Google Cloud (Optional)
+🧩 **Architecture Overview**  
+The system uses a modular monolith architecture — clear separation of services without microservices overhead:
 
-## Installation & Setup
-### Prerequisites
-- **Docker** installed on your machine
-- **Node.js** (if running without Docker)
-- **Git** for version control
+```
+my-banker/
+│
+├── api/                    # Main Express server setup and routing
+│
+├── services/
+│   └── authentication/     # Authentication logic and routes
+│       ├── authentication.js
+│       ├── authenticationModel.js
+│       └── authenticationRoutes.js
+│
+├── tests/                  # Python tests (Pytest)
+├── utils/                  # Utility functions (e.g., error handling)
+├── errors/                 # Centralized error definitions
+└── README.md
+```
 
-### Clone the Repository
+✅ **Current Features**  
+- 🟢 Base Express server running  
+- 🟢 Modular authentication service created  
+- 🟢 Project is structured for clarity, testing, and growth  
+
+🔜 **Coming Soon**  
+- AI-generated financial reports  
+- Crypto wallet connection and analysis  
+- Frontend interface (React)  
+- Dockerized project environment  
+- Full authentication flow with JWT  
+
+---
+
+## ⚙️ Installation & Setup
+
+### 📦 Prerequisites
+- Docker installed on your machine  
+- Node.js (if running without Docker)  
+- Git for version control  
+
+### 🔄 Clone the Repository
 ```bash
 git clone <repository-url>
 cd my-banker
 ```
 
-### Run with Docker
-1. **Build the Docker image**:
-   ```bash
-   docker build -t my-banker .
-   ```
-2. **Run the container**:
-   ```bash
-   docker run -p 8000:8000 my-banker
-   ```
-3. The server will be accessible at:
-   ```
-   http://localhost:8000
-   ```
+### 🐳 Run with Docker
 
-### Run Without Docker
-1. **Install dependencies**:
-   ```bash
-   npm install
-   ```
-2. **Start the server**:
-   ```bash
-   npm start
-   ```
+**Build the Docker image:**
+```bash
+docker build -t my-banker .
+```
 
-## API Endpoints
-| Method | Endpoint       | Description                   |
-|--------|---------------|-------------------------------|
-| POST   | `/login`      | Authenticate a user          |
-| POST   | `/upload`     | Upload financial statements  |
-| GET    | `/offers`     | Get personalized credit offers |
-| GET    | `/chat`       | AI-powered financial assistant |
+**Run the container:**
+```bash
+docker run -p 8000:8000 my-banker
+```
 
-## Contributing
+The server will be accessible at:  
+[http://localhost:8000](http://localhost:8000)
+
+### 🚀 Run Without Docker
+
+**Install dependencies:**
+```bash
+npm install
+```
+
+**Start the server:**
+```bash
+npm start
+```
+
+---
+
+## 📡 API Endpoints
+
+| Method | Endpoint      | Description                           |
+|--------|---------------|---------------------------------------|
+| POST   | /auth/login   | Authenticate a user                   |
+| POST   | /auth/upload  | Upload financial statements           |
+| GET    | /auth/offers  | Get personalized credit offers        |
+| GET    | /auth/chat    | AI-powered financial assistant        |
+
+---
+
+## 🤝 Contributing
 We welcome contributions! Feel free to submit a pull request or open an issue.
 
-## License
+---
+
+## 📄 License
 MIT License
+```
 
