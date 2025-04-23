@@ -1,8 +1,8 @@
 # Use official Node.js image as the base image
-FROM node:16
+FROM node:18-slim
 
 # Set the working directory inside the container
-WORKDIR /usr/src/app
+WORKDIR /app
 
 # Copy package.json and package-lock.json into the working directory
 COPY package*.json ./
@@ -17,4 +17,4 @@ COPY . .
 EXPOSE 8000
 
 # Command to run the app
-CMD ["node", "backend/api.js"]
+CMD ["node", "api.js"]
