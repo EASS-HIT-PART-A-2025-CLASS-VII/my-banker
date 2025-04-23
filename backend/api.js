@@ -1,6 +1,7 @@
 const express = require('express');
 const path = require('path');
 const connectDB = require('./database/db'); // Import the MongoDB connection function
+const cors = require('cors');
 
 const app = express();
 const port = 8000;
@@ -8,9 +9,8 @@ const port = 8000;
 // Connect to MongoDB
 connectDB();
 
-// Set Pug as the view engine
-app.set('view engine', 'pug');
-app.set('views', path.join(__dirname, 'views'));
+// Enable Cross-Origin Resource Sharing (CORS) to allow requests from different origins
+app.use(cors());
 
 // Middleware to parse JSON requests
 app.use(express.json());
