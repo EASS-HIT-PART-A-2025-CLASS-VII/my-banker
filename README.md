@@ -1,4 +1,3 @@
-```markdown
 # 💰 MyBanker – Personal Financial Intelligence
 
 🎯 **Project Purpose**  
@@ -17,7 +16,7 @@ It aims to provide a personalized financial assistant that analyzes user data an
 🧩 **Architecture Overview**  
 The system uses a modular monolith architecture — clear separation of services without microservices overhead:
 
-```
+
 my-banker/
 │
 ├── api/                    # Main Express server setup and routing
@@ -32,7 +31,6 @@ my-banker/
 ├── utils/                  # Utility functions (e.g., error handling)
 ├── errors/                 # Centralized error definitions
 └── README.md
-```
 
 ✅ **Current Features**  
 - 🟢 Base Express server running  
@@ -46,7 +44,6 @@ my-banker/
 - Dockerized project environment  
 - Full authentication flow with JWT  
 
----
 
 ## ⚙️ Installation & Setup
 
@@ -88,7 +85,6 @@ npm install
 npm start
 ```
 
----
 
 ## 📡 API Endpoints
 
@@ -99,14 +95,13 @@ npm start
 | GET    | /auth/offers  | Get personalized credit offers        |
 | GET    | /auth/chat    | AI-powered financial assistant        |
 
----
 
 ## 🤝 Contributing
 We welcome contributions! Feel free to submit a pull request or open an issue.
 
----
+
 
 ## 📄 License
 MIT License
-```
+
 
