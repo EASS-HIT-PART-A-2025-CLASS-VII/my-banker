@@ -1,27 +1,15 @@
 import React, { useState } from 'react';
+import './Login.css';
 
 /**
- * Component for user login and MetaMask wallet connection
- * @component
+ * Login page for user credentials and MetaMask connection.
  */
-function Login() {
+const Login = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [wallet, setWallet] = useState('');
-  const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
 
-  /**
-   * Handles user login by sending credentials to the API
-   * @async
-   * @function
-   * @param {Event} e - The form submit event
-   */
-  const handleLogin = async (e) => {
-    e.preventDefault();
-    setError('');
-    setSuccess('');
-
+  // Handle user login
+  const handleLogin = async () => {
     try {
       const response = await fetch('http://localhost:8000/auth/login', {
         method: 'POST',
@@ -30,41 +18,35 @@ function Login() {
       });
 
       const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.message || 'Login failed');
-      }
-
-      setSuccess('Login successful!');
-      console.log('JWT Token:', data.token); // Here you can store it (e.g., localStorage.setItem)
+      console.log(data); // Placeholder for future logic
     } catch (err) {
-      setError(err.message);
+      console.error('Login error:', err);
     }
   };
 
-  /**
-   * Connects to the user's MetaMask wallet and retrieves the address
-   * @async
-   * @function
-   */
-  const connectWallet = async () => {
+  // Connect to MetaMask wallet
+  const handleConnectWallet = async () => {
     if (window.ethereum) {
       try {
-        const [address] = await window.ethereum.request({ method: 'eth_requestAccounts' });
-        setWallet(address);
+        const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+        console.log('Connected wallet:', accounts[0]);
       } catch (err) {
-        alert('Wallet connection failed');
+        console.error('Wallet connection error:', err);
       }
     } else {
-      alert('MetaMask not detected');
+      alert('MetaMask is not installed');
     }
   };
 
   return (
-    <div style={{ padding: '2rem', maxWidth: '400px', margin: 'auto' }}>
-      <h2>Login to MyBanker</h2>
-      <form onSubmit={handleLogin}>
-      <input
+    <div className="login-container">
+      <h1 className="login-title">Welcome to My Banker</h1>
+      <p className="login-description">
+        Please enter your username and password, then connect your wallet.
+        Once authenticated, you will receive a full financial analysis report.
+      </p>
+      <div className="login-form">
+        <input
           type="text"
           placeholder="Username"
           value={username}
@@ -75,24 +57,14 @@ function Login() {
           placeholder="Password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          required
-          style={{ width: '100%', marginBottom: '1rem' }}
         />
-        <button type="submit" style={{ width: '100%' }}>Login</button>
-      </form>
-
-      {error && <p style={{ color: 'red', marginTop: '1rem' }}>{error}</p>}
-      {success && <p style={{ color: 'green', marginTop: '1rem' }}>{success}</p>}
-
-      <hr style={{ margin: '2rem 0' }} />
-
-      <button onClick={connectWallet} style={{ width: '100%' }}>
-        Connect MetaMask Wallet
-      </button>
-
-      {wallet && <p style={{ marginTop: '1rem' }}>Wallet: {wallet}</p>}
+        <div className="login-actions">
+          <button onClick={handleLogin}>Submit</button>
+          <button onClick={handleConnectWallet}>Connect Wallet</button>
+        </div>
+      </div>
     </div>
   );
-}
+};
 
 export default Login;
