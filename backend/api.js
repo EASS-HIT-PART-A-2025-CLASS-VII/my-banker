@@ -1,5 +1,5 @@
 const express = require('express');
-const connectDB = require('./db'); // Import the MongoDB connection function
+const connectDB = require('./database/db'); // Import the MongoDB connection function
 
 const app = express();
 const port = 8000;

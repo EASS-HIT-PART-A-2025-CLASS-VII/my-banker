@@ -11,10 +11,10 @@ COPY package*.json ./
 RUN npm install
 
 # Copy the rest of the project files
-COPY . .
+COPY backend ./backend
 
 # Expose the port that the app will run on
 EXPOSE 8000
 
 # Command to run the app
-CMD ["node", "api.js"]
+CMD ["node", "backend/api.js"]
