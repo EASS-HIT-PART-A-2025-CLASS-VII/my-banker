@@ -7,30 +7,57 @@ It aims to provide a personalized financial assistant that analyzes user data an
 ⚙️ **Tech Stack**  
 - **Backend:** Node.js (Express)  
 - **Authentication Service:** MongoDB  
-- **AI Engine:** Python (planned)  
+- **AI Engine:** Planned  
 - **Crypto Wallet Integration:** Planned  
 - **Containerization:** Docker  
 - **Testing:** Python (Pytest)  
-- **Frontend:** React (planned)
+- **Frontend:** React
 
 🧩 **Architecture Overview**  
 The system uses a modular monolith architecture — clear separation of services without microservices overhead:
 
-
+```
 my-banker/
 │
-├── api/                    # Main Express server setup and routing
+├── backend/                     # Backend (Node.js + Express)
+│   ├── api.js                   # Main Express server setup and routing
+│   ├── database/                # Database connection logic
+│   │   └── db.js
+│   ├── services/                # Modular services
+│   │   └── authentication/      # Authentication logic and routes
+│   │       ├── authentication.js
+│   │       ├── authenticationModel.js
+│   │       └── authenticationRoutes.js
+│   ├── views/                   # Pug templates for server-side rendering
+│   │   └── index.pug
+│   ├── package.json             # Backend dependencies and scripts
+│   ├── package-lock.json        # Backend lock file
+│   └── Dockerfile               # Dockerfile for containerizing the backend
 │
-├── services/
-│   └── authentication/     # Authentication logic and routes
-│       ├── authentication.js
-│       ├── authenticationModel.js
-│       └── authenticationRoutes.js
+├── frontend/                    # Frontend (React)
+│   ├── public/                  # Public assets
+│   │   ├── index.html           # Main HTML file
+│   │   └── favicon.ico          # Favicon
+│   ├── src/                     # React source files
+│   │   ├── components/          # React components
+│   │   │   ├── Login.js         # Login and MetaMask connection component
+│   │   ├── App.js               # Main React app component
+│   │   ├── index.js             # React entry point
+│   │   ├── App.css              # Global styles
+│   │   └── index.css            # Global styles
+│   ├── package.json             # Frontend dependencies and scripts
+│   ├── package-lock.json        # Frontend lock file
+│   └── .env                     # Environment variables (e.g., API base URL)
 │
-├── tests/                  # Python tests (Pytest)
-├── utils/                  # Utility functions (e.g., error handling)
-├── errors/                 # Centralized error definitions
-└── README.md
+├── tests/                       # Test files
+│   ├── authentication/          # Authentication-related tests
+│   │   ├── test_authentication.py # Pytest for backend authentication
+│
+├── utils/                       # Utility functions (e.g., error handling)
+├── errors/                      # Centralized error definitions
+├── docker-compose.yml           # Docker Compose configuration
+└── README.md                    # Project documentation
+```
 
 ✅ **Current Features**  
 - 🟢 Base Express server running  
@@ -40,7 +67,7 @@ my-banker/
 🔜 **Coming Soon**  
 - AI-generated financial reports  
 - Crypto wallet connection and analysis  
-- Frontend interface (React)  
+- Full frontend interface (React)  
 - Dockerized project environment  
 - Full authentication flow with JWT  
 
@@ -54,7 +81,7 @@ my-banker/
 
 ### 🔄 Clone the Repository
 ```bash
-git clone <repository-url>
+git clone https://github.com/EASS-HIT-PART-A-2025-CLASS-VII/my-banker
 cd my-banker
 ```
 
@@ -91,9 +118,8 @@ npm start
 | Method | Endpoint      | Description                           |
 |--------|---------------|---------------------------------------|
 | POST   | /auth/login   | Authenticate a user                   |
-| POST   | /auth/upload  | Upload financial statements           |
-| GET    | /auth/offers  | Get personalized credit offers        |
-| GET    | /auth/chat    | AI-powered financial assistant        |
+| POST   | /auth/send    | Send wallet information               |
+| GET    | /auth/report  | Get personalized report               |
 
 
 ## 🤝 Contributing
