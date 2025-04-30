@@ -16,48 +16,7 @@ It aims to provide a personalized financial assistant that analyzes user data an
 🧩 **Architecture Overview**  
 The system uses a modular monolith architecture — clear separation of services without microservices overhead:
 
-```
-my-banker/
-│
-├── backend/                     # Backend (Node.js + Express)
-│   ├── api.js                   # Main Express server setup and routing
-│   ├── database/                # Database connection logic
-│   │   └── db.js
-│   ├── services/                # Modular services
-│   │   └── authentication/      # Authentication logic and routes
-│   │       ├── authentication.js
-│   │       ├── authenticationModel.js
-│   │       └── authenticationRoutes.js
-│   ├── views/                   # Pug templates for server-side rendering
-│   │   └── index.pug
-│   ├── package.json             # Backend dependencies and scripts
-│   ├── package-lock.json        # Backend lock file
-│   └── Dockerfile               # Dockerfile for containerizing the backend
-│
-├── frontend/                    # Frontend (React)
-│   ├── public/                  # Public assets
-│   │   ├── index.html           # Main HTML file
-│   │   └── favicon.ico          # Favicon
-│   ├── src/                     # React source files
-│   │   ├── components/          # React components
-│   │   │   ├── Login.js         # Login and MetaMask connection component
-│   │   ├── App.js               # Main React app component
-│   │   ├── index.js             # React entry point
-│   │   ├── App.css              # Global styles
-│   │   └── index.css            # Global styles
-│   ├── package.json             # Frontend dependencies and scripts
-│   ├── package-lock.json        # Frontend lock file
-│   └── .env                     # Environment variables (e.g., API base URL)
-│
-├── tests/                       # Test files
-│   ├── authentication/          # Authentication-related tests
-│   │   ├── test_authentication.py # Pytest for backend authentication
-│
-├── utils/                       # Utility functions (e.g., error handling)
-├── errors/                      # Centralized error definitions
-├── docker-compose.yml           # Docker Compose configuration
-└── README.md                    # Project documentation
-```
+![](Diagram/Diagram.png)
 
 ✅ **Current Features**  
 - 🟢 Base Express server running  
