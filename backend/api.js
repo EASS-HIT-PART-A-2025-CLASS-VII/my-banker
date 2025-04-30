@@ -20,14 +20,14 @@ app.use(express.json());
  * Grouped by logical service
  */
 const authRoutes = require('./authentication/authenticationRoutes');
-const walletRoutes = require('./wallet/walletRoutes');
+//const walletRoutes = require('./wallet/walletRoutes');
 const reportRoutes = require('./manualReports/manualReportsRoutes');
 //const ollamaRoutes = require('./ollamaService/ollamaRoutes');
 
 // Mount routes at / + name
 app.use('/auth', authRoutes);
-app.use('/wallet-transactions', walletTransactionsRoutes);
-app.use('/manual-reports', reportRoutes);
+//app.use('/wallet-transactions', walletTransactionsRoutes);
+app.use('/manual-report', reportRoutes);
 //app.use('/ollama', ollamaRoutes);
 
 /**
