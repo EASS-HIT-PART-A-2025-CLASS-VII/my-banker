@@ -16,7 +16,7 @@ It aims to provide a personalized financial assistant that analyzes user data an
 🧩 **Architecture Overview**  
 The system uses a modular monolith architecture — clear separation of services without microservices overhead:
 
-![](Diagram/Diagram.png)
+![Diagram](readmeFiles/Diagram.png)
 
 ✅ **Current Features**  
 - 🟢 Base Express server running  
