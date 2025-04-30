@@ -26,8 +26,8 @@ const reportRoutes = require('./manualReports/manualReportsRoutes');
 
 // Mount routes at / + name
 app.use('/auth', authRoutes);
-app.use('/walletTransactions', walletTransactionsRoutes);
-//app.use('/report', reportRoutes);
+app.use('/wallet-transactions', walletTransactionsRoutes);
+app.use('/manual-reports', reportRoutes);
 //app.use('/ollama', ollamaRoutes);
 
 /**
