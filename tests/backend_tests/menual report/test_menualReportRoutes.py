@@ -1,39 +1,35 @@
 import pytest
-from app import app  
+from app import app  # assuming your Express app is exposed in app.js
 import json
 
 @pytest.fixture
 def client():
     app.testing = True
-    with app.test_client() as client:
-        yield client
+    return app.test_client()
 
-def test_post_manual_report(client):
-    sample_payload = {
-        "result": [
-            {
-                "hash": "0xabc123",
-                "block_timestamp": "2021-05-07T11:08:35.000Z",
-                "from_address": "0xfrom",
-                "erc20_transfer": [
-                    {
-                        "token_symbol": "USDT",
-                        "value": "1000000",
-                        "token_decimals": "6",
-                        "transaction_hash": "0xtx1",
-                        "block_timestamp": "2021-05-07T11:08:35.000Z",
-                        "from_address": "0xfrom",
-                        "to_address": "0xto"
-                    }
-                ]
-            }
-        ]
+def test_manual_report_route(client):
+    payload = {
+        "result": [{
+            "value": "1000000000000000000",
+            "erc20_transfer": [{
+                "token_symbol": "USDT",
+                "value": "1000000"
+            }],
+            "nft_transfers": [{
+                "contract_type": "ERC721",
+                "amount": "2"
+            }],
+            "native_transfers": [{
+                "value": "500000000000000000",
+                "token_symbol": "ETH"
+            }],
+            "internal_transactions": []
+        }]
     }
-
-    response = client.post('/manual-reports', json=sample_payload)
+    response = client.post("/manual-report", data=json.dumps(payload), content_type='application/json')
     assert response.status_code == 200
-
     data = response.get_json()
-    assert "report" in data
-    assert "balances" in data["report"]
-    assert "transactions" in data["report"]
+    assert "profit_and_loss_report" in data
+    assert "current_balances" in data
+    assert "actions_report" in data
+    assert "transactions" in data

@@ -1,61 +1,41 @@
 import pytest
-from manualReports import generate_manual_report
+from manualReports import getProfitAndLoss, getWalletBalances, getActionsReport
 
-sample_data = {
-    "result": [
-        {
-            "hash": "0xabc123",
-            "block_timestamp": "2021-05-07T11:08:35.000Z",
-            "from_address": "0xfrom",
-            "erc20_transfer": [
-                {
-                    "token_symbol": "USDT",
-                    "value": "1000000",
-                    "token_decimals": "6",
-                    "transaction_hash": "0xtx1",
-                    "block_timestamp": "2021-05-07T11:08:35.000Z",
-                    "from_address": "0xfrom",
-                    "to_address": "0xto"
-                }
-            ],
-            "native_transfers": [
-                {
-                    "token_symbol": "ETH",
-                    "value_formatted": "0.1",
-                    "direction": "outgoing",
-                    "from_address": "0xfrom",
-                    "to_address": "0xto"
-                }
-            ],
-            "nft_transfers": [
-                {
-                    "token_address": "0xNFT",
-                    "amount": "1",
-                    "transaction_hash": "0xntfhash",
-                    "block_timestamp": "2021-06-04T16:00:15",
-                    "from_address": "0xfrom",
-                    "to_address": "0xto"
-                }
-            ]
-        }
-    ]
-}
+# Sample transaction data
+@pytest.fixture
+def sample_transactions():
+    return [{
+        "value": "1000000000000000000",
+        "erc20_transfer": [{
+            "token_symbol": "USDT",
+            "value": "1000000",
+        }],
+        "nft_transfers": [{
+            "contract_type": "ERC721",
+            "amount": "2"
+        }],
+        "native_transfers": [{
+            "value": "500000000000000000",
+            "token_symbol": "ETH"
+        }],
+        "internal_transactions": []
+    }]
 
-def test_generate_manual_report():
-    report = generate_manual_report(sample_data['result'])
-    
-    assert "balances" in report
-    assert "transactions" in report
+def test_get_profit_and_loss(sample_transactions):
+    result = getProfitAndLoss(sample_transactions)
+    assert "total_profit" in result
+    assert "total_loss" in result
 
-    balances = report["balances"]
-    transactions = report["transactions"]
+def test_get_wallet_balances(sample_transactions):
+    result = getWalletBalances(sample_transactions)
+    assert "native_tokens" in result
+    assert "erc20_tokens" in result
+    assert "nfts" in result
+    assert isinstance(result["nfts"], list)
 
-    # ERC20
-    assert balances.get("USDT") == -1.0  # because sender == from_address
-    # Native
-    assert balances.get("ETH") == -0.1
-    # NFT
-    assert balances.get("NFT-0xNFT") == -1
-
-    # Check transaction details
-    assert len(transactions) == 3
+def test_get_actions_report(sample_transactions):
+    result = getActionsReport(sample_transactions)
+    assert "calculation_method" in result
+    assert "total_actions" in result
+    assert "trade_volume" in result
+    assert "total_fees" in result
