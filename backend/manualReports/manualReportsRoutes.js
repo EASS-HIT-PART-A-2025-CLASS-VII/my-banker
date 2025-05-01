@@ -1,34 +1,59 @@
 const express = require('express');
 const router = express.Router();
-const { generateManualReport } = require('./manualReports');
+
+// Import functions to process transactions and generate reports
+const {
+  getProfitAndLoss,
+  getWalletBalances,
+  getActionsReport,
+} = require('../services/manualReports');
 
 /**
- * @route POST /manual-reports
- * @description Generates a manual report based on the provided transaction data.
+ * @route POST /manual-report
+ * @description Generates a comprehensive manual report based on transaction data.
  * @param {Object} req - The request object.
- * @param {Array} req.body.result - Array of transaction entries.
- * @returns {Object} res - The response object containing the generated report.
+ * @param {Array} req.body.result - Array of transaction objects.
+ * @returns {Object} res - The response object containing the full report.
  * @throws {Error} 400 - If the input data format is invalid.
  * @throws {Error} 500 - If an internal server error occurs.
  */
-router.post('/', (req, res) => {
+router.post('/manual-report', async (req, res) => {
   try {
-    // Extract the "result" array from the request body
-    const { result } = req.body;
+    // Extract transactions from the request body
+    const transactions = req.body.result;
 
-    // Generate the manual report using the provided data
-    const report = generateManualReport(result);
+    // Validate that transactions is an array
+    if (!Array.isArray(transactions)) {
+      return res.status(400).json({ error: 'Invalid transactions data' });
+    }
 
-    // Return the generated report as a JSON response
-    return res.status(200).json({ report });
-  } catch (err) {
-    console.error('Error generating manual report:', err.message);
+    // Generate the profit and loss report
+    const profitAndLoss = getProfitAndLoss(transactions);
 
-    // Determine the appropriate status code based on the error message
-    const status = err.message.includes('Invalid data format') ? 400 : 500;
+    // Calculate the current wallet balances
+    const balances = getWalletBalances(transactions);
 
-    return res.status(status).json({ error: err.message });
+    // Generate the actions report
+    const actionsReport = getActionsReport(transactions);
+
+    // Combine all reports into a single object
+    const fullReport = {
+      profit_and_loss_report: profitAndLoss,
+      current_balances: balances,
+      actions_report: actionsReport,
+      transactions: transactions,
+    };
+
+    // Send the full report as a JSON response
+    res.status(200).json(fullReport);
+  } catch (error) {
+    // Log the error for debugging purposes
+    console.error('Error generating manual report:', error);
+
+    // Send a 500 Internal Server Error response
+    res.status(500).json({ error: 'Failed to generate manual report' });
   }
 });
 
+// Export the router to be used in other parts of the application
 module.exports = router;
