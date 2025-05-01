@@ -1,109 +1,135 @@
+// services/manualReports.js
+
 /**
- * Generates a manual report based on transaction data.
- * @param {Array} result - Array of transaction entries.
- * @returns {Object} An object containing balances and transaction details.
- * @throws {Error} If input format is invalid or processing fails.
+ * Calculate profit and loss based on transaction data.
+ * @param {Array} transactions - Array of transaction objects.
+ * @returns {Object} An object containing total received, total sent, and profit or loss.
  */
-function generateManualReport(result) {
-  // Validate that the input is an array
-  if (!Array.isArray(result)) {
-    throw new Error('Invalid data format: "result" should be an array.');
-  }
+function generateProfitAndLossReport(transactions) {
+  let totalReceived = 0;
+  let totalSent = 0;
 
-   // Object to track token balances
-  const balances = {};
-  // Array to store transaction details
-  const transactions = []; 
-
-  // Iterate over each entry in the result array
-  result.forEach(entry => {
-    // Handle ERC20 transfers
-    if (entry.erc20_transfer && Array.isArray(entry.erc20_transfer)) {
-      entry.erc20_transfer.forEach(tx => {
-        // Token symbol (e.g., USDT, DAI)
-        const symbol = tx.token_symbol; 
-        const amount = parseFloat(tx.value) / Math.pow(10, parseInt(tx.token_decimals)); // Calculate token amount
-        const direction = entry.from_address === tx.from_address ? 'send' : 'receive'; // Determine transaction direction
-
-        // Update token balance
-        balances[symbol] = balances[symbol] || 0;
-        balances[symbol] += direction === 'receive' ? amount : -amount;
-
-        // Record transaction details
-        transactions.push({
-          hash: tx.transaction_hash, 
-          timestamp: tx.block_timestamp,
-          token: symbol, // Token symbol
-          amount, 
-          type: direction, // Transaction type (send/receive)
-          from: tx.from_address, // Sender address
-          to: tx.to_address // Receiver address
-        });
-      });
-    }
-
-    // Handle native transfers (e.g., ETH)
-    if (entry.native_transfers && Array.isArray(entry.native_transfers)) {
-      entry.native_transfers.forEach(tx => {
-        // Default to ETH if no token symbol is provided
-        const symbol = tx.token_symbol || 'ETH'; 
-        // Parse the formatted value
-        const amount = parseFloat(tx.value_formatted); 
-        // Default to 'send' if direction is not provided
-        const direction = tx.direction || 'send'; 
-
-        // Update native token balance
-        balances[symbol] = balances[symbol] || 0;
-        balances[symbol] += direction === 'incoming' ? amount : -amount;
-
-        // Record transaction details
-        transactions.push({
-          hash: entry.hash, 
-          timestamp: entry.block_timestamp, 
-          token: symbol, 
-          amount, 
-          type: direction === 'incoming' ? 'receive' : 'send', 
-          from: tx.from_address, 
-          to: tx.to_address 
-        });
-      });
-    }
-
-    // Handle NFT transfers
-    if (entry.nft_transfers && Array.isArray(entry.nft_transfers)) {
-      entry.nft_transfers.forEach(tx => {
-        // Generate a unique symbol for the NFT using its token address
-        const symbol = `NFT-${tx.token_address}`; 
-        // Default to 1 if no amount is provided
-        const amount = parseInt(tx.amount) || 1; 
-        // Determine transaction direction
-        const direction = entry.from_address === tx.from_address ? 'send' : 'receive'; 
-
-        // Update NFT balance
-        balances[symbol] = balances[symbol] || 0;
-        balances[symbol] += direction === 'receive' ? amount : -amount;
-
-        // Record transaction details
-        transactions.push({
-          hash: tx.transaction_hash, // Transaction hash
-          timestamp: tx.block_timestamp, // Timestamp of the transaction
-          token: symbol, // NFT identifier
-          amount,
-          type: direction, 
-          from: tx.from_address, 
-          to: tx.to_address 
-        });
+  // Iterate over each transaction to calculate totals
+  transactions.forEach((tx) => {
+    // Check for native transfers in the transaction
+    if (tx.native_transfers && tx.native_transfers.length > 0) {
+      tx.native_transfers.forEach((nt) => {
+        const value = Number(nt.value || 0);
+        // Add to total received if the direction is incoming
+        if (nt.direction === 'incoming') {
+          totalReceived += value;
+        // Add to total sent if the direction is outgoing
+        } else if (nt.direction === 'outgoing') {
+          totalSent += value;
+        }
       });
     }
   });
 
-  // Return the generated report containing balances and transactions
+  // Return the calculated profit or loss
   return {
-    balances, // Final token balances
-    transactions // List of all transactions
+    total_received: totalReceived,
+    total_sent: totalSent,
+    profit_or_loss: totalReceived - totalSent,
   };
 }
 
+/**
+ * Aggregate wallet balances based on the last state of transactions.
+ * @param {Array} transactions - Array of transaction objects.
+ * @returns {Object} An object containing aggregated balances for tokens, native assets, and NFTs.
+ */
+function getWalletBalances(transactions) {
+  const balances = {};
+
+  // Iterate over each transaction to calculate balances
+  transactions.forEach((tx) => {
+    // Handle ERC-20 token transfers
+    if (tx.erc20_transfer) {
+      tx.erc20_transfer.forEach((token) => {
+        const symbol = token.token_symbol || 'UNKNOWN';
+        const value = Number(token.value || 0);
+        balances[symbol] = (balances[symbol] || 0) + value;
+      });
+    }
+
+    // Handle native token transfers (e.g., ETH)
+    if (tx.native_transfers) {
+      tx.native_transfers.forEach((nt) => {
+        const symbol = nt.token_symbol || 'ETH';
+        const value = Number(nt.value || 0);
+        // Add to balance if the direction is incoming
+        if (nt.direction === 'incoming') {
+          balances[symbol] = (balances[symbol] || 0) + value;
+        // Subtract from balance if the direction is outgoing
+        } else {
+          balances[symbol] = (balances[symbol] || 0) - value;
+        }
+      });
+    }
+
+    // Handle NFT transfers
+    if (tx.nft_transfers) {
+      tx.nft_transfers.forEach((nft) => {
+        const type = nft.contract_type || 'UNKNOWN';
+        const key = `NFT_${type}`;
+        const amount = Number(nft.amount || 1); // Default to 1 if not specified
+        balances[key] = (balances[key] || 0) + amount;
+      });
+    }
+  });
+
+  // Return the aggregated balances
+  return balances;
+}
+
+/**
+ * Summarize transaction activity, including total transactions, trading volume, and trading fees.
+ * @param {Array} transactions - Array of transaction objects.
+ * @returns {Object} An object containing transaction summary details.
+ */
+function summarizeTransactions(transactions) {
+  let totalTransactions = 0;
+  let tradingVolume = 0;
+  let tradingFees = 0;
+
+  // Iterate over each transaction to calculate summary details
+  transactions.forEach((tx) => {
+    totalTransactions += 1;
+
+    // Add to trading volume if the transaction has a value
+    if (tx.value) {
+      tradingVolume += Number(tx.value);
+    }
+
+    // Calculate trading fees if gas and gas price are available
+    if (tx.gas && tx.gas_price) {
+      tradingFees += Number(tx.gas) * Number(tx.gas_price);
+    }
+  });
+
+  // Return the summarized transaction details
+  return {
+    calculation_method: 'FIFO',
+    total_transactions: totalTransactions,
+    trading_volume: tradingVolume,
+    trading_fees: tradingFees,
+  };
+}
+
+/**
+ * Collect all transactions into a flat list.
+ * @param {Array} transactions - Array of transaction objects.
+ * @returns {Array} A flat list of all transactions.
+ */
+function getAllTransactions(transactions) {
+  return transactions;
+}
+
+// Export the functions for use in other modules
 module.exports = {
-  generateManualReport
+  generateProfitAndLossReport,
+  getWalletBalances,
+  summarizeTransactions,
+  getAllTransactions,
 };
