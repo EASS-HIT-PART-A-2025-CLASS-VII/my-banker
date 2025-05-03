@@ -3,10 +3,11 @@ const router = express.Router();
 
 // Import functions to process transactions and generate reports
 const {
-  getProfitAndLoss,
+  generateProfitAndLossReport,
   getWalletBalances,
-  getActionsReport,
-} = require('../services/manualReports');
+  summarizeTransactions,
+  getAllTransactions,
+} = require('./manualReports');
 
 /**
  * @route POST /manual-report
@@ -17,7 +18,7 @@ const {
  * @throws {Error} 400 - If the input data format is invalid.
  * @throws {Error} 500 - If an internal server error occurs.
  */
-router.post('/manual-report', async (req, res) => {
+router.post('/', async (req, res) => {
   try {
     // Extract transactions from the request body
     const transactions = req.body.result;
@@ -28,13 +29,14 @@ router.post('/manual-report', async (req, res) => {
     }
 
     // Generate the profit and loss report
-    const profitAndLoss = getProfitAndLoss(transactions);
+    const profitAndLoss = generateProfitAndLossReport(transactions);
 
     // Calculate the current wallet balances
     const balances = getWalletBalances(transactions);
 
     // Generate the actions report
-    const actionsReport = getActionsReport(transactions);
+    const actionsReport = summarizeTransactions(transactions);
+
 
     // Combine all reports into a single object
     const fullReport = {

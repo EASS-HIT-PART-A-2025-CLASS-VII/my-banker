@@ -22,13 +22,13 @@ app.use(express.json());
 const authRoutes = require('./authentication/authenticationRoutes');
 //const walletRoutes = require('./wallet/walletRoutes');
 const reportRoutes = require('./manualReports/manualReportsRoutes');
-//const ollamaRoutes = require('./ollamaService/ollamaRoutes');
+//const llmRoutes = require('.llm/llmReportRoutes');
 
 // Mount routes at / + name
 app.use('/auth', authRoutes);
 //app.use('/wallet-transactions', walletTransactionsRoutes);
 app.use('/manual-report', reportRoutes);
-//app.use('/ollama', ollamaRoutes);
+//app.use('/llm-report', llmRoutes);
 
 /**
  * Default health check route
