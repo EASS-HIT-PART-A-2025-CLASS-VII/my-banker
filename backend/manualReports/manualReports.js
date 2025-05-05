@@ -5,33 +5,26 @@
  * @param {Array} transactions - Array of transaction objects.
  * @returns {Object} An object containing total received, total sent, and profit or loss.
  */
-function generateProfitAndLossReport(transactions) {
-  let totalReceived = 0;
-  let totalSent = 0;
+function generateProfitAndLossReport(walletInfo) {
+  return walletInfo.wallet.map(coinData => {
+    let totalReceived = 0;
+    let totalSent = 0;
 
-  // Iterate over each transaction to calculate totals
-  transactions.forEach((tx) => {
-    // Check for native transfers in the transaction
-    if (tx.native_transfers && tx.native_transfers.length > 0) {
-      tx.native_transfers.forEach((nt) => {
-        const value = Number(nt.value || 0);
-        // Add to total received if the direction is incoming
-        if (nt.direction === 'incoming') {
-          totalReceived += value;
-        // Add to total sent if the direction is outgoing
-        } else if (nt.direction === 'outgoing') {
-          totalSent += value;
-        }
-      });
-    }
+    coinData.transactions.forEach(tx => {
+      if (tx.type === "receive") {
+        totalReceived += tx.amount;
+      } else if (tx.type === "send") {
+        totalSent += tx.amount;
+      }
+    });
+
+    return {
+      coin: coinData.coin,
+      totalReceived,
+      totalSent,
+      profitOrLoss: totalReceived - totalSent
+    };
   });
-
-  // Return the calculated profit or loss
-  return {
-    total_received: totalReceived,
-    total_sent: totalSent,
-    profit_or_loss: totalReceived - totalSent,
-  };
 }
 
 /**
@@ -39,48 +32,11 @@ function generateProfitAndLossReport(transactions) {
  * @param {Array} transactions - Array of transaction objects.
  * @returns {Object} An object containing aggregated balances for tokens, native assets, and NFTs.
  */
-function getWalletBalances(transactions) {
-  const balances = {};
-
-  // Iterate over each transaction to calculate balances
-  transactions.forEach((tx) => {
-    // Handle ERC-20 token transfers
-    if (tx.erc20_transfer) {
-      tx.erc20_transfer.forEach((token) => {
-        const symbol = token.token_symbol || 'UNKNOWN';
-        const value = Number(token.value || 0);
-        balances[symbol] = (balances[symbol] || 0) + value;
-      });
-    }
-
-    // Handle native token transfers (e.g., ETH)
-    if (tx.native_transfers) {
-      tx.native_transfers.forEach((nt) => {
-        const symbol = nt.token_symbol || 'ETH';
-        const value = Number(nt.value || 0);
-        // Add to balance if the direction is incoming
-        if (nt.direction === 'incoming') {
-          balances[symbol] = (balances[symbol] || 0) + value;
-        // Subtract from balance if the direction is outgoing
-        } else {
-          balances[symbol] = (balances[symbol] || 0) - value;
-        }
-      });
-    }
-
-    // Handle NFT transfers
-    if (tx.nft_transfers) {
-      tx.nft_transfers.forEach((nft) => {
-        const type = nft.contract_type || 'UNKNOWN';
-        const key = `NFT_${type}`;
-        const amount = Number(nft.amount || 1); // Default to 1 if not specified
-        balances[key] = (balances[key] || 0) + amount;
-      });
-    }
-  });
-
-  // Return the aggregated balances
-  return balances;
+function getWalletBalances(walletInfo) {
+  return walletInfo.wallet.map(coinData => ({
+    coin: coinData.coin,
+    balance: coinData.balance
+  }));
 }
 
 /**

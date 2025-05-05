@@ -3,117 +3,102 @@ const router = express.Router();
 
 const getWalletTransactions = (walletAddress) => {
   return {
-    "page": "2",
-    "page_size": "100",
-    "cursor": "",
-    "result": [
+    "wallet": [
       {
-        "hash": "0x1ed85b3757a6d31d01a4d6677fc52fd3911d649a0af21fe5ca3f886b153773ed",
-        "nonce": "1848059",
-        "transaction_index": "108",
-        "from_address_entity": "Opensea",
-        "from_address_entity_logo": "https://opensea.io/favicon.ico",
-        "from_address": "0x267be1c1d684f78cb4f6a176c4911b741e4ffdc0",
-        "from_address_label": "Binance 1",
-        "to_address_entity": "Beaver Build",
-        "to_address_entity_logo": "https://beaverbuild.com/favicon.ico",
-        "to_address": "0x003dde3494f30d861d063232c6a8c04394b686ff",
-        "to_address_label": "Binance 2",
-        "value": "115580000000000000",
-        "gas": "30000",
-        "gas_price": "52500000000",
-        "receipt_cumulative_gas_used": "4923073",
-        "receipt_gas_used": "21000",
-        "receipt_contract_address": "",
-        "receipt_root": "",
-        "receipt_status": "1",
-        "block_timestamp": "2021-05-07T11:08:35.000Z",
-        "block_number": "12386788",
-        "block_hash": "0x9b559aef7ea858608c2e554246fe4a24287e7aeeb976848df2b9a2531f4b9171",
-        "internal_transactions": [
+        "coin": "Bitcoin",
+        "balance": 1.2345,
+        "transactions": [
           {
-            "transaction_hash": "0x057Ec652A4F150f7FF94f089A38008f49a0DF88e",
-            "block_number": "12526958",
-            "block_hash": "0x0372c302e3c52e8f2e15d155e2c545e6d802e479236564af052759253b20fd86",
-            "type": "CALL",
-            "from": "0xd4a3BebD824189481FC45363602b83C9c7e9cbDf",
-            "to": "0xa71db868318f0a0bae9411347cd4a6fa23d8d4ef",
-            "value": "650000000000000000",
-            "gas": "6721975",
-            "gas_used": "6721975",
-            "input": "0x",
-            "output": "0x"
+            "txid": "e3c1b6a7f5d4...",
+            "timestamp": "2024-05-01T12:34:56Z",
+            "type": "receive",
+            "amount": 0.5,
+            "from": "1A2b3C4d5E6f...",
+            "to": "1XyZ9w8V7u6T...",
+            "fee": 0.0001,
+            "status": "confirmed"
+          },
+          {
+            "txid": "b7a4d3c2e1f0...",
+            "timestamp": "2024-04-28T09:21:11Z",
+            "type": "send",
+            "amount": 0.2,
+            "from": "1XyZ9w8V7u6T...",
+            "to": "1QwErTyUiOpL...",
+            "fee": 0.00008,
+            "status": "confirmed"
           }
-        ],
-        "nft_transfers": [
+        ]
+      },
+      {
+        "coin": "Ethereum",
+        "balance": 10.5678,
+        "transactions": [
           {
-            "token_address": "0x057Ec652A4F150f7FF94f089A38008f49a0DF88e",
-            "token_id": "15",
-            "from_address_entity": "Opensea",
-            "from_address_entity_logo": "https://opensea.io/favicon.ico",
-            "from_address": "0x057Ec652A4F150f7FF94f089A38008f49a0DF88e",
-            "from_address_label": "Binance 1",
-            "to_address_entity": "Beaver Build",
-            "to_address_entity_logo": "https://beaverbuild.com/favicon.ico",
-            "to_address": "0x057Ec652A4F150f7FF94f089A38008f49a0DF88e",
-            "to_address_label": "Binance 2",
-            "value": "1000000000000000",
-            "amount": "1",
-            "contract_type": "ERC721",
-            "block_number": "88256",
-            "block_timestamp": "2021-06-04T16:00:15",
-            "block_hash": "string",
-            "transaction_hash": "0x057Ec652A4F150f7FF94f089A38008f49a0DF88e",
-            "transaction_type": "string",
-            "transaction_index": 1,
-            "log_index": 1,
-            "operator": "0x057Ec652A4F150f7FF94f089A38008f49a0DF88e",
-            "possible_spam": "",
-            "verified_collection": ""
+            "txid": "0xabc123def456...",
+            "timestamp": "2024-05-03T15:22:10Z",
+            "type": "receive",
+            "amount": 3.0,
+            "from": "0x1a2b3c4d5e6f...",
+            "to": "0x7f8e9d0c1b2a...",
+            "fee": 0.0021,
+            "status": "confirmed"
+          },
+          {
+            "txid": "0xdef789abc012...",
+            "timestamp": "2024-04-30T08:10:45Z",
+            "type": "send",
+            "amount": 1.25,
+            "from": "0x7f8e9d0c1b2a...",
+            "to": "0x4e5d6c7b8a9f...",
+            "fee": 0.0018,
+            "status": "confirmed"
+          },
+          {
+            "txid": "0x987zyx654wvu...",
+            "timestamp": "2024-04-25T19:05:33Z",
+            "type": "receive",
+            "amount": 2.5,
+            "from": "0x3b2a1c4d5e6f...",
+            "to": "0x7f8e9d0c1b2a...",
+            "fee": 0.0020,
+            "status": "confirmed"
           }
-        ],
-        "erc20_transfer": [
+        ]
+      },
+      {
+        "coin": "Solana",
+        "balance": 150.75,
+        "transactions": [
           {
-            "token_name": "Tether USD",
-            "token_symbol": "USDT",
-            "token_logo": "https://assets.coingecko.com/coins/images/325/large/Tether-logo.png?1598003707",
-            "token_decimals": "6",
-            "transaction_hash": "0x2d30ca6f024dbc1307ac8a1a44ca27de6f797ec22ef20627a1307243b0ab7d09",
-            "address": "0x057Ec652A4F150f7FF94f089A38008f49a0DF88e",
-            "block_timestamp": "2021-04-02T10:07:54.000Z",
-            "block_number": "12526958",
-            "block_hash": "0x0372c302e3c52e8f2e15d155e2c545e6d802e479236564af052759253b20fd86",
-            "to_address_entity": "Beaver Build",
-            "to_address_entity_logo": "https://beaverbuild.com/favicon.ico",
-            "to_address": "0x62AED87d21Ad0F3cdE4D147Fdcc9245401Af0044",
-            "to_address_label": "Binance 2",
-            "from_address_entity": "Opensea",
-            "from_address_entity_logo": "https://opensea.io/favicon.ico",
-            "from_address": "0xd4a3BebD824189481FC45363602b83C9c7e9cbDf",
-            "from_address_label": "Binance 1",
-            "value": "650000000000000000",
-            "transaction_index": 12,
-            "log_index": 2,
-            "possible_spam": "",
-            "verified_contract": ""
-          }
-        ],
-        "native_transfers": [
+            "txid": "5G7h8J9k0L1m...",
+            "timestamp": "2024-05-02T11:47:29Z",
+            "type": "receive",
+            "amount": 50.0,
+            "from": "9x8y7z6w5v4u...",
+            "to": "3q2w1e4r5t6y...",
+            "fee": 0.00005,
+            "status": "confirmed"
+          },
           {
-            "from_address_entity": "Opensea",
-            "from_address_entity_logo": "https://opensea.io/favicon.ico",
-            "from_address": "0x057Ec652A4F150f7FF94f089A38008f49a0DF88e",
-            "from_address_label": "Binance 1",
-            "to_address_entity": "Beaver Build",
-            "to_address_entity_logo": "https://beaverbuild.com/favicon.ico",
-            "to_address": "0x057Ec652A4F150f7FF94f089A38008f49a0DF88e",
-            "to_address_label": "Binance 2",
-            "value": "1000000000000000",
-            "value_formatted": "0.1",
-            "direction": "outgoing",
-            "internal_transaction": "",
-            "token_symbol": "ETH",
-            "token_logo": "https://cdn.moralis.io/eth/0x67b6d479c7bb412c54e03dca8e1bc6740ce6b99c.png"
+            "txid": "2B3c4D5e6F7g...",
+            "timestamp": "2024-04-29T14:15:00Z",
+            "type": "send",
+            "amount": 20.5,
+            "from": "3q2w1e4r5t6y...",
+            "to": "7u8i9o0p1a2s...",
+            "fee": 0.00004,
+            "status": "confirmed"
+          },
+          {
+            "txid": "8N9m0B1v2C3x...",
+            "timestamp": "2024-04-27T17:30:10Z",
+            "type": "receive",
+            "amount": 30.25,
+            "from": "6t5r4e3w2q1z...",
+            "to": "3q2w1e4r5t6y...",
+            "fee": 0.00003,
+            "status": "confirmed"
           }
         ]
       }

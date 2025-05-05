@@ -21,21 +21,21 @@ const {
 router.post('/', async (req, res) => {
   try {
     // Extract transactions from the request body
-    const transactions = req.body.result;
+    const walletInfo = req.body.result;
 
-    // Validate that transactions is an array
-    if (!Array.isArray(transactions)) {
-      return res.status(400).json({ error: 'Invalid transactions data' });
+    // Validate the input data format
+    if(!walletInfo) {
+      return res.status(400).json({ error: 'Invalid input data format' });
     }
 
     // Generate the profit and loss report
-    const profitAndLoss = generateProfitAndLossReport(transactions);
+    const profitAndLoss = generateProfitAndLossReport(walletInfo);
 
     // Calculate the current wallet balances
-    const balances = getWalletBalances(transactions);
+    const balances = getWalletBalances(walletInfo);
 
     // Generate the actions report
-    const actionsReport = summarizeTransactions(transactions);
+    const actionsReport = summarizeTransactions(walletInfo);
 
 
     // Combine all reports into a single object
@@ -43,7 +43,7 @@ router.post('/', async (req, res) => {
       profit_and_loss_report: profitAndLoss,
       current_balances: balances,
       actions_report: actionsReport,
-      transactions: transactions,
+      transactions: walletInfo,
     };
 
     // Send the full report as a JSON response
