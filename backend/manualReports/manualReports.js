@@ -32,7 +32,7 @@ function generateProfitAndLossReport(walletInfo) {
  * @param {Array} transactions - Array of transaction objects.
  * @returns {Object} An object containing aggregated balances for tokens, native assets, and NFTs.
  */
-function getWalletBalances(walletInfo) {
+function generateWalletBalances(walletInfo) {
   return walletInfo.wallet.map(coinData => ({
     coin: coinData.coin,
     balance: coinData.balance
@@ -44,32 +44,26 @@ function getWalletBalances(walletInfo) {
  * @param {Array} transactions - Array of transaction objects.
  * @returns {Object} An object containing transaction summary details.
  */
-function summarizeTransactions(transactions) {
-  let totalTransactions = 0;
+function generateActionReport(walletInfo) {
+  let totalActions = 0;
   let tradingVolume = 0;
-  let tradingFees = 0;
+  let totalCommission = 0;
 
-  // Iterate over each transaction to calculate summary details
-  transactions.forEach((tx) => {
-    totalTransactions += 1;
-
-    // Add to trading volume if the transaction has a value
-    if (tx.value) {
-      tradingVolume += Number(tx.value);
-    }
-
-    // Calculate trading fees if gas and gas price are available
-    if (tx.gas && tx.gas_price) {
-      tradingFees += Number(tx.gas) * Number(tx.gas_price);
-    }
+  walletInfo.wallet.forEach(coinData => {
+    coinData.transactions.forEach(tx => {
+      totalActions += 1;
+      // Trading volume is the sum of all amounts sent and received
+      tradingVolume += tx.amount;
+      // Total commission is the sum of all fees
+      totalCommission += tx.fee || 0;
+    });
   });
 
-  // Return the summarized transaction details
   return {
-    calculation_method: 'FIFO',
-    total_transactions: totalTransactions,
-    trading_volume: tradingVolume,
-    trading_fees: tradingFees,
+    calculationMethod: "FIFO",
+    totalActions,
+    tradingVolume,
+    totalCommissionPaid: totalCommission
   };
 }
 
@@ -78,8 +72,17 @@ function summarizeTransactions(transactions) {
  * @param {Array} transactions - Array of transaction objects.
  * @returns {Array} A flat list of all transactions.
  */
-function getAllTransactions(transactions) {
-  return transactions;
+function generateAllTransactionsList(transactions) {
+  let allTransactions = [];
+  walletData.wallet.forEach(coinData => {
+    coinData.transactions.forEach(tx => {
+      allTransactions.push({
+        coin: coinData.coin,
+        ...tx
+      });
+    });
+  });
+  return allTransactions;
 }
 
 // Export the functions for use in other modules
