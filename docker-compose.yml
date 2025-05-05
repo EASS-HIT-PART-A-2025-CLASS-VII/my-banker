@@ -10,8 +10,10 @@ services:
       - "8000:8000"
     depends_on:
       - mongo
+      - ollama 
     environment:
       - MONGO_URI=mongodb://mongo:27017/my-banker
+      - OLLAMA_API=http://ollama:11434
     volumes:
       - ./backend:/usr/src/app/backend
     restart: unless-stopped
@@ -25,5 +27,16 @@ services:
       - mongo-data:/data/db
     restart: unless-stopped
 
+  ollama:
+      image: ollama/ollama
+      container_name: ollama
+      ports:
+        - "11434:11434"
+      volumes:
+        - ollama-data:/root/.ollama
+      restart: unless-stopped
+      privileged: true
+
 volumes:
   mongo-data:
+  ollama-data:

@@ -22,13 +22,13 @@ app.use(express.json());
 const authRoutes = require('./authentication/authenticationRoutes');
 //const walletRoutes = require('./wallet/walletRoutes');
 const reportRoutes = require('./manualReports/manualReportsRoutes');
-//const llmRoutes = require('.llm/llmReportRoutes');
+const llmRoutes = require('./llmReport/llmReportRoutes');
 
 // Mount routes at / + name
 app.use('/auth', authRoutes);
 //app.use('/wallet-transactions', walletTransactionsRoutes);
 app.use('/manual-report', reportRoutes);
-//app.use('/llm-report', llmRoutes);
+app.use('/llm-report', llmRoutes);
 
 /**
  * Default health check route

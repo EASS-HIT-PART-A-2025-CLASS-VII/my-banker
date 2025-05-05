@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const { analyzeReportWithLLM } = require('./llmReport');
 
-// POST /api/analyze
+// POST /api/
 router.post('/', async (req, res) => {
   const manualReport = req.body;
 
