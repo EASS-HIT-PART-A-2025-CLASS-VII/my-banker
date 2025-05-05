@@ -13,7 +13,7 @@ const {
  * @route POST /manual-report
  * @description Generates a comprehensive manual report based on transaction data.
  * @param {Object} req - The request object.
- * @param {Array} req.body.result - Array of transaction objects.
+ * @param {Object} req.body.result - wallet data object containing coins and their transactions.
  * @returns {Object} res - The response object containing the full report.
  * @throws {Error} 400 - If the input data format is invalid.
  * @throws {Error} 500 - If an internal server error occurs.

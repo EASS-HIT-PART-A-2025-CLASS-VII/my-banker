@@ -1,64 +1,86 @@
-// services/manualReports.js
 
 /**
- * Calculate profit and loss based on transaction data.
- * @param {Array} transactions - Array of transaction objects.
- * @returns {Object} An object containing total received, total sent, and profit or loss.
+ * Calculate profit and loss based on wallet data.
+ * @param {Object} walletInfo - The wallet data object containing coins and their transactions.
+ * @param {Array} walletInfo.wallet - Array of coin objects, each containing coin name, balance, and transactions.
+ * @returns {Object} A JSON object containing profit and loss details for each coin.
  */
 function generateProfitAndLossReport(walletInfo) {
-  return walletInfo.wallet.map(coinData => {
+  // Initialize an object to store profit and loss details
+  const profitAndLoss = {};
+
+  // Iterate over each coin in the wallet to calculate profit and loss
+  walletInfo.wallet.forEach(coinData => {
     let totalReceived = 0;
     let totalSent = 0;
 
+    // Iterate over each transaction for the coin
     coinData.transactions.forEach(tx => {
+      // Add to total received if the transaction type is "receive"
       if (tx.type === "receive") {
         totalReceived += tx.amount;
+      // Add to total sent if the transaction type is "send"
       } else if (tx.type === "send") {
         totalSent += tx.amount;
       }
     });
 
-    return {
-      coin: coinData.coin,
+    // Store the profit and loss details for the coin
+    profitAndLoss[coinData.coin] = {
       totalReceived,
       totalSent,
       profitOrLoss: totalReceived - totalSent
     };
   });
+
+  // Return the profit and loss details as a JSON object
+  return profitAndLoss;
 }
 
 /**
- * Aggregate wallet balances based on the last state of transactions.
- * @param {Array} transactions - Array of transaction objects.
- * @returns {Object} An object containing aggregated balances for tokens, native assets, and NFTs.
+ * Aggregate wallet balances based on the last state of wallet data.
+ * @param {Object} walletInfo - The wallet data object containing coins and their balances.
+ * @param {Array} walletInfo.wallet - Array of coin objects, each containing coin name, balance, and transactions.
+ * @returns {Object} A JSON object containing the balance for each coin.
  */
 function generateWalletBalances(walletInfo) {
-  return walletInfo.wallet.map(coinData => ({
-    coin: coinData.coin,
-    balance: coinData.balance
-  }));
+  // Initialize an object to store balances
+  const balances = {};
+
+  // Iterate over each coin in the wallet to extract its balance
+  walletInfo.wallet.forEach(coinData => {
+    balances[coinData.coin] = coinData.balance;
+  });
+
+  // Return the balances as a JSON object
+  return balances;
 }
 
 /**
  * Summarize transaction activity, including total transactions, trading volume, and trading fees.
- * @param {Array} transactions - Array of transaction objects.
- * @returns {Object} An object containing transaction summary details.
+ * @param {Object} walletInfo - The wallet data object containing coins and their transactions.
+ * @param {Array} walletInfo.wallet - Array of coin objects, each containing coin name, balance, and transactions.
+ * @returns {Object} A JSON object containing transaction summary details.
  */
 function generateActionReport(walletInfo) {
+  // Initialize variables to store summary details
   let totalActions = 0;
   let tradingVolume = 0;
   let totalCommission = 0;
 
+  // Iterate over each coin in the wallet
   walletInfo.wallet.forEach(coinData => {
+    // Iterate over each transaction for the coin
     coinData.transactions.forEach(tx => {
       totalActions += 1;
-      // Trading volume is the sum of all amounts sent and received
+      // Add the transaction amount to the trading volume
       tradingVolume += tx.amount;
-      // Total commission is the sum of all fees
+      // Add the transaction fee to the total commission
       totalCommission += tx.fee || 0;
     });
   });
 
+  // Return the summarized transaction activity as a JSON object
   return {
     calculationMethod: "FIFO",
     totalActions,
@@ -69,12 +91,17 @@ function generateActionReport(walletInfo) {
 
 /**
  * Collect all transactions into a flat list.
- * @param {Array} transactions - Array of transaction objects.
- * @returns {Array} A flat list of all transactions.
+ * @param {Object} walletInfo - The wallet data object containing coins and their transactions.
+ * @param {Array} walletInfo.wallet - Array of coin objects, each containing coin name, balance, and transactions.
+ * @returns {Object} A JSON object containing all transactions with coin information included.
  */
 function generateAllTransactionsList(transactions) {
-  let allTransactions = [];
-  walletData.wallet.forEach(coinData => {
+  // Initialize an array to store all transactions
+  const allTransactions = [];
+
+  // Iterate over each coin in the wallet
+  walletInfo.wallet.forEach(coinData => {
+    // Iterate over each transaction for the coin and add it to the flat list
     coinData.transactions.forEach(tx => {
       allTransactions.push({
         coin: coinData.coin,
@@ -82,7 +109,9 @@ function generateAllTransactionsList(transactions) {
       });
     });
   });
-  return allTransactions;
+
+  // Return the flat list of all transactions as a JSON object
+  return { transactions: allTransactions };
 }
 
 // Export the functions for use in other modules
