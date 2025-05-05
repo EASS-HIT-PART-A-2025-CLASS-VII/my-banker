@@ -21,7 +21,7 @@ const {
 router.post('/', async (req, res) => {
   try {
     // Extract transactions from the request body
-    const walletInfo = req.body.result;
+    const walletInfo = req.body;
 
     // Validate the input data format
     if(!walletInfo) {
@@ -46,7 +46,7 @@ router.post('/', async (req, res) => {
       profit_and_loss_report: profitAndLoss,
       current_balances: balances,
       actions_report: actionsReport,
-      transactions: walletInfo,
+      transactions: transactionsList,
     };
 
     // Send the full report as a JSON response
