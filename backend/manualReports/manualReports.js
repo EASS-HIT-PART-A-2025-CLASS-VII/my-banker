@@ -63,30 +63,33 @@ function generateWalletBalances(walletInfo) {
  * @returns {Object} A JSON object containing transaction summary details.
  */
 function generateActionReport(walletInfo) {
-  // Initialize variables to store summary details
-  let totalActions = 0;
-  let tradingVolume = 0;
-  let totalCommission = 0;
+   // Map over each coin in the wallet to process its transactions
+   return walletInfo.wallet.map(coinData => {
+    // Get the total number of transactions for the coin
+    let totalActions = coinData.transactions.length;
 
-  // Iterate over each coin in the wallet
-  walletInfo.wallet.forEach(coinData => {
+    // Initialize variables to calculate trading volume and total commission
+    let tradingVolume = 0;
+    let totalCommission = 0;
+
     // Iterate over each transaction for the coin
     coinData.transactions.forEach(tx => {
-      totalActions += 1;
       // Add the transaction amount to the trading volume
       tradingVolume += tx.amount;
+
       // Add the transaction fee to the total commission
       totalCommission += tx.fee || 0;
     });
-  });
 
-  // Return the summarized transaction activity as a JSON object
-  return {
-    calculationMethod: "FIFO",
-    totalActions,
-    tradingVolume,
-    totalCommissionPaid: totalCommission
-  };
+    // Return a JSON object summarizing the transactions for the coin
+    return {
+      coin: coinData.coin, // The name of the coin
+      calculationMethod: "FIFO", // The calculation method used
+      totalActions, // Total number of transactions
+      tradingVolume, // Total trading volume for the coin
+      totalCommissionPaid: totalCommission // Total commission paid for the transactions
+    };
+  });
 }
 
 /**
