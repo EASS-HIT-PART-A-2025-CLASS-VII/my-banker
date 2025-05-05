@@ -4,9 +4,9 @@ const router = express.Router();
 // Import functions to process transactions and generate reports
 const {
   generateProfitAndLossReport,
-  getWalletBalances,
-  summarizeTransactions,
-  getAllTransactions,
+  generateWalletBalances,
+  generateActionReport,
+  generateAllTransactionsList,
 } = require('./manualReports');
 
 /**
@@ -32,10 +32,13 @@ router.post('/', async (req, res) => {
     const profitAndLoss = generateProfitAndLossReport(walletInfo);
 
     // Calculate the current wallet balances
-    const balances = getWalletBalances(walletInfo);
+    const balances = generateWalletBalances(walletInfo);
 
     // Generate the actions report
-    const actionsReport = summarizeTransactions(walletInfo);
+    const actionsReport = generateActionReport(walletInfo);
+
+    // Generate a detailed list of all transactions
+    const transactionsList = generateAllTransactionsList(walletInfo);
 
 
     // Combine all reports into a single object
