@@ -1,5 +1,5 @@
 const User = require('../authenticationModel'); 
-const { badRequest, notFound, unauthorized, internalError, success } = require('../../utils/jsonResponse'); 
+const { badRequestJsonResponse, notFoundJsonResponse, unauthorizedJsonResponse, internalErrorJsonResponse, successJsonResponse } = require('../../utils/jsonResponses/jsonResponses'); 
 
 /**
  * Handles user login.
@@ -19,14 +19,14 @@ const login = async (req, res) => {
     // Check if the user exists and if the provided password matches the stored password.
     if (!user || user.password !== password) {
       // Return an error if credentials are invalid.
-      return res.status(400).json(badRequest('Invalid credentials')); 
+      return res.status(400).json(badRequestJsonResponse('Invalid credentials')); 
     }
 
     // If credentials are valid, send a success response.
-    res.status(200).json(success('Login successfuly')); 
+    res.status(200).json(successJsonResponse('Login successfuly')); 
   } catch (error) {
     // Handle any server errors that occur during the login process.
-    res.status(500).json(internalError('Server error')); 
+    res.status(500).json(internalErrorJsonResponse('Server error')); 
   }
 };
 

@@ -1,5 +1,5 @@
 const User = require('../authenticationModel'); 
-const { badRequest, notFound, unauthorized, internalError, success } = require('../../utils/jsonResponse'); 
+const { badRequestJsonResponse, notFoundJsonResponse, unauthorizedJsonResponse, internalErrorJsonResponse, successJsonResponse } = require('../../utils/jsonResponses/jsonResponses'); 
 
 /**
  * Handles user registration.
@@ -17,7 +17,7 @@ const register = async (req, res) => {
     const existingUser = await User.findOne({ username });
     if (existingUser) {
       // Return an error if the username is already taken.
-      return res.status(400).json(badRequest('User already exists'));
+      return res.status(400).json(badRequestJsonResponse('User already exists'));
     }
 
     // Create a new user instance with the provided username and password.
@@ -27,10 +27,10 @@ const register = async (req, res) => {
     await newUser.save();
 
     // Send a success response after successful registration.
-    res.status(200).json(success('User registered successfully'));
+    res.status(200).json(successJsonResponse('User registered successfully'));
   } catch (error) {
     // Handle any server errors that occur during the registration process.
-    res.status(500).json(internalError('Server error'));
+    res.status(500).json(internalErrorJsonResponse('Server error'));
   }
 };
 
