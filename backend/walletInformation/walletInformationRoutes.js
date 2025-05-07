@@ -6,7 +6,6 @@ const getWalletInfo = require('./walletInformation');
 router.post('/', async (req, res) => {
   const walletAddress = req.params.publicKey;
   
-
   try {
     const walletInfo = getWalletInfo(walletAddress);
     res.status(200).json(walletInfo);
