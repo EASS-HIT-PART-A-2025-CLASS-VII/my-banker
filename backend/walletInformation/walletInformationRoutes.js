@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const getWalletInfo = require('./llmReport');
+const getWalletInfo = require('./walletInformation');
 
 // POST /api/
 router.post('/', async (req, res) => {

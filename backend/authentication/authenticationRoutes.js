@@ -6,7 +6,8 @@
 
 const express = require('express');
 const router = express.Router();
-const authentication = require('./authentication');
+const login = require('./authenticationModules/loginModule');
+const register = require('./authenticationModules/registerModule');
 
 
 /**
@@ -19,7 +20,7 @@ const authentication = require('./authentication');
  * @param {express.Response} res - Express response object.
  * @param {Function} next - Express next middleware function.
  */
-router.post('/login', authentication.login);
+router.post('/login', login);
 
 /**
  * Route to handle user registration.
@@ -31,6 +32,6 @@ router.post('/login', authentication.login);
  * @param {express.Response} res - Express response object.
  * @param {Function} next - Express next middleware function.
  */
-router.post('/register', authentication.register);
+router.post('/register', register);
 
 module.exports = router;
