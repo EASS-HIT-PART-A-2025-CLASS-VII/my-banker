@@ -1,8 +1,8 @@
-const Web3 = require("web3");
+const { Web3 } = require("web3");
 const axios = require("axios");
 
 // Initialize a Web3 instance with an Infura provider
-const web3 = new Web3(new Web3.providers.HttpProvider("https://mainnet.infura.io/v3/YOUR_INFURA_API_KEY"));
+const web3 = new Web3("https://mainnet.infura.io/v3/YOUR_INFURA_API_KEY");
 
 /**
  * Fetch the Ethereum balance for a given address.

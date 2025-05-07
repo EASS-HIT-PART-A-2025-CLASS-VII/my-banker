@@ -3,7 +3,7 @@ const http = require('http');
 function analyzeReportWithLLM(manualReport) {
   return new Promise((resolve, reject) => {
     const data = JSON.stringify({
-      model: 'tinyllama', // or your preferred model
+      model: 'mistral', // or your preferred model
       prompt: `
         You are a private banker and financial analyst. I will provide you with a structured JSON financial report containing cryptocurrency data across several coins (Bitcoin, Ethereum, and Solana). 
 
