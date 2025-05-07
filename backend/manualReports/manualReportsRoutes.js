@@ -2,12 +2,8 @@ const express = require('express');
 const router = express.Router();
 
 // Import functions to process transactions and generate reports
-const {
-  generateProfitAndLossReport,
-  generateWalletBalances,
-  generateActionReport,
-  generateAllTransactionsList,
-} = require('./manualReports');
+const { generateProfitAndLossReport, generateBalancesReport, generateActionReport, generateTransactionsListReport } = require('./manualReports');
+const { badRequestJsonResponse, notFoundJsonResponse, unauthorizedJsonResponse, internalErrorJsonResponse, successJsonResponse } = require('../utils/jsonResponses/jsonResponses'); 
 
 /**
  * @route POST /manual-report
@@ -25,20 +21,20 @@ router.post('/', async (req, res) => {
 
     // Validate the input data format
     if(!walletInfo) {
-      return res.status(400).json({ error: 'Invalid input data format' });
+      return res.status(400).json(badRequestJsonResponse('Invalid input data format'));
     }
 
     // Generate the profit and loss report
     const profitAndLoss = generateProfitAndLossReport(walletInfo);
 
     // Calculate the current wallet balances
-    const balances = generateWalletBalances(walletInfo);
+    const balances = generateBalancesReport(walletInfo);
 
     // Generate the actions report
     const actionsReport = generateActionReport(walletInfo);
 
     // Generate a detailed list of all transactions
-    const transactionsList = generateAllTransactionsList(walletInfo);
+    const transactionsList = generateTransactionsListReport(walletInfo);
 
 
     // Combine all reports into a single object
@@ -56,7 +52,7 @@ router.post('/', async (req, res) => {
     console.error('Error generating manual report:', error);
 
     // Send a 500 Internal Server Error response
-    res.status(500).json({ error: 'Failed to generate manual report' });
+    res.status(500).json(internalErrorJsonResponse('Internal server error while generating report'));
   }
 });
 

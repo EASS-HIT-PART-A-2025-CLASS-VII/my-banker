@@ -4,7 +4,7 @@
  * @param {Array} walletInfo.wallet - Array of coin objects, each containing coin name, balance, and transactions.
  * @returns {Object} A JSON object containing the balance for each coin.
  */
-function generateWalletBalances(walletInfo) {
+function generateBalancesReport(walletInfo) {
     // Initialize an object to store balances
     const balances = {};
   
@@ -17,4 +17,4 @@ function generateWalletBalances(walletInfo) {
     return balances;
 }
 
-module.exports = generateWalletBalances;
+module.exports = generateBalancesReport;

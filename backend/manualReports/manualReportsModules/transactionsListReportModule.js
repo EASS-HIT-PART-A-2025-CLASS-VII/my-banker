@@ -4,7 +4,7 @@
  * @param {Array} walletInfo.wallet - Array of coin objects, each containing coin name, balance, and transactions.
  * @returns {Object} A JSON object containing all transactions with coin information included.
  */
-function generateAllTransactionsList(walletInfo) {
+function generateTransactionsListReport(walletInfo) {
     // Initialize an array to store all transactions
     const allTransactions = [];
   
@@ -23,4 +23,4 @@ function generateAllTransactionsList(walletInfo) {
     return { transactions: allTransactions };
 }
 
-module.exports = generateAllTransactionsList;
+module.exports = generateTransactionsListReport;
