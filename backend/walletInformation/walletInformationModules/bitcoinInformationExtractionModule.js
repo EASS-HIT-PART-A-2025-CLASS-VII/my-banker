@@ -1,4 +1,5 @@
 const axios = require('axios');
+const e = require('express');
 
 /**
  * Fetch the Bitcoin balance for a given address.
@@ -60,6 +61,7 @@ async function getTransactions(address) {
             return [];
         }
     } catch (error) {
+        console.error('Error fetching Bitcoin transactions:', error.message);
         // Throw an error to indicate failure
         throw new Error('Failed to fetch Bitcoin transactions');
     }
@@ -81,16 +83,40 @@ async function extractBitcoinInformation(address) {
         ]);
 
         // Map the transactions to the desired format
-        const mappedTransactions = transactions.map(tx => ({
-            txid: tx.txid,
-            timestamp: new Date(tx.time * 1000).toISOString(),
-            type: tx.inputs.some(input => input.prev_out.addr === address) ? 'send' : 'receive',
-            amount: tx.outputs.reduce((sum, output) => sum + (output.addr === address ? output.value : 0), 0) / 1e8,
-            from: tx.inputs.map(input => input.prev_out.addr).join(', '),
-            to: tx.outputs.map(output => output.addr).join(', '),
-            fee: tx.fee / 1e8,
-            status: 'confirmed', // Assuming all transactions are confirmed
-        }));
+        const mappedTransactions = transactions.map(tx => {
+            // Find if address is in inputs
+            const sentFrom = tx.inputs.some(
+                input => input.prev_out && input.prev_out.addr === address
+            );
+        
+            // Calculate total received by this address in outputs
+            const received = tx.outputs
+                .filter(output => output.addr === address)
+                .reduce((sum, output) => sum + (output.value || 0), 0);
+        
+            let type, amount;
+            if (received > 0 && !sentFrom) {
+                type = "receive";
+                amount = received / 1e8;
+            } else if (sentFrom) {
+                type = "send";
+                // To calculate net sent, you would need to sum inputs from your address and subtract outputs back to your address (change)
+                const sent = tx.inputs
+                    .filter(input => input.prev_out && input.prev_out.addr === address)
+                    .reduce((sum, input) => sum + (input.prev_out.value || 0), 0);
+                amount = (sent - received) / 1e8;
+            } else {
+                type = "other";
+                amount = 0;
+            }
+        
+            return {
+                txid: tx.txid,
+                timestamp: new Date(tx.time * 1000).toISOString(),
+                type,
+                amount
+            };
+        });
 
         // Return the wallet information in the desired format
         return {
@@ -100,7 +126,7 @@ async function extractBitcoinInformation(address) {
         };
     } catch (error) {
         // Throw an error to indicate failure
-        throw new Error('Failed to extract Bitcoin wallet information');
+        throw new Error('Failed to extract Bitcoin wallet information: ' + error.message);
     }
 }
 

@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
-const extractEthereumInformation = require('./walletInformation');
+const { extractEthereumInformation, extractBitcoinInformation } = require('./walletInformation');
+
 
 /**
  * @route POST /
@@ -10,10 +11,10 @@ const extractEthereumInformation = require('./walletInformation');
  * @returns {Promise<void>} Sends a JSON response with wallet information or an error message.
  */
 router.post('/', async (req, res) => {
-  const walletAddress = req.params.publicKey;
+  const walletAddress = req.body.publicKey;
   
   try {
-    const walletInfo = extractEthereumInformation(walletAddress);
+    const walletInfo = extractBitcoinInformation(walletAddress);
     res.status(200).json(walletInfo);
   } catch (error) {
     res.status(500).json({ message: "An error occurred while fetching the wallet transactions." });
