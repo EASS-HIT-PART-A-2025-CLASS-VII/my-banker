@@ -1,38 +1,56 @@
+const { getHistoricalPrice, formatDate } = require('./coinPriceByDateModule');
+
 /**
  * Calculate profit and loss based on wallet data.
+ * 
+ * This function processes wallet transactions to calculate the total income,
+ * total cost, fees, and the resulting profit or loss for each coin.
+ * 
  * @param {Object} walletInfo - The wallet data object containing coins and their transactions.
  * @param {Array} walletInfo.wallet - Array of coin objects, each containing coin name, balance, and transactions.
  * @returns {Object} A JSON object containing profit and loss details for each coin.
  */
-function generateProfitAndLossReport(walletInfo) {
+async function generateProfitAndLossReport(walletInfo) {
     // Initialize an object to store profit and loss details
     const profitAndLoss = {};
+    // Variable to track total income from sales
+    let totalIncome = 0; 
+    // Variable to track total cost of purchases
+    let totalCost = 0;  
+    // Variable to track total transaction fees
+    let fees = 0;
 
-    // Iterate over each coin in the wallet to calculate profit and loss
-    walletInfo.wallet.forEach(coinData => {
-        let totalReceived = 0;
-        let totalSent = 0;
+    // Iterate through each transaction in the wallet data
+    for (const tx of walletInfo.transactions) {
+        const dateStr = formatDate(tx.timestamp);
+        const price = await getHistoricalPrice("bitcoin", dateStr);
 
-        // Iterate over each transaction for the coin
-        coinData.transactions.forEach(tx => {
-        // Add to total received if the transaction type is "receive"
+        // Calculate the transaction value in USD
+        const valueInUSD = price * tx.amount;
+
+        // Check if the transaction is a "receive" type (purchase)
         if (tx.type === "receive") {
-            totalReceived += tx.amount;
-        // Add to total sent if the transaction type is "send"
-        } else if (tx.type === "send") {
-            totalSent += tx.amount;
+            totalCost += valueInUSD; 
+        } 
+        // Check if the transaction is a "send" type (sale)
+        else if (tx.type === "send") {
+            totalIncome += valueInUSD;  
         }
-        });
 
-        // Store the profit and loss details for the coin
-        profitAndLoss[coinData.coin] = {
-        totalReceived,
-        totalSent,
-        profitOrLoss: totalReceived - totalSent
-        };
-    });
+        fees += tx.fee || 0;
+    }
 
-    // Return the profit and loss details as a JSON object
+    // Calculate the net profit or loss
+    const gainOrLoss = totalIncome - totalCost - fees;
+
+    // Store the profit and loss details for the coin
+    profitAndLoss[coinData.coin] = {
+        Gain: +totalIncome.toFixed(2), 
+        Loss: +totalCost.toFixed(2), 
+        Fees: +fees.toFixed(2),
+        Sum: +gainOrLoss.toFixed(2)
+    };
+
     return profitAndLoss;
 }
 
