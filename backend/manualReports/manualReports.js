@@ -6,14 +6,14 @@ const generateActionReport = require("./manualReportsModules/actionReportModule"
  * @description Provides functions to generate various reports based on wallet data.
  */
 
-function getManualReport(walletInfo) {
+async function getManualReport(walletInfo) {
   // Validate the input data format
   if (!walletInfo) {
     throw new Error("Invalid input data format");
   }
 
   // Generate the profit and loss report
-  const profitAndLoss = generateProfitAndLossReport(walletInfo);
+  const profitAndLoss = await generateProfitAndLossReport(walletInfo);
 
   // Calculate the current wallet balances
   const balances = walletInfo.balance;

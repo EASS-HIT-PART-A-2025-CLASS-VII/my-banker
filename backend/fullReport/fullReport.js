@@ -11,7 +11,7 @@ router.post('/', async (req, res) => {
     const coinType = req.body.coin;
 
     const walletInfo = await getWalletInformation(walletAddress, coinType);
-    const manualReport = getManualReport(walletInfo);
+    const manualReport = await getManualReport(walletInfo);
     const analysis = await analyzeReportWithLLM(manualReport);
 
 
