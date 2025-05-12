@@ -81,7 +81,7 @@ npm start
 |--------|---------------|---------------------------------------|
 | POST   | /auth/login   | Authenticate a user                   |
 | POST   | /auth/register| Register a user                       |
-| GET    | /full-report  | Get personalized report               |
+| POST   | /full-report  | Get personalized report               |
 
 
 ## 🤝 Contributing
