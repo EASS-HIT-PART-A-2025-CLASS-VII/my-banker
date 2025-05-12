@@ -12,12 +12,29 @@ const { extractEthereumInformation, extractBitcoinInformation } = require('./wal
  */
 router.post('/', async (req, res) => {
   const walletAddress = req.body.publicKey;
-  
-  try {
-    const walletInfo = await extractBitcoinInformation(walletAddress);
-    res.status(200).json(walletInfo);
-  } catch (error) {
-    res.status(500).json({ message: "An error occurred while fetching the wallet transactions." });
+  const coinType = req.body.coin;
+
+  switch (coinType) {
+    case 'ethereum':
+      try {
+        const walletInfo = await extractEthereumInformation(walletAddress);
+        res.status(200).json(walletInfo);
+      } catch (error) {
+        res.status(500).json({ message: "An error occurred while fetching the wallet transactions." });
+      }
+      break;
+
+    case 'bitcoin':
+      try {
+        const walletInfo = await extractBitcoinInformation(walletAddress);
+        res.status(200).json(walletInfo);
+      } catch (error) {
+        res.status(500).json({ message: "An error occurred while fetching the wallet transactions." });
+      }
+      break;
+
+    default:
+      res.status(400).json({ message: "Invalid coin type. Please use 'ethereum' or 'bitcoin'." });
   }
 });
 
