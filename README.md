@@ -1,5 +1,7 @@
 # 💰 MyBanker – Personal Financial Intelligence
 
+![Logo](readmeFiles/Logo.png)
+
 🎯 **Project Purpose**  
 This project was created for the Engineering of Advanced Software Solutions course at HIT.  
 It aims to provide a personalized financial assistant that analyzes user data and delivers comprehensive reports — as if written by a private banker and senior accountant.
@@ -22,10 +24,10 @@ The system uses a modular monolith architecture — clear separation of services
 - 🟢 Base Express server running  
 - 🟢 Modular authentication service created  
 - 🟢 Project is structured for clarity, testing, and growth  
+- 🟢 Crypto wallet connection and analysis  
 
 🔜 **Coming Soon**  
 - AI-generated financial reports  
-- Crypto wallet connection and analysis  
 - Full frontend interface (React)  
 - Dockerized project environment  
 - Full authentication flow with JWT  
@@ -77,8 +79,8 @@ npm start
 | Method | Endpoint      | Description                           |
 |--------|---------------|---------------------------------------|
 | POST   | /auth/login   | Authenticate a user                   |
-| POST   | /auth/send    | Send wallet information               |
-| GET    | /auth/report  | Get personalized report               |
+| POST   | /auth/register| Register a user                       |
+| GET    | /manual-report| Get personalized report               |
 
 
 ## 🤝 Contributing
