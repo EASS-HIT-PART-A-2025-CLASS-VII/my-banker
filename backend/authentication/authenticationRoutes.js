@@ -8,6 +8,8 @@ const express = require('express');
 const router = express.Router();
 const login = require('./authenticationModules/loginModule');
 const register = require('./authenticationModules/registerModule');
+const deleteUser = require('./authenticationModules/deleteModule');
+const update = require('./authenticationModules/updateModule');
 
 
 /**

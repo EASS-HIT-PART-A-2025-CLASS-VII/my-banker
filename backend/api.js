@@ -20,15 +20,11 @@ app.use(express.json());
  * Grouped by logical service
  */
 const authRoutes = require('./authentication/authenticationRoutes');
-const walletInformationRoutes = require('./walletInformation/walletInformationRoutes');
-const reportRoutes = require('./manualReports/manualReportsRoutes');
-const llmRoutes = require('./llmReport/llmReportRoutes');
+const fullReport = require('./fullReport/fullReport');
 
 // Mount routes at / + name
 app.use('/auth', authRoutes);
-app.use('/wallet-information', walletInformationRoutes);
-app.use('/manual-report', reportRoutes);
-app.use('/llm-report', llmRoutes);
+app.use('/full-report', fullReport);
 
 /**
  * Default health check route

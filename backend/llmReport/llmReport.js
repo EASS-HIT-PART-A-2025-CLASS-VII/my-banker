@@ -68,4 +68,4 @@ function analyzeReportWithLLM(manualReport) {
   });
 }
 
-module.exports = { analyzeReportWithLLM };
+module.exports = analyzeReportWithLLM;
