@@ -9,10 +9,10 @@ It aims to provide a personalized financial assistant that analyzes user data an
 ⚙️ **Tech Stack**  
 - **Backend:** Node.js (Express)  
 - **Authentication Service:** MongoDB  
-- **AI Engine:** Planned  
-- **Crypto Wallet Integration:** Planned  
+- **AI Engine:** Tinyllama  
+- **Crypto Wallet Integration:** CoinGecko API  
 - **Containerization:** Docker  
-- **Testing:** Python (Pytest)  
+- **Testing:** Jest  
 - **Frontend:** React
 
 🧩 **Architecture Overview**  
@@ -22,14 +22,15 @@ The system uses a modular monolith architecture — clear separation of services
 
 ✅ **Current Features**  
 - 🟢 Base Express server running  
-- 🟢 Modular authentication service created  
+- 🟢 Modular services   
 - 🟢 Project is structured for clarity, testing, and growth  
-- 🟢 Crypto wallet connection and analysis  
+- 🟢 Crypto wallet connection and analysis
+- 🟢 AI-generated financial reports  
+- 🟢 Dockerized project environment
 
 🔜 **Coming Soon**  
-- AI-generated financial reports  
-- Full frontend interface (React)  
-- Dockerized project environment  
+  
+- Full frontend interface (React)    
 - Full authentication flow with JWT  
 
 
@@ -80,7 +81,7 @@ npm start
 |--------|---------------|---------------------------------------|
 | POST   | /auth/login   | Authenticate a user                   |
 | POST   | /auth/register| Register a user                       |
-| GET    | /manual-report| Get personalized report               |
+| GET    | /full-report  | Get personalized report               |
 
 
 ## 🤝 Contributing
