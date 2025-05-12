@@ -1,71 +1,112 @@
-const generateBalancesReport = require('../../backend/manualReports/manualReportsModules/balancesReportModule');
+const { getHistoricalPrice, formatDate } = require('./coinPriceByDateModule');
+const generateProfitAndLossReport = require('./profitAndLossReportModule');
 
-describe('generateBalancesReport', () => {
-  it('should generate correct balances for valid wallet data', () => {
-    // Mock wallet data
-    const walletInfo = {
-      wallet: [
-        { coin: 'BTC', balance: 1.5, transactions: [] },
-        { coin: 'ETH', balance: 10, transactions: [] },
-      ],
-    };
+// Mock the getHistoricalPrice function
+jest.mock('./coinPriceByDateModule', () => ({
+    getHistoricalPrice: jest.fn(),
+    formatDate: jest.fn(),
+}));
 
-    // Expected result
-    const expectedResult = {
-      BTC: 1.5,
-      ETH: 10,
-    };
+describe('generateProfitAndLossReport', () => {
+    beforeEach(() => {
+        jest.clearAllMocks();
+    });
 
-    // Call the function
-    const result = generateBalancesReport(walletInfo);
+    it('should calculate profit and loss correctly for valid wallet data', async () => {
+        // Mock the formatDate function
+        formatDate.mockImplementation((timestamp) => '12-05-2025');
 
-    // Assert the result matches the expected output
-    expect(result).toEqual(expectedResult);
-  });
+        // Mock the getHistoricalPrice function
+        getHistoricalPrice.mockResolvedValue(50000);
 
-  it('should return an empty object for an empty wallet', () => {
-    // Mock wallet data with an empty wallet
-    const walletInfo = { wallet: [] };
+        // Define wallet data
+        const walletInfo = {
+            transactions: [
+                { timestamp: '2025-05-12T00:00:00Z', type: 'receive', amount: 0.1, fee: 1 },
+                { timestamp: '2025-05-12T00:00:00Z', type: 'send', amount: 0.05, fee: 0.5 },
+            ],
+        };
 
-    // Expected result
-    const expectedResult = {};
+        // Call the function
+        const result = await generateProfitAndLossReport(walletInfo);
 
-    // Call the function
-    const result = generateBalancesReport(walletInfo);
+        // Expected result
+        const expected = {
+            bitcoin: {
+                Gain: 2500.00, // 0.05 * 50000
+                Loss: 5000.00, // 0.1 * 50000
+                Fees: 1.50,    // 1 + 0.5
+                Sum: -3501.50, // 2500 - 5000 - 1.5
+            },
+        };
 
-    // Assert the result matches the expected output
-    expect(result).toEqual(expectedResult);
-  });
+        // Assert the result
+        expect(result).toEqual(expected);
+    });
 
-  it('should handle missing wallet property gracefully', () => {
-    // Mock wallet data with no wallet property
-    const walletInfo = {};
+    it('should handle empty transactions gracefully', async () => {
+        // Define wallet data with no transactions
+        const walletInfo = {
+            transactions: [],
+        };
 
-    // Call the function and expect an error
-    expect(() => generateBalancesReport(walletInfo)).toThrow(
-      new TypeError("Cannot read property 'forEach' of undefined")
-    );
-  });
+        // Call the function
+        const result = await generateProfitAndLossReport(walletInfo);
 
-  it('should handle coins with zero balance', () => {
-    // Mock wallet data with coins having zero balance
-    const walletInfo = {
-      wallet: [
-        { coin: 'BTC', balance: 0, transactions: [] },
-        { coin: 'ETH', balance: 0, transactions: [] },
-      ],
-    };
+        // Expected result
+        const expected = {};
 
-    // Expected result
-    const expectedResult = {
-      BTC: 0,
-      ETH: 0,
-    };
+        // Assert the result
+        expect(result).toEqual(expected);
+    });
 
-    // Call the function
-    const result = generateBalancesReport(walletInfo);
+    it('should handle missing fees in transactions', async () => {
+        // Mock the formatDate function
+        formatDate.mockImplementation((timestamp) => '12-05-2025');
 
-    // Assert the result matches the expected output
-    expect(result).toEqual(expectedResult);
-  });
+        // Mock the getHistoricalPrice function
+        getHistoricalPrice.mockResolvedValue(50000);
+
+        // Define wallet data with missing fees
+        const walletInfo = {
+            transactions: [
+                { timestamp: '2025-05-12T00:00:00Z', type: 'receive', amount: 0.1 },
+                { timestamp: '2025-05-12T00:00:00Z', type: 'send', amount: 0.05 },
+            ],
+        };
+
+        // Call the function
+        const result = await generateProfitAndLossReport(walletInfo);
+
+        // Expected result
+        const expected = {
+            bitcoin: {
+                Gain: 2500.00, // 0.05 * 50000
+                Loss: 5000.00, // 0.1 * 50000
+                Fees: 0.00,    // No fees provided
+                Sum: -2500.00, // 2500 - 5000 - 0
+            },
+        };
+
+        // Assert the result
+        expect(result).toEqual(expected);
+    });
+
+    it('should throw an error if getHistoricalPrice fails', async () => {
+        // Mock the formatDate function
+        formatDate.mockImplementation((timestamp) => '12-05-2025');
+
+        // Mock the getHistoricalPrice function to throw an error
+        getHistoricalPrice.mockRejectedValue(new Error('API error'));
+
+        // Define wallet data
+        const walletInfo = {
+            transactions: [
+                { timestamp: '2025-05-12T00:00:00Z', type: 'receive', amount: 0.1, fee: 1 },
+            ],
+        };
+
+        // Call the function and assert it throws an error
+        await expect(generateProfitAndLossReport(walletInfo)).rejects.toThrow('API error');
+    });
 });

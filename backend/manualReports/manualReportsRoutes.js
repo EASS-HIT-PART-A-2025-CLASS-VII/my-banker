@@ -25,7 +25,7 @@ router.post('/', async (req, res) => {
     }
 
     // Generate the profit and loss report
-    const profitAndLoss = generateProfitAndLossReport(walletInfo);
+    const profitAndLoss = await generateProfitAndLossReport(walletInfo);
 
     // Calculate the current wallet balances
     const balances = walletInfo.balance;

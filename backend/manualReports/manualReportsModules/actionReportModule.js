@@ -6,7 +6,7 @@
  */
 function generateActionReport(walletInfo) {
     // Map over each coin in the wallet to process its transactions
-    return walletInfo.wallet.map(coinData => {
+    return walletInfo.map(coinData => {
      // Get the total number of transactions for the coin
      let totalActions = coinData.transactions.length;
  
