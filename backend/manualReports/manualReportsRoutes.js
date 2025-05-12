@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 
 // Import functions to process transactions and generate reports
-const { generateProfitAndLossReport, generateBalancesReport, generateActionReport, generateTransactionsListReport } = require('./manualReports');
+const { generateProfitAndLossReport, generateActionReport } = require('./manualReports');
 const { badRequestJsonResponse, notFoundJsonResponse, unauthorizedJsonResponse, internalErrorJsonResponse, successJsonResponse } = require('../utils/jsonResponses/jsonResponses'); 
 
 /**

@@ -1,7 +1,5 @@
 const generateProfitAndLossReport = require("./manualReportsModules/profitAndLossReportModule");
-const generateBalancesReport = require("./manualReportsModules/balancesReportModule");
 const generateActionReport = require("./manualReportsModules/actionReportModule");
-const generateTransactionsListReport = require("./manualReportsModules/transactionsListReportModule");
 
 /**
  * @module manualReports
@@ -9,7 +7,5 @@ const generateTransactionsListReport = require("./manualReportsModules/transacti
  */
 module.exports = {
   generateProfitAndLossReport,
-  generateBalancesReport,
   generateActionReport,
-  generateTransactionsListReport,
 };

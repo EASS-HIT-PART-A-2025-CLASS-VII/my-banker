@@ -43,15 +43,12 @@ async function generateProfitAndLossReport(walletInfo) {
     // Calculate the net profit or loss
     const gainOrLoss = totalIncome - totalCost - fees;
 
-    // Store the profit and loss details for the coin
-    profitAndLoss[coinData.coin] = {
+    return {
         Gain: +totalIncome.toFixed(2), 
         Loss: +totalCost.toFixed(2), 
         Fees: +fees.toFixed(2),
         Sum: +gainOrLoss.toFixed(2)
     };
-
-    return profitAndLoss;
 }
 
 module.exports = generateProfitAndLossReport;
