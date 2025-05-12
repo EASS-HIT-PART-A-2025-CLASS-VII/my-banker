@@ -28,13 +28,13 @@ router.post('/', async (req, res) => {
     const profitAndLoss = generateProfitAndLossReport(walletInfo);
 
     // Calculate the current wallet balances
-    const balances = generateBalancesReport(walletInfo);
+    const balances = walletInfo.balance;
 
     // Generate the actions report
     const actionsReport = generateActionReport(walletInfo);
 
     // Generate a detailed list of all transactions
-    const transactionsList = generateTransactionsListReport(walletInfo);
+    const transactionsList = walletInfo.transactions;
 
 
     // Combine all reports into a single object
