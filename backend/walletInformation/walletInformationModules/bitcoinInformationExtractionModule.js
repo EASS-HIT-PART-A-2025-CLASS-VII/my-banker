@@ -114,7 +114,8 @@ async function extractBitcoinInformation(address) {
                 txid: tx.txid,
                 timestamp: new Date(tx.time * 1000).toISOString(),
                 type,
-                amount
+                amount,
+                fee: tx.fee ? tx.fee / 1e8 : 0,
             };
         });
 

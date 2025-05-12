@@ -14,7 +14,7 @@ router.post('/', async (req, res) => {
   const walletAddress = req.body.publicKey;
   
   try {
-    const walletInfo = extractBitcoinInformation(walletAddress);
+    const walletInfo = await extractBitcoinInformation(walletAddress);
     res.status(200).json(walletInfo);
   } catch (error) {
     res.status(500).json({ message: "An error occurred while fetching the wallet transactions." });
