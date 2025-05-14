@@ -13,11 +13,8 @@ const axios = require('axios');
  * @throws {Error} Throws an error if the symbol is not provided.
  */
 async function getHistoricalPrice(symbol, dateStr) {
-    // Check if the symbol is provided
-    if (!symbol) {
-        // Throw an error if the symbol is missing
-        throw new Error('Symbol is required');
-    }
+    // Check if the symbol is provided and throw an error if not
+    if (!symbol) throw new Error('Symbol is required');
 
     try {
         // Make a GET request to the CoinGecko API to fetch historical price data

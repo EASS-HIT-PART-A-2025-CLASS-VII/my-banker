@@ -11,11 +11,8 @@ const { getHistoricalPrice, formatDate } = require('./coinPriceByDateModule');
  * @returns {Object} A JSON object containing profit and loss details for each coin.
  */
 async function generateProfitAndLossReport(walletInfo) {
-    // Variable to track total income from sales
     let totalIncome = 0; 
-    // Variable to track total cost of purchases
     let totalCost = 0;  
-    // Variable to track total transaction fees
     let fees = 0;
 
     // Iterate through each transaction in the wallet data

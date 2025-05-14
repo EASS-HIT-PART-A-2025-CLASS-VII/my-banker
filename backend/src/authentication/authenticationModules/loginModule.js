@@ -10,22 +10,18 @@ const { badRequestJsonResponse, notFoundJsonResponse, unauthorizedJsonResponse, 
  * @returns {Promise<void>} Sends a JSON response with a success or error message.
  */
 const login = async (req, res) => {
-  const { username, password } = req.body; // Extract username and password from the request body.
+  // Extract username and password from the request body.
+  const { username, password } = req.body; 
 
   try {
     // Find a user in the database with the provided username.
     const user = await User.findOne({ username });
 
-    // Check if the user exists and if the provided password matches the stored password.
-    if (!user || user.password !== password) {
-      // Return an error if credentials are invalid.
-      return res.status(400).json(badRequestJsonResponse('Invalid credentials')); 
-    }
+    // Check if the user exists and if the provided password matches the stored password and return an error if credentials are invalid
+    if (!user || user.password !== password) return res.status(400).json(badRequestJsonResponse('Invalid credentials')); 
 
-    // If credentials are valid, send a success response.
     res.status(200).json(successJsonResponse('Login successfuly')); 
   } catch (error) {
-    // Handle any server errors that occur during the login process.
     res.status(500).json(internalErrorJsonResponse('Server error')); 
   }
 };

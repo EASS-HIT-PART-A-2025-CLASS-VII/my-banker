@@ -8,9 +8,7 @@ const generateActionReport = require("./manualReportsModules/actionReportModule"
 
 async function getManualReport(walletInfo) {
   // Validate the input data format
-  if (!walletInfo) {
-    throw new Error("Invalid input data format");
-  }
+  if (!walletInfo) throw new Error("Invalid input data format");
 
   // Generate the profit and loss report
   const profitAndLoss = await generateProfitAndLossReport(walletInfo);

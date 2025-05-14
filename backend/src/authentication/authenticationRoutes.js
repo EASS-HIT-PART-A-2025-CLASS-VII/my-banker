@@ -15,9 +15,6 @@ const update = require('./authenticationModules/updateModule');
 /**
  * Route to handle user login.
  * @name POST /login
- * @function
- * @memberof module:authenticationRoutes
- * @inner
  * @param {express.Request} req - Express request object.
  * @param {express.Response} res - Express response object.
  * @param {Function} next - Express next middleware function.
@@ -27,9 +24,6 @@ router.post('/login', login);
 /**
  * Route to handle user registration.
  * @name POST /register
- * @function
- * @memberof module:authenticationRoutes
- * @inner
  * @param {express.Request} req - Express request object.
  * @param {express.Response} res - Express response object.
  * @param {Function} next - Express next middleware function.
@@ -39,9 +33,6 @@ router.post('/register', register);
 /**
  * Route to handle user deletion.
  * @name DELETE /delete
- * @function
- * @memberof module:authenticationRoutes
- * @inner
  * @param {express.Request} req - Express request object.
  * @param {express.Response} res - Express response object.
  * @param {Function} next - Express next middleware function.
@@ -51,9 +42,6 @@ router.delete('/delete', deleteUser);
 /**
  * Route to handle updating user credentials.
  * @name PUT /update
- * @function
- * @memberof module:authenticationRoutes
- * @inner
  * @param {express.Request} req - Express request object.
  * @param {express.Response} res - Express response object.
  * @param {Function} next - Express next middleware function.

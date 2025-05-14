@@ -20,10 +20,8 @@ async function getBitcoinBalance(address) {
         const balanceInSatoshis = parseInt(response.data);
         const balanceInBTC = balanceInSatoshis / 100000000;
 
-        // Return the balance in BTC
         return balanceInBTC;
     } catch (error) {
-        // Throw an error to indicate failure
         throw new Error('Failed to fetch Bitcoin balance');
     }
 }
@@ -43,9 +41,8 @@ async function getTransactions(address) {
         // Send a GET request to the API
         const response = await axios.get(apiUrl);
 
-        // Check if the response contains transaction data
+        // Check if the response contains transaction data and map it
         if (response.data && response.data.txs) {
-            // Map the transactions to the desired format
             const transactions = response.data.txs.map(tx => ({
                 txid: tx.hash,
                 time: tx.time,
@@ -53,16 +50,10 @@ async function getTransactions(address) {
                 outputs: tx.out,
             }));
 
-            // Return the mapped transactions
             return transactions;
         } 
-        else {
-            // Return an empty array
-            return [];
-        }
+        else return [];
     } catch (error) {
-        console.error('Error fetching Bitcoin transactions:', error.message);
-        // Throw an error to indicate failure
         throw new Error('Failed to fetch Bitcoin transactions');
     }
 }
@@ -82,7 +73,7 @@ async function extractBitcoinInformation(address) {
             getBitcoinBalance(address), // Fetch Bitcoin balance
         ]);
 
-        // Map the transactions to the desired format
+        // Map the transactions 
         const mappedTransactions = transactions.map(tx => {
             // Find if address is in inputs
             const sentFrom = tx.inputs.some(
@@ -100,7 +91,7 @@ async function extractBitcoinInformation(address) {
                 amount = received / 1e8;
             } else if (sentFrom) {
                 type = "send";
-                // To calculate net sent, you would need to sum inputs from your address and subtract outputs back to your address (change)
+                // Calculate total sent from this address in inputs
                 const sent = tx.inputs
                     .filter(input => input.prev_out && input.prev_out.addr === address)
                     .reduce((sum, input) => sum + (input.prev_out.value || 0), 0);
@@ -119,14 +110,12 @@ async function extractBitcoinInformation(address) {
             };
         });
 
-        // Return the wallet information in the desired format
         return {
             coin: 'BTC',
-            balance: parseFloat(balance), // Convert balance to a float
+            balance: parseFloat(balance), 
             transactions: mappedTransactions,
         };
     } catch (error) {
-        // Throw an error to indicate failure
         throw new Error('Failed to extract Bitcoin wallet information: ' + error.message);
     }
 }

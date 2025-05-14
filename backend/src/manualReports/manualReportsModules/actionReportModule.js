@@ -5,7 +5,6 @@
  * @returns {Object} A JSON object containing transaction summary details.
  */
 function generateActionReport(walletInfo) {
-    // Map over each coin in the wallet to process its transactions
     // Get the total number of transactions for the coin
     let totalActions = walletInfo.transactions.length;
 
@@ -22,13 +21,12 @@ function generateActionReport(walletInfo) {
       totalCommission += tx.fee || 0;
     });
 
-    // Return a JSON object summarizing the transactions for the coin
     return {
-      coin: walletInfo.coin, // The name of the coin
-      calculationMethod: "FIFO", // The calculation method used
-      totalActions, // Total number of transactions
-      tradingVolume, // Total trading volume for the coin
-      totalCommissionPaid: totalCommission // Total commission paid for the transactions
+      coin: walletInfo.coin,
+      calculationMethod: "FIFO", 
+      totalActions, 
+      tradingVolume, 
+      totalCommissionPaid: totalCommission 
     };
  }
 
