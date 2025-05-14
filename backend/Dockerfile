@@ -17,4 +17,4 @@ COPY . .
 EXPOSE 8000
 
 # Command to run the app
-CMD ["node", "api.js"]
+CMD ["node", "src/api.js"]
