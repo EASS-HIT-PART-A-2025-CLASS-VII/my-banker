@@ -4,7 +4,7 @@ const axios = require('axios');
  * Analyzes a manual financial report using an LLM (e.g., TinyLlama) via the Ollama API,
  * and returns a formal summary paragraph as if written by a private banker.
  *
- * @param {Object} manualReport - The report object containing portfolio and transaction data.
+ * @param {Object} walletInsightsInput - The report object containing portfolio and transaction data.
  * @returns {Promise<string>} A promise that resolves to a well-written summary paragraph.
  * @throws {Error} If the request to Ollama fails or the response is invalid.
  *
@@ -12,14 +12,14 @@ const axios = require('axios');
  * const summary = await analyzeReportWithLLM(reportData);
  * console.log(summary); // Outputs a banker-style financial summary
  */
-async function analyzeReportWithLLM(manualReport) {
+async function generateLlmAnalysis(walletInsightsInput) {
   // Prepare the request payload to send to the LLM
   const payload = {
     model: 'gemma3:1b', // Specify the LLM model to use
     prompt: `
       You are a private banker and financial analyst. Use only the data provided below:
 
-      ${JSON.stringify(manualReport, null, 2)}
+      ${JSON.stringify(walletInsightsInput, null, 2)}
 
       Write a single, well-written paragraph, in fluent, formal English, summarizing this client's portfolio and activity.
 
@@ -57,4 +57,4 @@ async function analyzeReportWithLLM(manualReport) {
   }
 }
 
-module.exports = analyzeReportWithLLM;
+module.exports = generateLlmAnalysis;

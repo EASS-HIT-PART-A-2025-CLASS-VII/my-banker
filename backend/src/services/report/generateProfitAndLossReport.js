@@ -1,4 +1,4 @@
-const { getHistoricalPrice, formatDate } = require('./coinPriceByDateModule');
+const { getHistoricalPrice, formatDate } = require('../../externals/abstractLayersForAPI/getCoinPriceByDate');
 
 /**
  * Calculate profit and loss based on wallet data.

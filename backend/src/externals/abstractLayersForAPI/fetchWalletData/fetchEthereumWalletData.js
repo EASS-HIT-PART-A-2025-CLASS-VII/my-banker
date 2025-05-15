@@ -66,7 +66,7 @@ async function getEthereumTransactions(address) {
  * @param {string} address - The Ethereum wallet address.
  * @returns {Object|null} A JSON object containing the coin, balance, and transactions, or null if an error occurs.
  */
-async function extractEthereumInformation(address) {
+async function fetchEthereumWalletData(address) {
   try {
     // Fetch the Ethereum balance for the given address
     const balance = await getEthereumBalance(address);
@@ -92,4 +92,4 @@ async function extractEthereumInformation(address) {
   }
 }
 
-module.exports = extractEthereumInformation;
+module.exports = fetchEthereumWalletData;

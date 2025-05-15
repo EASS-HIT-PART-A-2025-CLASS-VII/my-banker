@@ -1,5 +1,4 @@
 const axios = require('axios');
-const e = require('express');
 
 /**
  * Fetch the Bitcoin balance for a given address.
@@ -65,7 +64,7 @@ async function getTransactions(address) {
  * @param {string} address - The Bitcoin wallet address.
  * @returns {Object} A JSON object containing the coin, balance, and transactions.
  */
-async function extractBitcoinInformation(address) {
+async function fetchBitcoinWalletData(address) {
     try {
         // Fetch transactions and balance for the given Bitcoin address
         const [transactions, balance] = await Promise.all([
@@ -120,4 +119,4 @@ async function extractBitcoinInformation(address) {
     }
 }
 
-module.exports = extractBitcoinInformation;
+module.exports = fetchBitcoinWalletData;
