@@ -4,7 +4,7 @@ const router = express.Router();
 const analyzeReportWithLLM = require('../llmReport/llmReport');
 const getWalletInformation = require('../walletInformation/walletInformation');
 const getManualReport = require('../manualReports/manualReports');
-const { internalErrorJsonResponse } = require('../utils/errorResponses');
+const { internalErrorJsonResponse } = require('../utils/jsonResponses/jsonResponses');
 
 /**
  * @route POST /

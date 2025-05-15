@@ -15,7 +15,7 @@ const axios = require('axios');
 async function analyzeReportWithLLM(manualReport) {
   // Prepare the request payload to send to the LLM
   const payload = {
-    model: 'tinyllama', // Specify the LLM model to use
+    model: 'gemma3:1b', // Specify the LLM model to use
     prompt: `
       You are a private banker and financial analyst. Use only the data provided below:
 
