@@ -2,7 +2,7 @@ const authenticationService = require('../services/authentication/authentication
 
 const loginController = async (req, res) => {
   try {
-    const user = await authenticationService.login(req.body);
+    const user = await authenticationService.login(req.body.username, req.body.password);
     res.json(user);
   } catch (error) {
     res.status(401).json({ message: error.message });
@@ -11,13 +11,13 @@ const loginController = async (req, res) => {
 
 const registerController = async (req, res) => {
   try {
-    const user = await authenticationService.register(req.body);
+    const user = await authenticationService.register(req.body.username, req.body.password);
     res.json(user);
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
 }
-/*const deleteUserController = async (req, res) => {
+const deleteUserController = async (req, res) => {
   try {
     const user = await authenticationService.deleteUser(req.body);
     res.json(user);
@@ -32,11 +32,11 @@ const updateUserController = async (req, res) => {
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
-}*/
+}
 
 module.exports = {
     loginController,
     registerController,
-    //deleteUserController,
-    //updateUserController
+    updateUserController,
+    deleteUserController
 };

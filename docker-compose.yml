@@ -12,6 +12,7 @@ services:
     environment:
       - MONGO_URI=mongodb://mongo:27017/my-banker
       - OLLAMA_API=http://ollama:11434
+      - JWT_SECRET=201fc9a67ef78be4d958f91bbad9f7d6c56ffdd923125b2e319318015474c130
     volumes:
       - ./backend:/usr/src/app/backend
     restart: unless-stopped

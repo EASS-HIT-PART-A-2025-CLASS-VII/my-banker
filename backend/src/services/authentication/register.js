@@ -14,14 +14,13 @@ const {
  * @param {express.Response} res - Express response object.
  * @returns {Promise<void>} Sends a JSON response with a success or error message.
  */
-const register = async (req, res) => {
-  const { username, password } = req.body;
+const register = async (username, password) => {
 
   try {
     // Check if a user with the same username already exists
     const existingUser = await User.findOne({ username });
     if (existingUser) {
-      return res.status(400).json(badRequestJsonResponse('User already exists'));
+      throw new Error('User already exists');
     }
 
     // Hash the password before saving
@@ -31,9 +30,10 @@ const register = async (req, res) => {
     const newUser = new User({ username, password: hashedPassword });
     await newUser.save();
 
-    return res.status(200).json(successJsonResponse('User registered successfully'));
+    return successJsonResponse('User registered successfully');
   } catch (error) {
-    return res.status(500).json(internalErrorJsonResponse('Server error'));
+    throw new Error(error.message);
+    //return res.status(500).json(internalErrorJsonResponse('Server error'));
   }
 };
 
