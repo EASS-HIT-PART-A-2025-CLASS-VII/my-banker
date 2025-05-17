@@ -15,7 +15,7 @@ const axios = require('axios');
 async function generateLlmAnalysis(walletInsightsInput) {
   // Prepare the request payload to send to the LLM
   const payload = {
-    model: 'gemma3:1b', // Specify the LLM model to use
+    model: 'llama3.2:3b', // Specify the LLM model to use
     prompt: `
       You are a private banker and financial analyst. Use only the data provided below:
 

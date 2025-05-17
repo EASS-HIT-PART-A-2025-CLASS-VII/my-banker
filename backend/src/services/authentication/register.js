@@ -19,9 +19,7 @@ const register = async (username, password) => {
   try {
     // Check if a user with the same username already exists
     const existingUser = await User.findOne({ username });
-    if (existingUser) {
-      throw new Error('User already exists');
-    }
+    if (existingUser) throw new Error('User already exists');
 
     // Hash the password before saving
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -30,10 +28,9 @@ const register = async (username, password) => {
     const newUser = new User({ username, password: hashedPassword });
     await newUser.save();
 
-    return successJsonResponse('User registered successfully');
+    return {username: username, password: password};
   } catch (error) {
     throw new Error(error.message);
-    //return res.status(500).json(internalErrorJsonResponse('Server error'));
   }
 };
 

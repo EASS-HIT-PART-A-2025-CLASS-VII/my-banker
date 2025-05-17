@@ -41,10 +41,8 @@ const login = async (username, password) => {
     );
 
     return token;
-    //return res.status(200).json(successJsonResponse('Login successful', { token }));
   } catch (error) {
     throw new Error(error.message);
-    //return res.status(500).json(internalErrorJsonResponse('Server error'));
   }
 };
 
