@@ -1,5 +1,6 @@
 const fetchEthereumWalletData = require('./fetchEthereumWalletData');
 const fetchBitcoinWalletData = require('./fetchBitcoinWalletData');
+const fetchSolanaWalletData = require('./fetchSolanaWalletData');
 
 /**
  * @module walletInformation
