@@ -13,6 +13,8 @@ services:
       - MONGO_URI=mongodb://mongo:27017/my-banker
       - OLLAMA_API=http://ollama:11434
       - JWT_SECRET=201fc9a67ef78be4d958f91bbad9f7d6c56ffdd923125b2e319318015474c130
+      - INFURA_API_KEY=f49c060887b94c769b56624f4ef0ff38
+      - ETHERSCAN_API_KEY=AB486YE7ED8U82X66GYU9KXEXKI9NXRTAZ
     volumes:
       - ./backend:/usr/src/app/backend
     restart: unless-stopped

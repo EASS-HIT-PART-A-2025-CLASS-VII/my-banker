@@ -1,9 +1,6 @@
 const { Web3 } = require("web3");
 const axios = require("axios");
 
-// Initialize a Web3 instance with an Infura provider
-const web3 = new Web3("https://mainnet.infura.io/v3/YOUR_INFURA_API_KEY");
-
 /**
  * Fetch the Ethereum balance for a given address.
  * @async
@@ -12,6 +9,13 @@ const web3 = new Web3("https://mainnet.infura.io/v3/YOUR_INFURA_API_KEY");
  * @returns {number} The balance of the wallet in ETH.
  */
 async function getEthereumBalance(address) {
+
+  // Load Infura API key from environment variables
+  const INFURA_API_KEY = process.env.INFURA_API_KEY;
+
+  // Initialize a Web3 instance with an Infura provider
+  const web3 = new Web3(`https://mainnet.infura.io/${INFURA_API_KEY}`);
+
   // Fetch the balance in Wei from the Ethereum blockchain
   const balanceInWei = await web3.eth.getBalance(address);
 
@@ -30,31 +34,43 @@ async function getEthereumBalance(address) {
  * @returns {Array} An array of transaction objects.
  */
 async function getEthereumTransactions(address) {
-  try {
-    // Construct the API URL to fetch transactions from Etherscan
-    const apiUrl = `https://api.etherscan.io/api?module=account&action=txlist&address=${address}&startblock=0&endblock=99999999&sort=asc&apikey=YOUR_ETHERSCAN_API_KEY`;
+  // Load Infura API key from environment variables
+  const ETHERSCAN_API_KEY = process.env.ETHERSCAN_API_KEY;
 
-    // Send a GET request to the Etherscan API
+  try {
+    // Calculate UNIX timestamp for 1 year ago
+    const oneYearAgoTimestamp = Math.floor(Date.now() / 1000) - (365 * 24 * 60 * 60);
+
+    // Etherscan API endpoint
+    const apiUrl = `https://api.etherscan.io/api?module=account&action=txlist&address=${address}&startblock=0&endblock=99999999&sort=asc&apikey=${ETHERSCAN_API_KEY}`;
+
+    // Make the GET request
     const response = await axios.get(apiUrl);
 
-    // Extract the transactions from the API response
-    const transactions = response.data.result;
+    // Validate response
+    if (response.data.status !== "1" || !response.data.result) {
+      return [];
+    }
 
-    // Map the transactions to the desired format
-    return transactions.map(tx => ({
-      txid: tx.hash, // Transaction hash
-      timestamp: new Date(tx.timeStamp * 1000).toISOString(), // Convert timestamp to ISO format
-      type: tx.to.toLowerCase() === address.toLowerCase() ? "receive" : "send", // Determine transaction type
-      amount: web3.utils.fromWei(tx.value, "ether"), // Convert value from Wei to Ether
-      from: tx.from, // Sender address
-      to: tx.to, // Receiver address
-      fee: tx.gasUsed && tx.gasPrice
-        ? web3.utils.fromWei((tx.gasUsed * tx.gasPrice).toString(), "ether") // Calculate transaction fee
-        : "0", // Default fee to "0" if gasUsed or gasPrice is missing
-      status: tx.isError === "0" ? "confirmed" : "failed", // Determine transaction status
-    }));
+    // Filter and format transactions from the last year
+    const transactions = response.data.result
+      .filter(tx => Number(tx.timeStamp) >= oneYearAgoTimestamp)
+      .map(tx => ({
+        txid: tx.hash,
+        timestamp: new Date(tx.timeStamp * 1000).toISOString(),
+        type: tx.to?.toLowerCase() === address.toLowerCase() ? "receive" : "send",
+        amount: parseFloat(web3.utils.fromWei(tx.value || "0", "ether")),
+        from: tx.from,
+        to: tx.to,
+        fee: (tx.gasUsed && tx.gasPrice)
+          ? parseFloat(web3.utils.fromWei((BigInt(tx.gasUsed) * BigInt(tx.gasPrice)).toString(), "ether"))
+          : 0,
+        status: tx.isError === "0" ? "confirmed" : "failed"
+      }));
+
+    return transactions;
   } catch (error) {
-    // Return an empty array if an error occurs
+    // Log the error and return an empty array
     return [];
   }
 }

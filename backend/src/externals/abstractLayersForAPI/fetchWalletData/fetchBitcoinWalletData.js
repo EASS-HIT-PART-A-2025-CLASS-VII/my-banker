@@ -33,6 +33,9 @@ async function getBitcoinBalance(address) {
  * @returns {Array} An array of transaction objects.
  */
 async function getTransactions(address) {
+    // Calculate timestamp for 365 days ago (in seconds)
+    const oneYearAgoTimestamp = Math.floor(Date.now() / 1000) - (365 * 24 * 60 * 60);
+    
     // Construct the API URL to fetch transactions
     const apiUrl = `https://blockchain.info/rawaddr/${address}`;
 
@@ -40,14 +43,17 @@ async function getTransactions(address) {
         // Send a GET request to the API
         const response = await axios.get(apiUrl);
 
-        // Check if the response contains transaction data and map it
+        // Check if the response contains transaction data
         if (response.data && response.data.txs) {
-            const transactions = response.data.txs.map(tx => ({
-                txid: tx.hash,
-                time: tx.time,
-                inputs: tx.inputs,
-                outputs: tx.out,
-            }));
+            // Filter transactions from last 365 days and map results
+            const transactions = response.data.txs
+                .filter(tx => tx.time >= oneYearAgoTimestamp)
+                .map(tx => ({
+                    txid: tx.hash,
+                    time: tx.time,
+                    inputs: tx.inputs,
+                    outputs: tx.out,
+                }));
 
             return transactions;
         } 

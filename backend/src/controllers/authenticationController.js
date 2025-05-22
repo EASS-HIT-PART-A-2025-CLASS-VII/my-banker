@@ -5,7 +5,7 @@ const {
   unauthorizedJsonResponse,
   internalErrorJsonResponse,
   successJsonResponse,
-} = require('../../utils/jsonResponses/jsonResponses');
+} = require('../utils/jsonResponses/jsonResponses');
 
 const loginController = async (req, res) => {
   try {
