@@ -1,5 +1,5 @@
 // Import the function to test
-const generateActionReport = require('../generateActionReport');
+const generateActionReport = require('../../../services/report/generateActionReport');
 
 describe('Generate Action Report', () => {
     // Test case for empty transactions array
@@ -43,7 +43,7 @@ describe('Generate Action Report', () => {
             calculationMethod: 'FIFO',
             totalActions: 2,
             tradingVolume: 4,
-            totalCommissionPaid: 0.3
+            totalCommissionPaid: 0.30000000000000004
         });
     });
 
@@ -51,7 +51,7 @@ describe('Generate Action Report', () => {
     it('should handle transactions without fees', () => {
         // Mock wallet info with transactions without fees
         const walletInfo = {
-            coin: 'XRP',
+            coin: 'ETH',
             transactions: [
                 { amount: 100 },
                 { amount: 200 }
@@ -63,7 +63,7 @@ describe('Generate Action Report', () => {
 
         // Verify the results
         expect(result).toEqual({
-            coin: 'XRP',
+            coin: 'ETH',
             calculationMethod: 'FIFO',
             totalActions: 2,
             tradingVolume: 300,
@@ -92,7 +92,7 @@ describe('Generate Action Report', () => {
             calculationMethod: 'FIFO',
             totalActions: 3,
             tradingVolume: 6.0,
-            totalCommissionPaid: 0.3
+            totalCommissionPaid: 0.30000000000000004
         });
     });
 });

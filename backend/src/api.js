@@ -1,36 +1,27 @@
 const express = require('express');
-const path = require('path');
 const connectDB = require('./database/db');
 const cors = require('cors');
 
+// Initialize express app
 const app = express();
 const port = 8000;
 
 // Connect to MongoDB
 connectDB();
 
-// Enable CORS
+// Enable middleware
 app.use(cors());
-
-// Middleware to parse JSON
 app.use(express.json());
 
-/**
- * ROUTES
- * Grouped by logical service
- */
+// Import route handlers
 const authRoutes = require('./routes/authenticationRoute');
 const report = require('./routes/reportRoute');
 
-// Mount routes at / + name
+// Mount route handlers
 app.use('/auth', authRoutes);
 app.use('/report', report);
 
-/**
- * Default health check route
- * @route GET /
- * @returns {string} - A simple message indicating the server is running.
- */
+// health check route
 app.get('/', (req, res) => {
   res.status(200).send('Server is running!');
 });

@@ -8,13 +8,24 @@ const {
 } = require('../controllers/authenticationController');
 const verifyToken = require('../middlewares/verifyToken');
 
-// POST /api/auth/login
+/**
+ * @description Handle user login requests
+ */
 router.post('/login', loginController);
 
-// POST /api/auth/register
+/**
+ * @description Handle new user registration
+ */
 router.post('/register', registerController);
 
+/**
+ * @description Handle user information updates
+ */
 router.patch('/update', verifyToken, updateUserController);
+
+/**
+ * @description Handle user account deletion
+ */
 router.delete('/delete', verifyToken, deleteUserController);
 
 module.exports = router;

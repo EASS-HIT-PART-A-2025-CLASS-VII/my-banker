@@ -1,41 +1,33 @@
 const { getHistoricalPrice, formatDate } = require('../../externals/abstractLayersForAPI/getCoinPriceByDate');
 
 /**
- * Calculate profit and loss based on wallet data.
- * 
- * This function processes wallet transactions to calculate the total income,
- * total cost, fees, and the resulting profit or loss for each coin.
- * 
- * @param {Object} walletInfo - The wallet data object containing coins and their transactions.
- * @param {Array} walletInfo.wallet - Array of coin objects, each containing coin name, balance, and transactions.
- * @returns {Object} A JSON object containing profit and loss details for each coin.
+ * @function generateProfitAndLossReport
+ * @description Calculates profit and loss metrics from wallet transactions
  */
 async function generateProfitAndLossReport(walletInfo) {
     let totalIncome = 0; 
     let totalCost = 0;  
     let fees = 0;
 
-    // Iterate through each transaction in the wallet data
     for (const tx of walletInfo.transactions) {
+        // Get historical price data
         const dateStr = formatDate(tx.timestamp);
         const price = await getHistoricalPrice("bitcoin", dateStr);
 
-        // Calculate the transaction value in USD
+        // Calculate USD value
         const valueInUSD = price * tx.amount;
 
-        // Check if the transaction is a "receive" type (purchase)
-        if (tx.type === "receive") {
-            totalCost += valueInUSD; 
-        } 
-        // Check if the transaction is a "send" type (sale)
-        else if (tx.type === "send") {
-            totalIncome += valueInUSD;  
-        }
+        // Process purchase transaction
+        if (tx.type === "receive") totalCost += valueInUSD;
 
+        // Process sale transaction
+        else if (tx.type === "send") totalIncome += valueInUSD;
+
+        // Add transaction fees
         fees += tx.fee || 0;
     }
 
-    // Calculate the net profit or loss
+    // Calculate final profit/loss
     const gainOrLoss = totalIncome - totalCost - fees;
 
     return {

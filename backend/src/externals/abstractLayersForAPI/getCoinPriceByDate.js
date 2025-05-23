@@ -1,49 +1,43 @@
-// Import the axios library for making HTTP requests
 const axios = require('axios');
 
 /**
- * Fetch the historical price of a cryptocurrency for a specific date.
- * 
- * This function uses the CoinGecko API to retrieve the price of a cryptocurrency
- * in USD for a given date.
- * 
- * @param {string} symbol - The symbol of the cryptocurrency (e.g., "bitcoin").
- * @param {string} dateStr - The date in "DD-MM-YYYY" format.
- * @returns {number|null} The price in USD or null if the price is unavailable.
- * @throws {Error} Throws an error if the symbol is not provided.
+ * @function getHistoricalPrice
+ * @description Fetches cryptocurrency price in USD for a specific date using CoinGecko API
  */
 async function getHistoricalPrice(symbol, dateStr) {
-    // Check if the symbol is provided and throw an error if not
+    // Validate input
     if (!symbol) throw new Error('Symbol is required');
 
     try {
-        // Make a GET request to the CoinGecko API to fetch historical price data
+        // Fetch historical price data
         const res = await axios.get(`https://api.coingecko.com/api/v3/coins/${symbol}/history?date=${dateStr}`);
+
+        // Extract and return USD price
         return res.data.market_data?.current_price?.usd ?? null;
-    } catch (err) {
-        // Return null if an error occurs
-        return null;
+    } catch (error) {
+        // Throw an error if the request fails
+        throw new Error('Failed to fetch historical price: ' + error.message);
     }
 }
 
 /**
- * Format an ISO date string into "DD-MM-YYYY" format.
- * 
- * This function converts a date in ISO format to a human-readable format
- * suitable for use with the CoinGecko API.
- * 
- * @param {string} dateISO - The ISO date string (e.g., "2025-05-12T00:00:00Z").
- * @returns {string} The formatted date string in "DD-MM-YYYY" format.
+ * @function formatDate
+ * @description Converts ISO date string to DD-MM-YYYY format
  */
 function formatDate(dateISO) {
-    // Create a new Date object from the ISO date string
+    // Create date object
     const d = new Date(dateISO);
-    // Extract the day and pad it with leading zeros if necessary
+
+    // Format day with leading zeros
     const day = String(d.getDate()).padStart(2, '0');
-    // Extract the month, add 1 (since months are zero-based), and pad with leading zeros
+
+    // Format month with leading zeros
     const month = String(d.getMonth() + 1).padStart(2, '0');
+
+    // Get year
     const year = d.getFullYear();
 
+    // Return formatted date
     return `${day}-${month}-${year}`;
 }
 

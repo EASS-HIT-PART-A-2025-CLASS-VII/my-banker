@@ -1,5 +1,6 @@
-// Import required modules
-const login = require('../login');
+process.env.JWT_SECRET = 'test-secret';
+
+const login = require('../../../services/authentication/login');
 const User = require('../../../models/userModel');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
@@ -37,13 +38,13 @@ describe('Login Service', () => {
         User.findOne.mockResolvedValue(mockUser);
 
         // Execute login
-        const result = await login('testuser', 'password123');
+        const result = await login('user1', 'user1');
 
         // Verify the results
-        expect(User.findOne).toHaveBeenCalledWith({ username: 'testuser' });
-        expect(bcrypt.compare).toHaveBeenCalledWith('password123', 'hashedPassword123');
+        expect(User.findOne).toHaveBeenCalledWith({ username: 'user1' });
+        expect(bcrypt.compare).toHaveBeenCalledWith('user1', 'user1');
         expect(jwt.sign).toHaveBeenCalledWith(
-            { id: 'testid123', username: 'testuser' },
+            { username: 'user1' },
             'test-secret',
             { expiresIn: '1h' }
         );
@@ -58,7 +59,7 @@ describe('Login Service', () => {
         // Execute and verify error
         await expect(login('nonexistentuser', 'password123'))
             .rejects
-            .toThrow('User not foune');
+            .toThrow('User not found');
     });
 
     // Test invalid password scenario
@@ -76,9 +77,9 @@ describe('Login Service', () => {
         bcrypt.compare.mockResolvedValue(false);
 
         // Execute and verify error
-        await expect(login('testuser', 'wrongpassword'))
+        await expect(login('user1', 'wrongpassword'))
             .rejects
-            .toThrow('Invalid credentials');
+            .toThrow('Invalid user credentials');
     });
 
     // Test database error handling
@@ -88,7 +89,7 @@ describe('Login Service', () => {
         User.findOne.mockRejectedValue(dbError);
 
         // Execute and verify error
-        await expect(login('testuser', 'password123'))
+        await expect(login('user1', 'user1'))
             .rejects
             .toThrow('Database connection failed');
     });
@@ -97,8 +98,8 @@ describe('Login Service', () => {
     it('should handle JWT generation errors', async () => {
         // Mock user data
         const mockUser = {
-            username: 'testuser',
-            password: 'hashedPassword123'
+            username: 'user1',
+            password: 'user1'
         };
 
         // Mock successful password comparison
@@ -112,7 +113,7 @@ describe('Login Service', () => {
         jwt.sign.mockImplementation(() => { throw jwtError; });
 
         // Execute and verify error
-        await expect(login('testuser', 'password123'))
+        await expect(login('user1', 'user1'))
             .rejects
             .toThrow('JWT generation failed');
     });

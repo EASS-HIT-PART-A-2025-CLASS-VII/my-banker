@@ -1,18 +1,34 @@
 const generateReport = require('../services/report/generateReport');
+const {
+    badRequestJsonResponse,
+    notFoundJsonResponse,
+    unauthorizedJsonResponse,
+    internalErrorJsonResponse,
+    successJsonResponse,
+} = require('../utils/jsonResponses/jsonResponses');
 
+/**
+ * @function reportController
+ * @description Handles wallet report generation requests
+ */
 const reportController = async (req, res) => {
     try {
+        // Extract request parameters
         const { walletAddress, chain } = req.body;
 
-        if (!walletAddress || !chain) {
-            return res.status(400).json({ error: 'walletAddress and chain are required' });
-        }
+        // Validate required parameters
+        if (!walletAddress || !chain) return res.json(badRequestJsonResponse('walletAddress and chain are required'));
 
+        // Generate wallet report
         const report = await generateReport(walletAddress, chain);
-        res.status(200).json(report);
+
+        // Return success response
+        return res.json(successJsonResponse(report));
     } catch (err) {
-        res.status(500).json({ error: err.message });
+        // Handle errors
+        return res.json(internalErrorJsonResponse(error.message));
     }
 };
 
+// Export controller function
 module.exports = reportController;

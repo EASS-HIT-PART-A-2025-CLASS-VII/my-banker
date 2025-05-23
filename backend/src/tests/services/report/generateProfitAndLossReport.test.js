@@ -1,5 +1,5 @@
 // Import required modules
-const generateProfitAndLossReport = require('../generateProfitAndLossReport');
+const generateProfitAndLossReport = require('../../../services/report/generateProfitAndLossReport');
 const { getHistoricalPrice, formatDate } = require('../../../externals/abstractLayersForAPI/getCoinPriceByDate');
 
 // Mock the external API functions

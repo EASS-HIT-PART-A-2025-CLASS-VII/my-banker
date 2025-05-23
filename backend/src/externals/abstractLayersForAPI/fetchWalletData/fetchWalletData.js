@@ -1,12 +1,10 @@
 const fetchEthereumWalletData = require('./fetchEthereumWalletData');
 const fetchBitcoinWalletData = require('./fetchBitcoinWalletData');
-const fetchSolanaWalletData = require('./fetchSolanaWalletData');
 
 /**
- * @module walletInformation
+ * @function walletInformation
  * @description Provides functions to extract coins information.
  */
-
 async function fetchWalletData(walletAddress, coinType) {
   switch (coinType) {
     case 'ethereum':
@@ -16,6 +14,6 @@ async function fetchWalletData(walletAddress, coinType) {
     default:
       throw new Error('Unsupported chain');
   }
-    
 }
+
 module.exports = fetchWalletData;

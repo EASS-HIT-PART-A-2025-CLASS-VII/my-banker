@@ -1,5 +1,5 @@
 // Import required modules
-const deleteUser = require('../delete');
+const deleteUser = require('../../../services/authentication/delete');
 const User = require('../../../models/userModel');
 
 // Mock the User model
@@ -15,19 +15,19 @@ describe('Delete User Service', () => {
     it('should delete user successfully', async () => {
         // Mock user data
         const mockUser = {
-            username: 'testuser',
-            password: 'hashedPassword123'
+            username: 'user1',
+            password: 'user1'
         };
 
         // Mock User.findOne to return user
         User.findOne.mockResolvedValue(mockUser);
 
         // Execute deletion
-        const result = await deleteUser('testuser');
+        const result = await deleteUser('user1');
 
         // Verify the results
-        expect(User.findOne).toHaveBeenCalledWith({ username: 'testuser' });
-        expect(result).toBe('testuser');
+        expect(User.findOne).toHaveBeenCalledWith({ username: 'user1' });
+        expect(result).toBe('user1');
     });
 
     // Test user not found scenario
@@ -48,7 +48,7 @@ describe('Delete User Service', () => {
         User.findOne.mockRejectedValue(dbError);
 
         // Execute and verify error
-        await expect(deleteUser('testuser'))
+        await expect(deleteUser('user1'))
             .rejects
             .toThrow('Database connection failed');
     });

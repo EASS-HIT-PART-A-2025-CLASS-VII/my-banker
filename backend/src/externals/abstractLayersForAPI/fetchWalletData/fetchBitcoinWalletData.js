@@ -1,21 +1,16 @@
 const axios = require('axios');
 
 /**
- * Fetch the Bitcoin balance for a given address.
- * @async
- * @function getBitcoinBalance
- * @param {string} address - The Bitcoin wallet address.
- * @returns {number} The balance of the wallet in BTC.
+ * @function getBalance
+ * @description Fetch the Bitcoin balance for a given address
  */
-async function getBitcoinBalance(address) {
-    // Construct the API URL to fetch the balance
+async function getBalance(address) {
     const apiUrl = `https://blockchain.info/q/addressbalance/${address}`;
 
     try {
-        // Send a GET request to the API
         const response = await axios.get(apiUrl);
 
-        // Convert the balance from satoshis to BTC
+        // Convert satoshis to BTC
         const balanceInSatoshis = parseInt(response.data);
         const balanceInBTC = balanceInSatoshis / 100000000;
 
@@ -26,26 +21,21 @@ async function getBitcoinBalance(address) {
 }
 
 /**
- * Fetch the transaction history for a given Bitcoin address.
- * @async
  * @function getTransactions
- * @param {string} address - The Bitcoin wallet address.
- * @returns {Array} An array of transaction objects.
+ * @description Fetch the transaction history for a given Bitcoin address
  */
 async function getTransactions(address) {
-    // Calculate timestamp for 365 days ago (in seconds)
+    // Set time range to one year
     const oneYearAgoTimestamp = Math.floor(Date.now() / 1000) - (365 * 24 * 60 * 60);
-    
-    // Construct the API URL to fetch transactions
+
     const apiUrl = `https://blockchain.info/rawaddr/${address}`;
 
     try {
-        // Send a GET request to the API
         const response = await axios.get(apiUrl);
 
-        // Check if the response contains transaction data
+        // Process transaction data if available
         if (response.data && response.data.txs) {
-            // Filter transactions from last 365 days and map results
+            // Filter and format transactions
             const transactions = response.data.txs
                 .filter(tx => tx.time >= oneYearAgoTimestamp)
                 .map(tx => ({
@@ -56,47 +46,45 @@ async function getTransactions(address) {
                 }));
 
             return transactions;
-        } 
-        else return [];
+        }
+        return [];
     } catch (error) {
         throw new Error('Failed to fetch Bitcoin transactions');
     }
 }
 
 /**
- * Extract Bitcoin wallet information.
- * @async
- * @function extractBitcoinInformation
- * @param {string} address - The Bitcoin wallet address.
- * @returns {Object} A JSON object containing the coin, balance, and transactions.
+ * @function fetchBitcoinWalletData
+ * @description Extract Bitcoin wallet information including balance and transactions
  */
 async function fetchBitcoinWalletData(address) {
     try {
-        // Fetch transactions and balance for the given Bitcoin address
+        // Fetch wallet data in parallel
         const [transactions, balance] = await Promise.all([
-            getTransactions(address), // Fetch Bitcoin transactions
-            getBitcoinBalance(address), // Fetch Bitcoin balance
+            getTransactions(address),
+            getBalance(address),
         ]);
 
-        // Map the transactions 
+        // Process transactions
         const mappedTransactions = transactions.map(tx => {
-            // Find if address is in inputs
+            // Check if address is in transaction inputs
             const sentFrom = tx.inputs.some(
                 input => input.prev_out && input.prev_out.addr === address
             );
-        
-            // Calculate total received by this address in outputs
+
+            // Calculate total received amount
             const received = tx.outputs
                 .filter(output => output.addr === address)
                 .reduce((sum, output) => sum + (output.value || 0), 0);
-        
+
+            // Determine transaction type and amount
             let type, amount;
             if (received > 0 && !sentFrom) {
                 type = "receive";
                 amount = received / 1e8;
             } else if (sentFrom) {
                 type = "send";
-                // Calculate total sent from this address in inputs
+                // Calculate total sent amount
                 const sent = tx.inputs
                     .filter(input => input.prev_out && input.prev_out.addr === address)
                     .reduce((sum, input) => sum + (input.prev_out.value || 0), 0);
@@ -105,7 +93,8 @@ async function fetchBitcoinWalletData(address) {
                 type = "other";
                 amount = 0;
             }
-        
+
+            // Format transaction data
             return {
                 txid: tx.txid,
                 timestamp: new Date(tx.time * 1000).toISOString(),
@@ -115,9 +104,10 @@ async function fetchBitcoinWalletData(address) {
             };
         });
 
+        // Return formatted wallet data
         return {
             coin: 'BTC',
-            balance: parseFloat(balance), 
+            balance: parseFloat(balance),
             transactions: mappedTransactions,
         };
     } catch (error) {

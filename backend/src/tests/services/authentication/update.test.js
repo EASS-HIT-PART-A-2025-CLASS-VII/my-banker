@@ -1,5 +1,5 @@
 // Import required modules
-const updateUser = require('../update');
+const updateUser = require('../../../services/authentication/update');
 const User = require('../../../models/userModel');
 const bcrypt = require('bcryptjs');
 

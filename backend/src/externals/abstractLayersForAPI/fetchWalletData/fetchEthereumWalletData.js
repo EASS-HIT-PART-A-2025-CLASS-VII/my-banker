@@ -2,110 +2,93 @@ const { Web3 } = require("web3");
 const axios = require("axios");
 
 /**
- * Fetch the Ethereum balance for a given address.
- * @async
  * @function getEthereumBalance
- * @param {string} address - The Ethereum wallet address.
- * @returns {number} The balance of the wallet in ETH.
+ * @description Fetch the Ethereum balance for a given address
  */
-async function getEthereumBalance(address) {
+async function getBalance(address) {
+    try {
+        const INFURA_API_KEY = process.env.INFURA_API_KEY;
 
-  // Load Infura API key from environment variables
-  const INFURA_API_KEY = process.env.INFURA_API_KEY;
+        const web3 = new Web3(`https://mainnet.infura.io/${INFURA_API_KEY}`);
 
-  // Initialize a Web3 instance with an Infura provider
-  const web3 = new Web3(`https://mainnet.infura.io/${INFURA_API_KEY}`);
+        // Get balance in Wei
+        const balanceInWei = await web3.eth.getBalance(address);
 
-  // Fetch the balance in Wei from the Ethereum blockchain
-  const balanceInWei = await web3.eth.getBalance(address);
+        // Convert Wei to Ether
+        const balanceInEth = web3.utils.fromWei(balanceInWei, "ether");
 
-  // Convert the balance from Wei to Ether
-  const balanceInEth = web3.utils.fromWei(balanceInWei, "ether");
-
-  // Return the balance as a float
-  return parseFloat(balanceInEth);
+        return parseFloat(balanceInEth);
+    } catch (error) {
+        // Throw an error if balance fetch fails
+        throw new Error("Failed to get balance");
+    }
 }
 
 /**
- * Fetch the transaction history for a given Ethereum address.
- * @async
  * @function getEthereumTransactions
- * @param {string} address - The Ethereum wallet address.
- * @returns {Array} An array of transaction objects.
+ * @description Fetch the transaction history for a given Ethereum address
  */
 async function getEthereumTransactions(address) {
-  // Load Infura API key from environment variables
-  const ETHERSCAN_API_KEY = process.env.ETHERSCAN_API_KEY;
+    const ETHERSCAN_API_KEY = process.env.ETHERSCAN_API_KEY;
 
-  try {
-    // Calculate UNIX timestamp for 1 year ago
-    const oneYearAgoTimestamp = Math.floor(Date.now() / 1000) - (365 * 24 * 60 * 60);
+    try {
+        // Calculate one year ago timestamp
+        const oneYearAgoTimestamp = Math.floor(Date.now() / 1000) - (365 * 24 * 60 * 60);
 
-    // Etherscan API endpoint
-    const apiUrl = `https://api.etherscan.io/api?module=account&action=txlist&address=${address}&startblock=0&endblock=99999999&sort=asc&apikey=${ETHERSCAN_API_KEY}`;
+        const apiUrl = `https://api.etherscan.io/api?module=account&action=txlist&address=${address}&startblock=0&endblock=99999999&sort=asc&apikey=${ETHERSCAN_API_KEY}`;
 
-    // Make the GET request
-    const response = await axios.get(apiUrl);
+        const response = await axios.get(apiUrl);
 
-    // Validate response
-    if (response.data.status !== "1" || !response.data.result) {
-      return [];
+        // Check response validity
+        if (response.data.status !== "1" || !response.data.result) return [];
+
+        // Process transactions
+        const transactions = response.data.result
+            .filter(tx => Number(tx.timeStamp) >= oneYearAgoTimestamp)
+            .map(tx => ({
+                txid: tx.hash,
+                timestamp: new Date(tx.timeStamp * 1000).toISOString(),
+                type: tx.to?.toLowerCase() === address.toLowerCase() ? "receive" : "send",
+                amount: parseFloat(web3.utils.fromWei(tx.value || "0", "ether")),
+                from: tx.from,
+                to: tx.to,
+                fee: (tx.gasUsed && tx.gasPrice)
+                    ? parseFloat(web3.utils.fromWei((BigInt(tx.gasUsed) * BigInt(tx.gasPrice)).toString(), "ether"))
+                    : 0,
+                status: tx.isError === "0" ? "confirmed" : "failed"
+            }));
+
+        return transactions;
+    } catch (error) {
+        // Throw an error if transaction fetch fails
+        throw new Error("Failed to fetch Ethereum transactions");
     }
-
-    // Filter and format transactions from the last year
-    const transactions = response.data.result
-      .filter(tx => Number(tx.timeStamp) >= oneYearAgoTimestamp)
-      .map(tx => ({
-        txid: tx.hash,
-        timestamp: new Date(tx.timeStamp * 1000).toISOString(),
-        type: tx.to?.toLowerCase() === address.toLowerCase() ? "receive" : "send",
-        amount: parseFloat(web3.utils.fromWei(tx.value || "0", "ether")),
-        from: tx.from,
-        to: tx.to,
-        fee: (tx.gasUsed && tx.gasPrice)
-          ? parseFloat(web3.utils.fromWei((BigInt(tx.gasUsed) * BigInt(tx.gasPrice)).toString(), "ether"))
-          : 0,
-        status: tx.isError === "0" ? "confirmed" : "failed"
-      }));
-
-    return transactions;
-  } catch (error) {
-    // Log the error and return an empty array
-    return [];
-  }
 }
 
 /**
- * Extract Ethereum wallet information.
- * @async
- * @function extractEthereumInformation
- * @param {string} address - The Ethereum wallet address.
- * @returns {Object|null} A JSON object containing the coin, balance, and transactions, or null if an error occurs.
+ * @function fetchEthereumWalletData
+ * @description Extract Ethereum wallet information including balance and transactions
  */
 async function fetchEthereumWalletData(address) {
-  try {
-    // Fetch the Ethereum balance for the given address
-    const balance = await getEthereumBalance(address);
+    try {
+        // Fetch wallet data in parallel
+        const [balance, transactions] = await Promise.all([
+            getBalance(address),
+            getEthereumTransactions(address)
+        ]);
 
-    // Fetch the transaction history for the given address
-    const transactions = await getEthereumTransactions(address);
+        // Build response object
+        const result = {
+            coin: "ETH",
+            balance: balance,
+            transactions: transactions
+        };
 
-    // Construct the result object with balance and transactions
-    const result = {
-      coin: "ETH", // The cryptocurrency type
-      balance: balance, // The wallet balance in Ether
-      transactions: transactions, // The transaction history
-    };
-
-    // Return the result object
-    return result;
-  } catch (error) {
-    // Log any errors that occur during the extraction process
-    console.error("Error getting Ethereum info:", error);
-
-    // Return null to indicate failure
-    return null;
-  }
+        return result;
+    } catch (error) {
+        // Throw an error if wallet data fetch fails
+        throw new Error("Failed to fetch Ethereum wallet data: " + error.message);
+    }
 }
 
 module.exports = fetchEthereumWalletData;
