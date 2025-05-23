@@ -24,7 +24,7 @@ const reportController = async (req, res) => {
 
         // Return success response
         return res.json(successJsonResponse(report));
-    } catch (err) {
+    } catch (error) {
         // Handle errors
         return res.json(internalErrorJsonResponse(error.message));
     }
