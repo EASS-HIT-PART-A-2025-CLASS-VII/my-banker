@@ -1,16 +1,15 @@
 const { Web3 } = require("web3");
 const axios = require("axios");
 
+const INFURA_API_KEY = process.env.INFURA_API_KEY;
+const web3 = new Web3(`https://mainnet.infura.io/${INFURA_API_KEY}`);
+
 /**
  * @function getEthereumBalance
  * @description Fetch the Ethereum balance for a given address
  */
 async function getBalance(address) {
     try {
-        const INFURA_API_KEY = process.env.INFURA_API_KEY;
-
-        const web3 = new Web3(`https://mainnet.infura.io/${INFURA_API_KEY}`);
-
         // Get balance in Wei
         const balanceInWei = await web3.eth.getBalance(address);
 
@@ -25,10 +24,10 @@ async function getBalance(address) {
 }
 
 /**
- * @function getEthereumTransactions
+ * @function getTransactions
  * @description Fetch the transaction history for a given Ethereum address
  */
-async function getEthereumTransactions(address) {
+async function getTransactions(address) {
     const ETHERSCAN_API_KEY = process.env.ETHERSCAN_API_KEY;
 
     try {
@@ -74,7 +73,7 @@ async function fetchEthereumWalletData(address) {
         // Fetch wallet data in parallel
         const [balance, transactions] = await Promise.all([
             getBalance(address),
-            getEthereumTransactions(address)
+            getTransactions(address)
         ]);
 
         // Build response object
