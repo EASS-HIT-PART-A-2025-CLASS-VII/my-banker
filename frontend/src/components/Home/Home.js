@@ -23,6 +23,10 @@ export default function LandingPage() {
     navigate('/profile');
   };
 
+  const goToReport = () => {
+    navigate('/report');
+  };
+
   return (
     <div className="landing-page">
       <header className="header">
@@ -55,7 +59,7 @@ export default function LandingPage() {
           <h2>Your Financial Future Starts Here</h2>
           <p>Upload your crypto wallet address and get a professional, personalized financial report – crafted as if by your own private banker.</p>
           <p>Let's shape a brighter financial future, together. Let us help you make the right decisions with tailored insights you can trust.</p>
-          <button className="btn-primary">Get Your Report</button>
+          <button className="btn-primary" onClick={goToReport}>Get Your Report</button>
         </div>
         <div className="hero-image">
           <img src={accountingOfficeImage} alt="Private Banker" />
