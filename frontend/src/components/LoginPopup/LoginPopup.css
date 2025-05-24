@@ -1,0 +1,58 @@
+.popup-overlay {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw; height: 100vh;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 1000;
+}
+
+.popup {
+  position: relative;
+  background: #1B1F24;
+  padding: 32px;
+  border-radius: 12px;
+  width: 300px;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.popup input {
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  background: #2D333B;
+  color: white;
+}
+
+.popup button {
+  padding: 10px;
+  border: none;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+  background-color: #2D333B;
+  color: white;
+}
+
+.popup .register-btn {
+  background-color: #3D4855; 
+}
+
+.popup .error {
+  color: #F87171;
+  font-size: 0.9rem;
+}
+
+.close-button {
+  position: absolute;
+  top: 8px;
+  right: 12px;
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  color: white;
+  cursor: pointer;
+}
