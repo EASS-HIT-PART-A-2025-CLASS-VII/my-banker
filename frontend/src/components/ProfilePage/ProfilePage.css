@@ -1,0 +1,60 @@
+.profile-container {
+  max-width: 420px;
+  margin: 80px auto;
+  padding: 40px 30px;
+  background-color: #1B1F24; /* רקע כהה כמו בלנдинг */
+  border-radius: 16px;
+  box-shadow: 0 10px 15px rgba(0,0,0,0.3);
+  text-align: center;
+  font-family: 'sans-serif'; /* להתאים לפונט של הלנדר */
+  color: white;
+  border: 1px solid #4B5563; /* קו גבול בהיר */
+}
+
+.profile-image {
+  width: 110px;
+  height: 110px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-bottom: 20px;
+  border: 2px solid #F9B64D; /* צהוב מוזהב תואם */
+  box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+}
+
+.profile-name {
+  font-size: 26px;
+  font-weight: 700;
+  color: #F9B64D; /* צהוב מוזהב */
+  margin-bottom: 30px;
+}
+
+.btn-secondary,
+.btn-danger {
+  width: 100%;
+  padding: 14px;
+  font-size: 16px;
+  font-weight: 600;
+  border: none;
+  border-radius: 8px;
+  margin-bottom: 15px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  color: black;
+}
+
+.btn-secondary {
+  background-color: #F9B64D; /* צהוב מוזהב כמו btn-primary */
+}
+
+.btn-secondary:hover {
+  background-color: #FBBF24; /* צהוב בהיר יותר */
+}
+
+.btn-danger {
+  background-color: #e53935; /* ניתן להשאיר אדום או לבחור גוון כהה יותר שמתאים לרקע הכהה */
+  color: white;
+}
+
+.btn-danger:hover {
+  background-color: #c62828;
+}

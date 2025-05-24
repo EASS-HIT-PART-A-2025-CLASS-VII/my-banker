@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import LoginPopup from "../LoginPopup/LoginPopup";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUserCircle } from '@fortawesome/free-solid-svg-icons';
+import { useNavigate } from "react-router-dom";
 import './Home.css';
 import accountingOfficeImage from '../../assets/images/accounting-office.png';
 import nycSkylineImage from '../../assets/images/nyc-skyline.png';
@@ -10,11 +11,16 @@ import businessmenHandshakeImage from '../../assets/images/businessmen-handshake
 export default function LandingPage() {
   const [showLogin, setShowLogin] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(!!localStorage.getItem('jwt_token'));
+  const navigate = useNavigate();
 
   const handleLoginSuccess = (token) => {
     localStorage.setItem('jwt_token', token);
     setIsAuthenticated(true);
     setShowLogin(false);
+  };
+
+  const goToProfile = () => {
+    navigate('/profile');
   };
 
   return (
@@ -28,7 +34,7 @@ export default function LandingPage() {
                 Login
               </li>
             ) : (
-              <li className="nav-item" title="Profile" style={{ cursor: 'pointer' }}>
+              <li className="nav-item" title="Profile" style={{ cursor: 'pointer' }} onClick={goToProfile}>
                 <FontAwesomeIcon icon={faUserCircle} size="2x" />
               </li>
             )}
