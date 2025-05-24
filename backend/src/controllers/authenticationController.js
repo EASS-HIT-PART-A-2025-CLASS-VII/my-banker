@@ -33,11 +33,26 @@ const loginController = async (req, res) => {
  */
 const registerController = async (req, res) => {
   try {
+    const userData = {
+      username: req.body.username,
+      password: req.body.password,
+      email: req.body.email,
+      riskAversion: req.body.riskAversion,
+      volatilityTolerance: req.body.volatilityTolerance,
+      growthFocus: req.body.growthFocus,
+      cryptoExperience: req.body.cryptoExperience,
+      innovationTrust: req.body.innovationTrust,
+      impactInterest: req.body.impactInterest,
+      diversification: req.body.diversification,
+      holdingPatience: req.body.holdingPatience,
+      monitoringFrequency: req.body.monitoringFrequency,
+      adviceOpenness: req.body.adviceOpenness
+    };
     // Create new user
-    const user = await authenticationService.register(req.body.username, req.body.password);
+    const user = await authenticationService.register(userData);
 
     // Return success response
-    return res.json(successJsonResponse('username: ' + user.username + ', ' + 'password: ' + user.password));
+    return res.json(successJsonResponse(user));
   } catch (error) {
     // Handle duplicate user
     if (error.message === 'User already exists') return res.json(badRequestJsonResponse(error.message));

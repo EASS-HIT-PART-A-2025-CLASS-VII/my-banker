@@ -3,29 +3,74 @@ const bcrypt = require('bcryptjs');
 
 /**
  * @function updateUser
- * @description Updates user credentials in database
+ * @description Updates user profile and credentials in database
  */
-const updateUser = async (username, password, newUsername, newPassword) => {
+const updateUser = async (username, updatedData) => {
     try {
         // Find existing user
         const user = await User.findOne({ username });
         if (!user) throw new Error('User not found');
 
-        // Update username if provided
-        if (username) user.username = newUsername;
+        // Update basic info if provided
+        if (updatedData.newUsername) {
+            const existingUser = await User.findOne({ username: updatedData.newUsername });
+            if (existingUser) throw new Error('Username already exists');
+            user.username = updatedData.newUsername;
+        }
 
-        // Update password if provided
-        if (password) {
-            const hashedPassword = await bcrypt.hash(newPassword, 10);
+        if (updatedData.newPassword) {
+            const hashedPassword = await bcrypt.hash(updatedData.newPassword, 10);
             user.password = hashedPassword;
         }
+
+        if (updatedData.email) {
+            const existingEmail = await User.findOne({ email: updatedData.email });
+            if (existingEmail) throw new Error('Email already exists');
+            user.email = updatedData.email;
+        }
+
+        // Update profile parameters if provided
+        const profileFields = [
+            'riskAversion',
+            'volatilityTolerance',
+            'growthFocus',
+            'cryptoExperience',
+            'innovationTrust',
+            'impactInterest',
+            'diversification',
+            'holdingPatience',
+            'monitoringFrequency',
+            'adviceOpenness'
+        ];
+
+        profileFields.forEach(field => {
+            if (updatedData[field] !== undefined) {
+                const value = parseInt(updatedData[field]);
+                if (value >= 1 && value <= 10) {
+                    user[field] = value;
+                } else {
+                    throw new Error(`${field} must be between 1 and 10`);
+                }
+            }
+        });
 
         // Save changes to database
         await user.save();
 
+        // Return updated user data without password
         return {
-            username: newUsername, 
-            password: newPassword
+            username: user.username,
+            email: user.email,
+            riskAversion: user.riskAversion,
+            volatilityTolerance: user.volatilityTolerance,
+            growthFocus: user.growthFocus,
+            cryptoExperience: user.cryptoExperience,
+            innovationTrust: user.innovationTrust,
+            impactInterest: user.impactInterest,
+            diversification: user.diversification,
+            holdingPatience: user.holdingPatience,
+            monitoringFrequency: user.monitoringFrequency,
+            adviceOpenness: user.adviceOpenness
         };
     } catch (error) {
         throw new Error(error.message);
