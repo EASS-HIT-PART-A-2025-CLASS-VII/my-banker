@@ -1,49 +1,35 @@
 import React, { useState } from "react";
-import './LoginPopup.css';
-import RegisterPopup from "../RegisterPopup/RegisterPopup";
+import './RegisterPopup.css';
 
-export default function LoginPopup({ onClose, onSuccess }) {
+export default function RegisterPopup({ onClose, onRegisterSuccess }) {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
-    const [showRegister, setShowRegister] = useState(false);
 
-    const handleLogin = async () => {
+    const handleRegister = async () => {
         try {
-            const response = await fetch("http://localhost:8000/auth/login", {
+            const response = await fetch("http://localhost:8000/auth/register", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ username, password }),
             });
 
             const data = await response.json();
-            if (response.ok && data.data && data.data.message) {
-                onSuccess(data.data.message);
+            if (response.ok && data.data?.message) {
+                onRegisterSuccess(data.data.message);
             } else {
-                setError(data.data?.message || "Login failed");
+                setError(data.data?.message || "Registration failed");
             }
         } catch (err) {
             setError("Server error: " + err.message);
         }
     };
 
-    if (showRegister) {
-        return (
-            <RegisterPopup
-                onClose={() => setShowRegister(false)}
-                onRegisterSuccess={(msg) => {
-                    setShowRegister(false);
-                    onSuccess(msg); // או אפשרות אחרת
-                }}
-            />
-        );
-    }
-
     return (
         <div className="popup-overlay">
             <div className="popup">
                 <button className="close-button" onClick={onClose}>×</button>
-                <h2>Login</h2>
+                <h2>Register</h2>
                 <input
                     type="text"
                     placeholder="Username"
@@ -57,11 +43,7 @@ export default function LoginPopup({ onClose, onSuccess }) {
                     onChange={e => setPassword(e.target.value)}
                 />
                 {error && <p className="error">{error}</p>}
-                <button onClick={handleLogin}>Login</button>
-                <button className="register-btn" onClick={() => setShowRegister(true)}>
-                    Register
-                </button>
-
+                <button onClick={handleRegister} className="btn-primary">Register</button>
             </div>
         </div>
     );
