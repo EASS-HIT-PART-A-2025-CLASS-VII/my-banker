@@ -4,94 +4,168 @@ const {
     updateUserController,
     deleteUserController
 } = require('../../controllers/authenticationController');
+const {
+    badRequestJsonResponse,
+    notFoundJsonResponse,
+    unauthorizedJsonResponse,
+    internalErrorJsonResponse,
+    successJsonResponse,
+} = require('../../utils/jsonResponses/jsonResponses');
 
 const authenticationService = require('../../services/authentication/authentication');
+const User = require('../../models/userModel');
+const updateUser = require('../../services/authentication/update');
 
 // Mock service
 jest.mock('../../services/authentication/authentication');
+jest.mock('../utils/jsonResponses/jsonResponses', () => ({
+    successJsonResponse: jest.fn((data) => ({ status: 'success', data })),
+    badRequestJsonResponse: jest.fn((msg) => ({ status: 'bad', msg })),
+    internalErrorJsonResponse: jest.fn((msg) => ({ status: 'error', msg })),
+    // Add other response functions if needed
+}));
 
 describe('Authentication Controllers', () => {
-    // Setup request/response mocks
     const mockRequest = (body = {}) => ({ body });
     const mockResponse = () => ({
         status: jest.fn().mockReturnThis(),
         json: jest.fn()
     });
 
-    // Reset mocks before each test
     beforeEach(() => {
         jest.clearAllMocks();
     });
 
     describe('registerController', () => {
-        it('should register new user successfully', async () => {
-            // Mock successful registration
-            authenticationService.register.mockResolvedValue({
-                username: 'testuser',
-                password: 'hashedpassword'
+        let req, res;
+
+        beforeEach(() => {
+            req = {
+                body: {
+                    username: 'testuser',
+                    password: 'password123',
+                    email: 'test@example.com'
+                }
+            };
+            res = {
+                json: jest.fn()
+            };
+            successJsonResponse.mockImplementation((data) => ({ status: 'success', data }));
+            badRequestJsonResponse.mockImplementation((msg) => ({ status: 'bad', msg }));
+            internalErrorJsonResponse.mockImplementation((msg) => ({ status: 'error', msg }));
+        });
+
+        afterEach(() => {
+            jest.clearAllMocks();
+        });
+        it('should successfully register a new user and return the correct format', async () => {
+            // Mocking the save method of User model
+            const mockSave = jest.fn().mockResolvedValue(true);
+            User.mockImplementation(() => ({
+                save: mockSave,
+                username: 'testuser2',
+                email: 'test2@example.com',
+            }));
+
+            // Mock bcrypt to return a fake hashed password
+            bcrypt.hash.mockResolvedValue('hashed_password');
+
+            const userData = {
+                username: 'testuser2',
+                password: 'testuser2',
+                email: 'test2@example.com',
+                riskAversion: 7,
+                volatilityTolerance: 6,
+                growthFocus: 8,
+                cryptoExperience: 5,
+                innovationTrust: 7,
+                impactInterest: 6,
+                diversification: 8,
+                holdingPatience: 7,
+                monitoringFrequency: 8,
+                adviceOpenness: 6,
+            };
+
+            // Mock the User.findOne method to return null (no existing user)
+            User.findOne.mockResolvedValue(null);
+
+            const result = await register(userData);
+
+            // Verify the results
+            expect(User.findOne).toHaveBeenCalledWith({
+                $or: [
+                    { username: 'testuser2' },
+                    { email: 'test2@example.com' },
+                ],
             });
+            expect(bcrypt.hash).toHaveBeenCalledWith('testuser2', 10); // Check if bcrypt.hash was called with correct arguments
+            expect(mockSave).toHaveBeenCalled(); // Ensure save method was called
 
-            // Setup test data
-            const req = mockRequest({
-                username: 'testuser',
-                password: 'Test123!'
-            });
-            const res = mockResponse();
-
-            // Execute controller
-            await registerController(req, res);
-
-            // Verify response
-            expect(res.json).toHaveBeenCalledWith({
+            expect(result).toEqual({
                 status: 200,
                 data: {
                     type: 'Success',
-                    message: 'username: testuser, password: hashedpassword'
-                }
+                    message: {
+                        username: 'testuser2',
+                        email: 'test2@example.com',
+                        riskAversion: 7,
+                        volatilityTolerance: 6,
+                        growthFocus: 8,
+                        cryptoExperience: 5,
+                        innovationTrust: 7,
+                        impactInterest: 6,
+                        diversification: 8,
+                        holdingPatience: 7,
+                        monitoringFrequency: 8,
+                        adviceOpenness: 6,
+                    },
+                },
             });
         });
 
-        it('should handle duplicate username', async () => {
-            // Mock registration failure
+        it('should handle user already exists error and return a bad request response', async () => {
+            // Mock an error indicating user already exists
             authenticationService.register.mockRejectedValue(new Error('User already exists'));
 
-            // Setup test data
-            const req = mockRequest({
-                username: 'testuser',
-                password: 'Test123!'
-            });
-            const res = mockResponse();
-
-            // Execute controller
+            // Call the registerController function
             await registerController(req, res);
 
-            // Verify error response
-            expect(res.json).toHaveBeenCalledWith({
-                status: 400,
-                error: {
-                    type: 'BadRequest',
-                    message: 'User already exists'
-                }
-            });
+            // Verify that the response is a bad request with the correct error message
+            expect(res.json).toHaveBeenCalledWith(badRequestJsonResponse('User already exists'));
+        });
+
+        it('should handle server error and return an internal error response', async () => {
+            // Mock an error that isn't handled specifically (a general error)
+            authenticationService.register.mockRejectedValue(new Error('Some server error'));
+
+            // Call the registerController function
+            await registerController(req, res);
+
+            // Verify that the response is an internal error with the correct error message
+            expect(res.json).toHaveBeenCalledWith(internalErrorJsonResponse('Some server error'));
+        });
+
+        it('should handle server error', async () => {
+            authenticationService.register.mockRejectedValue(new Error('DB error'));
+
+            await registerController(req, res);
+
+            expect(res.json).toHaveBeenCalledWith({ status: 'error', msg: 'DB error' });
         });
     });
 
     describe('loginController', () => {
         it('should login successfully with valid credentials', async () => {
-            // Mock successful login
             authenticationService.login.mockResolvedValue('jwt_token');
 
-            // Setup test data
             const req = mockRequest({
                 username: 'testuser',
                 password: 'Test123!'
             });
             const res = mockResponse();
 
-            // Execute controller
             await loginController(req, res);
 
-            // Verify response
             expect(res.json).toHaveBeenCalledWith({
                 status: 200,
                 data: {
@@ -102,20 +176,16 @@ describe('Authentication Controllers', () => {
         });
 
         it('should reject invalid credentials', async () => {
-            // Mock login failure
             authenticationService.login.mockRejectedValue(new Error('Invalid credentials'));
 
-            // Setup test data
             const req = mockRequest({
                 username: 'testuser',
                 password: 'wrongpass'
             });
             const res = mockResponse();
 
-            // Execute controller
             await loginController(req, res);
 
-            // Verify error response
             expect(res.json).toHaveBeenCalledWith({
                 status: 401,
                 error: {
@@ -126,77 +196,79 @@ describe('Authentication Controllers', () => {
         });
     });
 
-    describe('updateUserController', () => {
-        it('should update user successfully', async () => {
-            // Mock successful update
-            authenticationService.updateUser.mockResolvedValue({
-                username: 'updateduser',
-                password: 'hashedpassword'
-            });
+    describe('updateUser', () => {
+        let mockUser;
 
-            // Setup test data
-            const req = mockRequest({
-                username: 'testuser',
-                newUsername: 'updateduser'
-            });
-            const res = mockResponse();
+        beforeEach(() => {
+            jest.clearAllMocks();
 
-            // Execute controller
-            await updateUserController(req, res);
+            mockUser = {
+                username: 'oldUsername',
+                password: 'oldPassword',
+                email: 'old@example.com',
+                save: jest.fn().mockResolvedValue(true)
+            };
 
-            // Verify response
-            expect(res.json).toHaveBeenCalledWith({
-                status: 200,
-                data: {
-                    type: 'Success',
-                    message: {
-                        username: 'updateduser',
-                        password: 'hashedpassword'
-                    }
-                }
+            User.findOne.mockImplementation(({ username, email }) => {
+                if (username === 'oldUsername') return Promise.resolve(mockUser);
+                if (username === 'newUsername') return Promise.resolve(null);
+                if (email === 'existing@example.com') return Promise.resolve({});
+                return Promise.resolve(null);
             });
         });
+        it('should update both username and password successfully', async () => {
+            bcrypt.hash.mockResolvedValue('hashedPassword');
 
-        it('should handle non-existent user', async () => {
-            // Mock update failure
-            authenticationService.updateUser.mockRejectedValue(new Error('User not found'));
-
-            // Setup test data
-            const req = mockRequest({
-                username: 'nonexistent',
-                newUsername: 'newname'
+            const updatedUser = await updateUser('oldUsername', {
+                newUsername: 'newUsername',
+                newPassword: 'newPassword'
             });
-            const res = mockResponse();
 
-            // Execute controller
-            await updateUserController(req, res);
-
-            // Verify error response
-            expect(res.json).toHaveBeenCalledWith({
-                status: 404,
-                error: {
-                    type: 'NotFound',
-                    message: 'User not found'
-                }
+            expect(User.findOne).toHaveBeenCalledWith({ username: 'oldUsername' });
+            expect(User.findOne).toHaveBeenCalledWith({ username: 'newUsername' });
+            expect(bcrypt.hash).toHaveBeenCalledWith('newPassword', 10);
+            expect(mockUser.username).toBe('newUsername');
+            expect(mockUser.password).toBe('hashedPassword');
+            expect(mockUser.save).toHaveBeenCalled();
+            expect(updatedUser.username).toBe('newUsername');
+        });
+        it('should throw error if new username already exists', async () => {
+            User.findOne.mockImplementation(({ username }) => {
+                if (username === 'oldUsername') return Promise.resolve(mockUser);
+                if (username === 'takenUsername') return Promise.resolve({});
+                return Promise.resolve(null);
             });
+
+            await expect(updateUser('oldUsername', {
+                newUsername: 'takenUsername'
+            })).rejects.toThrow('Username already exists');
+        });
+        it('should throw error if riskAversion is out of range', async () => {
+            await expect(updateUser('oldUsername', {
+                riskAversion: 11
+            })).rejects.toThrow('riskAversion must be between 1 and 10');
+        });
+        it('should handle bcrypt.hash errors', async () => {
+            bcrypt.hash.mockRejectedValue(new Error('Hashing error'));
+
+            await expect(updateUser('oldUsername', {
+                newPassword: 'newPassword'
+            })).rejects.toThrow('Hashing error');
         });
     });
 
+
     describe('deleteUserController', () => {
         it('should delete user successfully', async () => {
-            // Mock successful deletion
             authenticationService.deleteUser.mockResolvedValue({
                 username: 'testuser'
             });
 
-            // Setup test data
             const req = mockRequest({ username: 'testuser' });
             const res = mockResponse();
 
-            // Execute controller
             await deleteUserController(req, res);
 
-            // Verify response
             expect(res.json).toHaveBeenCalledWith({
                 status: 200,
                 data: {
@@ -209,17 +281,13 @@ describe('Authentication Controllers', () => {
         });
 
         it('should handle non-existent user', async () => {
-            // Mock deletion failure
             authenticationService.deleteUser.mockRejectedValue(new Error('User not found'));
 
-            // Setup test data
             const req = mockRequest({ username: 'nonexistent' });
             const res = mockResponse();
 
-            // Execute controller
             await deleteUserController(req, res);
 
-            // Verify error response
             expect(res.json).toHaveBeenCalledWith({
                 status: 404,
                 error: {

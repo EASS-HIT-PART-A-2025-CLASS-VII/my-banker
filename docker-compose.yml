@@ -1,5 +1,5 @@
 services:
-  app:
+  backend:
     build:
       context: ./backend
       dockerfile: Dockerfile
@@ -8,7 +8,7 @@ services:
       - "8000:8000"
     depends_on:
       - mongo
-      - ollama 
+      - ollama
     environment:
       - MONGO_URI=mongodb://mongo:27017/my-banker
       - OLLAMA_API=http://ollama:11434
@@ -17,6 +17,19 @@ services:
       - ETHERSCAN_API_KEY=AB486YE7ED8U82X66GYU9KXEXKI9NXRTAZ
     volumes:
       - ./backend:/usr/src/app/backend
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: frontend
+    ports:
+      - "3000:80"
+    environment:
+      - REACT_APP_API_URL=http://backend:8000
+    depends_on:
+      - backend
     restart: unless-stopped
 
   mongo:
@@ -29,14 +42,14 @@ services:
     restart: unless-stopped
 
   ollama:
-      image: ollama/ollama
-      container_name: ollama
-      ports:
-        - "11434:11434"
-      volumes:
-        - ollama-data:/root/.ollama
-      restart: unless-stopped
-      privileged: true
+    image: ollama/ollama
+    container_name: ollama
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama-data:/root/.ollama
+    restart: unless-stopped
+    privileged: true
 
 volumes:
   mongo-data:
