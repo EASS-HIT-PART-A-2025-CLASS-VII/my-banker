@@ -1,133 +1,110 @@
-// Import required modules
-const updateUser = require('../../../services/authentication/update');
-const User = require('../../../models/userModel');
 const bcrypt = require('bcryptjs');
+const User = require('../../../models/userModel');
+const updateUser = require('../../../services/authentication/update');
 
-// Mock the User model and bcrypt
 jest.mock('../../../models/userModel');
 jest.mock('bcryptjs');
 
-describe('Update User Service', () => {
-    // Setup test data before each test
+describe('updateUser', () => {
+    let mockUser;
+
     beforeEach(() => {
         jest.clearAllMocks();
+        mockUser = {
+            username: 'originalUser',
+            password: 'oldHashedPassword',
+            email: 'original@example.com',
+            save: jest.fn(),
+            riskAversion: 5,
+            volatilityTolerance: 5,
+            growthFocus: 5,
+            cryptoExperience: 5,
+            innovationTrust: 5,
+            impactInterest: 5,
+            diversification: 5,
+            holdingPatience: 5,
+            monitoringFrequency: 5,
+            adviceOpenness: 5,
+        };
     });
 
-    // Test successful update with both username and password
-    it('should update both username and password successfully', async () => {
-        // Mock user data
-        const mockUser = {
-            username: 'oldUsername',
-            password: 'oldPassword',
-            save: jest.fn()
-        };
+    it('should updates username successfully', async () => {
+        User.findOne
+            .mockResolvedValueOnce(mockUser)
+            .mockResolvedValueOnce(null);
 
-        // Mock bcrypt hash function
-        const hashedPassword = 'hashedNewPassword123';
-        bcrypt.hash.mockResolvedValue(hashedPassword);
+        const result = await updateUser('originalUser', { newUsername: 'newUser' });
 
-        // Mock User.findOne to return a user
+        expect(mockUser.username).toBe('newUser');
+        expect(mockUser.save).toHaveBeenCalled();
+        expect(result.username).toBe('newUser');
+    });
+
+    it('should updates password successfully', async () => {
+        User.findOne.mockResolvedValue(mockUser);
+        bcrypt.hash.mockResolvedValue('newHashedPassword');
+
+        const result = await updateUser('originalUser', { newPassword: 'newPass123' });
+
+        expect(mockUser.password).toBe('newHashedPassword');
+        expect(mockUser.save).toHaveBeenCalled();
+        expect(result).toHaveProperty('username', 'originalUser');
+    });
+
+    it('should updates email successfully', async () => {
+        User.findOne
+            .mockResolvedValueOnce(mockUser) 
+            .mockResolvedValueOnce(null);
+
+        const result = await updateUser('originalUser', { email: 'new@example.com' });
+
+        expect(mockUser.email).toBe('new@example.com');
+        expect(mockUser.save).toHaveBeenCalled();
+        expect(result.email).toBe('new@example.com');
+    });
+
+    it('should updates profile fields successfully', async () => {
         User.findOne.mockResolvedValue(mockUser);
 
-        // Execute update function
-        const result = await updateUser(
-            'oldUsername',
-            'oldPassword',
-            'newUsername',
-            'newPassword'
-        );
-
-        // Verify results
-        expect(User.findOne).toHaveBeenCalledWith({ username: 'oldUsername' });
-        expect(bcrypt.hash).toHaveBeenCalledWith('newPassword', 10);
-        expect(mockUser.save).toHaveBeenCalled();
-        expect(result).toEqual({
-            username: 'newUsername',
-            password: 'newPassword'
+        const result = await updateUser('originalUser', {
+            riskAversion: 8,
+            cryptoExperience: 10
         });
+
+        expect(mockUser.riskAversion).toBe(8);
+        expect(mockUser.cryptoExperience).toBe(10);
+        expect(mockUser.save).toHaveBeenCalled();
+        expect(result.riskAversion).toBe(8);
     });
 
-    // Test update with only username change
-    it('should update only username when no new password is provided', async () => {
-        // Mock user data
-        const mockUser = {
-            username: 'oldUsername',
-            password: 'oldPassword',
-            save: jest.fn()
-        };
-
-        // Mock User.findOne to return a user
-        User.findOne.mockResolvedValue(mockUser);
-
-        // Execute update function
-        const result = await updateUser(
-            'oldUsername',
-            null,
-            'newUsername',
-            null
-        );
-
-        // Verify results
-        expect(User.findOne).toHaveBeenCalledWith({ username: 'oldUsername' });
-        expect(bcrypt.hash).not.toHaveBeenCalled();
-        expect(mockUser.save).toHaveBeenCalled();
-        expect(result).toEqual({
-            username: 'newUsername',
-            password: null
-        });
-    });
-
-    // Test user not found scenario
-    it('should throw an error when user is not found', async () => {
-        // Mock User.findOne to return null
+    it('should throws error when user not found', async () => {
         User.findOne.mockResolvedValue(null);
 
-        // Execute and verify error
-        await expect(updateUser(
-            'nonexistentUser',
-            'password',
-            'newUsername',
-            'newPassword'
-        )).rejects.toThrow('User not found');
+        await expect(updateUser('nonexistentUser', {})).rejects.toThrow('User not found');
     });
 
-    // Test database error handling
-    it('should handle database errors properly', async () => {
-        // Mock database error
-        const dbError = new Error('Database connection failed');
-        User.findOne.mockRejectedValue(dbError);
+    it('should throws error if new username already exists', async () => {
+        User.findOne
+            .mockResolvedValueOnce(mockUser)  
+            .mockResolvedValueOnce({ username: 'newUser' }); 
 
-        // Execute and verify error
-        await expect(updateUser(
-            'username',
-            'password',
-            'newUsername',
-            'newPassword'
-        )).rejects.toThrow('Database connection failed');
+        await expect(updateUser('originalUser', { newUsername: 'newUser' }))
+            .rejects.toThrow('Username already exists');
     });
 
-    // Test bcrypt error handling
-    it('should handle bcrypt hash errors', async () => {
-        // Mock user data
-        const mockUser = {
-            username: 'oldUsername',
-            password: 'oldPassword',
-            save: jest.fn()
-        };
+    it('should throws error if new email already exists', async () => {
+        User.findOne
+            .mockResolvedValueOnce(mockUser)        
+            .mockResolvedValueOnce({ email: 'taken@example.com' }); 
 
-        // Mock User.findOne to return a user
+        await expect(updateUser('originalUser', { email: 'taken@example.com' }))
+            .rejects.toThrow('Email already exists');
+    });
+
+    it('should throws error for out of range profile value', async () => {
         User.findOne.mockResolvedValue(mockUser);
 
-        // Mock bcrypt hash error
-        const hashError = new Error('Hashing failed');
-        bcrypt.hash.mockRejectedValue(hashError);
-
-        // Execute and verify error
-        await expect(updateUser(
-            'username',
-            'password',
-            'newUsername',
-            'newPassword'
-        )).rejects.toThrow('Hashing failed');
+        await expect(updateUser('originalUser', { growthFocus: 11 }))
+            .rejects.toThrow('growthFocus must be between 1 and 10');
     });
 });

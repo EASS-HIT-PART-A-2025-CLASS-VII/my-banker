@@ -1,115 +1,85 @@
-// Import required modules
 const register = require('../../../services/authentication/register');
-const User = require('../../../models/userModel');
 const bcrypt = require('bcryptjs');
+const User = require('../../../models/userModel');
 
-// Mock the User model and bcrypt
-jest.mock('../../../models/userModel');
+
 jest.mock('bcryptjs');
+jest.mock('../../../models/userModel');
 
-describe('Register Service', () => {
-    // Setup test data before each test
+describe('register', () => {
     beforeEach(() => {
         jest.clearAllMocks();
     });
 
-    // Test successful user registration
+    const mockUserData = {
+        username: 'testuser2',
+        password: 'testuser2',
+        email: 'test2@example.com',
+        riskAversion: 7,
+        volatilityTolerance: 6,
+        growthFocus: 8,
+        cryptoExperience: 5,
+        innovationTrust: 7,
+        impactInterest: 6,
+        diversification: 8,
+        holdingPatience: 7,
+        monitoringFrequency: 8,
+        adviceOpenness: 6,
+    };
+
     it('should register a new user successfully', async () => {
-        // Mock user data
-        const mockUser = {
-            username: 'testuser',
-            password: 'hashedPassword123',
-            save: jest.fn()
-        };
-
-        // Mock bcrypt hash function
-        const hashedPassword = 'hashedPassword123';
-        bcrypt.hash.mockResolvedValue(hashedPassword);
-
-        // Mock User.findOne to return null (user doesn't exist)
         User.findOne.mockResolvedValue(null);
+        bcrypt.hash.mockResolvedValue('hashed_password');
 
-        // Mock User constructor
-        User.mockImplementation(() => mockUser);
+        const saveMock = jest.fn().mockResolvedValue();
 
-        // Execute registration
-        const result = await register('testuser', 'password123');
+        User.mockImplementation((data) => ({
+            ...data,
+            save: saveMock
+        }));
 
-        // Verify the results
-        expect(User.findOne).toHaveBeenCalledWith({ username: 'testuser' });
-        expect(bcrypt.hash).toHaveBeenCalledWith('password123', 10);
-        expect(mockUser.save).toHaveBeenCalled();
+        const result = await register(mockUserData);
+
+        expect(User.findOne).toHaveBeenCalledWith({
+            $or: [
+                { username: mockUserData.username },
+                { email: mockUserData.email }
+            ]
+        });
+
+        expect(saveMock).toHaveBeenCalled();
+
         expect(result).toEqual({
-            username: 'testuser',
-            password: 'password123'
+            username: mockUserData.username,
+            email: mockUserData.email,
+            riskAversion: 7,
+            volatilityTolerance: 6,
+            growthFocus: 8,
+            cryptoExperience: 5,
+            innovationTrust: 7,
+            impactInterest: 6,
+            diversification: 8,
+            holdingPatience: 7,
+            monitoringFrequency: 8,
+            adviceOpenness: 6
         });
     });
 
-    // Test user already exists scenario
-    it('should throw error when user already exists', async () => {
-        // Mock existing user
-        const existingUser = {
-            username: 'testuser',
-            password: 'hashedPassword123'
-        };
+    it('should throw error if username already exists', async () => {
+        User.findOne.mockResolvedValue({ username: 'testuser2' });
 
-        // Mock User.findOne to return existing user
-        User.findOne.mockResolvedValue(existingUser);
-
-        // Execute and verify error
-        await expect(register('testuser', 'password123'))
-            .rejects
-            .toThrow('User already exists');
+        await expect(register(mockUserData)).rejects.toThrow('Username already exists');
     });
 
-    // Test database error handling
-    it('should handle database errors properly', async () => {
-        // Mock database error
-        const dbError = new Error('Database connection failed');
-        User.findOne.mockRejectedValue(dbError);
+    it('should throw error if email already exists', async () => {
+        User.findOne.mockResolvedValue({ email: 'test2@example.com', username: 'otheruser' });
 
-        // Execute and verify error
-        await expect(register('testuser', 'password123'))
-            .rejects
-            .toThrow('Database connection failed');
+        await expect(register(mockUserData)).rejects.toThrow('Email already exists');
     });
 
-    // Test bcrypt error handling
-    it('should handle bcrypt hash errors', async () => {
-        // Mock User.findOne to return null
-        User.findOne.mockResolvedValue(null);
+    it('should throw generic error', async () => {
+        User.findOne.mockRejectedValue(new Error('Database error'));
 
-        // Mock bcrypt hash error
-        const hashError = new Error('Hashing failed');
-        bcrypt.hash.mockRejectedValue(hashError);
-
-        // Execute and verify error
-        await expect(register('testuser', 'password123'))
-            .rejects
-            .toThrow('Hashing failed');
-    });
-
-    // Test save error handling
-    it('should handle save errors', async () => {
-        // Mock user data with save error
-        const mockUser = {
-            username: 'testuser',
-            password: 'hashedPassword123',
-            save: jest.fn().mockRejectedValue(new Error('Save failed'))
-        };
-
-        // Mock User.findOne to return null
-        User.findOne.mockResolvedValue(null);
-
-        // Mock bcrypt hash function
-        bcrypt.hash.mockResolvedValue('hashedPassword123');
-
-        // Mock User constructor
-        User.mockImplementation(() => mockUser);
-
-        // Execute and verify error
-        await expect(register('testuser', 'password123'))
-            .rejects
-            .toThrow('Save failed');
+        await expect(register(mockUserData)).rejects.toThrow('Database error');
     });
 });
