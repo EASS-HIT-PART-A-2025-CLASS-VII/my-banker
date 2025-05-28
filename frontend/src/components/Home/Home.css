@@ -10,7 +10,7 @@
 /* Header */
 .header {
   display: flex;
-  justify-content: space-between;
+  justify-content: space-between; /* Aligns items on opposite sides */
   align-items: center;
   padding: 24px 32px;
   border-bottom: 1px solid #4B5563; /* gray-700 */
@@ -21,6 +21,7 @@
   font-weight: bold;
   color: #F9B64D;
   margin: 0;
+  flex-grow: 1; /* Ensures the title is pushed to the left */
 }
 
 .nav-list {
@@ -40,6 +41,7 @@
 .nav-item:hover {
   color: #F9B64D;
 }
+
 
 /* Hero Section */
 .hero-section {
