@@ -6,7 +6,7 @@ jest.mock('../../services/report/generateReport');
 
 describe('Report Controller', () => {
     // Setup test utilities
-    const mockRequest = (body = {}) => ({ body });
+    const mockRequest = (body = {}, user = {}) => ({ body, user });
     const mockResponse = () => ({
         status: jest.fn().mockReturnThis(),
         json: jest.fn()
@@ -29,11 +29,11 @@ describe('Report Controller', () => {
             // Configure mock behavior
             generateReport.mockResolvedValue(mockReport);
 
-            // Prepare request
+            // Prepare request with mock user
             const req = mockRequest({
                 walletAddress: '0x123',
                 chain: 'ETH'
-            });
+            }, { username: 'testuser' });
 
             // Prepare response
             const res = mockResponse();
@@ -55,7 +55,7 @@ describe('Report Controller', () => {
             // Prepare request with missing chain
             const req = mockRequest({
                 walletAddress: '0x123'
-            });
+            }, { username: 'testuser' });  // Adding mock user to avoid error
 
             // Prepare response
             const res = mockResponse();
@@ -77,11 +77,11 @@ describe('Report Controller', () => {
             // Configure mock error
             generateReport.mockRejectedValue(new Error('Failed to fetch data'));
 
-            // Prepare request
+            // Prepare request with mock user
             const req = mockRequest({
                 walletAddress: '0x123',
                 chain: 'ETH'
-            });
+            }, { username: 'testuser' });
 
             // Prepare response
             const res = mockResponse();

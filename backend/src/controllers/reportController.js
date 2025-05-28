@@ -15,12 +15,13 @@ const reportController = async (req, res) => {
     try {
         // Extract request parameters
         const { walletAddress, chain } = req.body;
+        const username = req.user.username;
 
         // Validate required parameters
         if (!walletAddress || !chain) return res.json(badRequestJsonResponse('walletAddress and chain are required'));
 
         // Generate wallet report
-        const report = await generateReport(walletAddress, chain);
+        const report = await generateReport(username, walletAddress, chain);
 
         // Return success response
         return res.json(successJsonResponse(report));
