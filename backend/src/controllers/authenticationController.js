@@ -102,9 +102,81 @@ const updateUserController = async (req, res) => {
   }
 };
 
+/**
+ * @function updateEmailController
+ * @description Updates user email address
+ */
+const updateEmailController = async (req, res) => {
+  try {
+    const { username, newEmail } = req.body;
+    if (!username || !newEmail) {
+      return res.json(badRequestJsonResponse('Username and new email are required'));
+    }
+
+    const user = await authenticationService.updateEmail(username, newEmail);
+    return res.json(successJsonResponse(user));
+  } catch (error) {
+    if (error.message === 'User not found') {
+      return res.json(notFoundJsonResponse(error.message));
+    }
+    if (error.message === 'Email already exists') {
+      return res.json(badRequestJsonResponse(error.message));
+    }
+    return res.json(internalErrorJsonResponse(error.message));
+  }
+};
+
+/**
+ * @function updatePasswordController
+ * @description Updates user password
+ */
+const updatePasswordController = async (req, res) => {
+  try {
+    const { username, newPassword } = req.body;
+    if (!username || !newPassword) {
+      return res.json(badRequestJsonResponse('Username and new password are required'));
+    }
+
+    const user = await authenticationService.updatePassword(username, newPassword);
+    return res.json(successJsonResponse(user));
+  } catch (error) {
+    if (error.message === 'User not found') {
+      return res.json(notFoundJsonResponse(error.message));
+    }
+    return res.json(internalErrorJsonResponse(error.message));
+  }
+};
+
+/**
+ * @function updatePreferencesController
+ * @description Updates user investment preferences
+ */
+const updatePreferencesController = async (req, res) => {
+  try {
+    const { username, ...preferences } = req.body;
+    if (!username) {
+      return res.json(badRequestJsonResponse('Username is required'));
+    }
+
+    const user = await authenticationService.updatePreferences(username, preferences);
+    return res.json(successJsonResponse(user));
+  } catch (error) {
+    if (error.message === 'User not found') {
+      return res.json(notFoundJsonResponse(error.message));
+    }
+    if (error.message.includes('must be a number between 1 and 10')) {
+      return res.json(badRequestJsonResponse(error.message));
+    }
+    return res.json(internalErrorJsonResponse(error.message));
+  }
+};
+
 module.exports = {
   loginController,
   registerController,
   updateUserController,
-  deleteUserController
+  deleteUserController,
+  updateEmailController,
+  updatePasswordController,
+  updatePreferencesController
 };
