@@ -1,19 +1,11 @@
 const User = require('../../../models/userModel');
 
-/**
- * @function updateEmail
- * @description Updates user email address
- * @param {string} username - Current username
- * @param {string} newEmail - New email address
- * @returns {Object} Updated user data without password
- */
 const updateEmail = async (username, newEmail) => {
     try {
         if (!newEmail) throw new Error('New email is required');
         
         const user = await User.findOne({ username });
         if (!user) throw new Error('User not found');
-        
         
         const existingEmail = await User.findOne({ email: newEmail });
         if (existingEmail) throw new Error('Email already exists');

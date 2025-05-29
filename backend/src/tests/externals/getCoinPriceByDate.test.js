@@ -1,18 +1,15 @@
 const axios = require('axios');
 const { getHistoricalPrice, formatDate } = require('../../externals/abstractLayersForAPI/getCoinPriceByDate');
 
-// Mock axios
 jest.mock('axios');
 
 describe('Coin Price Utilities', () => {
-    // Reset mocks before each test
     beforeEach(() => {
         jest.clearAllMocks();
     });
 
     describe('getHistoricalPrice', () => {
         it('should return USD price when data is available', async () => {
-            // Mock successful API response
             axios.get.mockResolvedValue({
                 data: {
                     market_data: {
@@ -31,7 +28,6 @@ describe('Coin Price Utilities', () => {
         });
 
         it('should return null when price data is missing', async () => {
-            // Mock API response without price data
             axios.get.mockResolvedValue({
                 data: {}
             });
@@ -47,7 +43,6 @@ describe('Coin Price Utilities', () => {
         });
 
         it('should handle API errors', async () => {
-            // Mock API error
             axios.get.mockRejectedValue(new Error('API Error'));
 
             await expect(getHistoricalPrice('bitcoin', '01-01-2023'))
@@ -84,7 +79,7 @@ describe('Coin Price Utilities', () => {
         });
 
         it('should handle different time zones', () => {
-            const date = new Date(Date.UTC(2023, 11, 31, 23, 0, 0)); // 2023-12-31T23:00:00Z
+            const date = new Date(Date.UTC(2023, 11, 31, 23, 0, 0)); 
             const result = formatDate(date.toISOString());
             expect(result).toBe('31-12-2023');
         });

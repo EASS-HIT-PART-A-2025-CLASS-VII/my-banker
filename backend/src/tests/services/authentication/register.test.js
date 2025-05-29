@@ -2,7 +2,6 @@ const register = require('../../../services/authentication/register');
 const bcrypt = require('bcryptjs');
 const User = require('../../../models/userModel');
 
-
 jest.mock('bcryptjs');
 jest.mock('../../../models/userModel');
 

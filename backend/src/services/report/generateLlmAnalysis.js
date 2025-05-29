@@ -1,11 +1,6 @@
 const axios = require('axios');
 
-/**
- * @function generateLlmAnalysis
- * @description Generates AI-powered analysis of financial reports using LLM
- */
 async function generateLlmAnalysis(walletInsightsInput, userPreferences) {
-    // Configure LLM request
     const payload = {
         model: 'mistral',
         prompt: `
@@ -33,7 +28,6 @@ async function generateLlmAnalysis(walletInsightsInput, userPreferences) {
     };
 
     try {
-        // Send request to Ollama API
         const response = await axios.post('http://ollama:11434/api/generate', payload, {
             headers: {
                 'Content-Type': 'application/json'

@@ -1,19 +1,13 @@
-// Import the function to test
 const generateActionReport = require('../../../services/report/generateActionReport');
 
 describe('Generate Action Report', () => {
-    // Test case for empty transactions array
     it('should handle empty transactions array', () => {
-        // Mock wallet info with no transactions
         const walletInfo = {
             coin: 'BTC',
             transactions: []
         };
-
-        // Execute report generation
         const result = generateActionReport(walletInfo);
 
-        // Verify the results
         expect(result).toEqual({
             coin: 'BTC',
             calculationMethod: 'FIFO',
@@ -23,9 +17,7 @@ describe('Generate Action Report', () => {
         });
     });
 
-    // Test case for transactions with fees
     it('should calculate correct totals for transactions with fees', () => {
-        // Mock wallet info with transactions including fees
         const walletInfo = {
             coin: 'ETH',
             transactions: [
@@ -33,11 +25,8 @@ describe('Generate Action Report', () => {
                 { amount: 2.5, fee: 0.2 }
             ]
         };
-
-        // Execute report generation
         const result = generateActionReport(walletInfo);
 
-        // Verify the results
         expect(result).toEqual({
             coin: 'ETH',
             calculationMethod: 'FIFO',
@@ -47,9 +36,7 @@ describe('Generate Action Report', () => {
         });
     });
 
-    // Test case for transactions without fees
     it('should handle transactions without fees', () => {
-        // Mock wallet info with transactions without fees
         const walletInfo = {
             coin: 'ETH',
             transactions: [
@@ -57,11 +44,8 @@ describe('Generate Action Report', () => {
                 { amount: 200 }
             ]
         };
-
-        // Execute report generation
         const result = generateActionReport(walletInfo);
 
-        // Verify the results
         expect(result).toEqual({
             coin: 'ETH',
             calculationMethod: 'FIFO',
@@ -71,9 +55,7 @@ describe('Generate Action Report', () => {
         });
     });
 
-    // Test case for mixed transactions (with and without fees)
     it('should handle mixed transactions with and without fees', () => {
-        // Mock wallet info with mixed transactions
         const walletInfo = {
             coin: 'LTC',
             transactions: [
@@ -82,11 +64,8 @@ describe('Generate Action Report', () => {
                 { amount: 3.0, fee: 0.2 }
             ]
         };
-
-        // Execute report generation
         const result = generateActionReport(walletInfo);
 
-        // Verify the results
         expect(result).toEqual({
             coin: 'LTC',
             calculationMethod: 'FIFO',

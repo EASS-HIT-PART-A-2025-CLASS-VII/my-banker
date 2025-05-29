@@ -6,8 +6,8 @@ const {
     updatePreferencesController,
     deleteUserController
 } = require('../../controllers/authenticationController');
+const authenticationService = require('../../services/authentication/authentication');
 
-// Mock the authentication service
 jest.mock('../../services/authentication/authentication', () => ({
     register: jest.fn(),
     login: jest.fn(),
@@ -17,10 +17,7 @@ jest.mock('../../services/authentication/authentication', () => ({
     deleteUser: jest.fn()
 }));
 
-const authenticationService = require('../../services/authentication/authentication');
-
 describe('Authentication Controller Tests', () => {
-    // Test user data
     const mockUser = {
         username: 'testuser',
         password: 'Test@1234',
@@ -36,8 +33,6 @@ describe('Authentication Controller Tests', () => {
         monitoringFrequency: 2,
         adviceOpenness: 5
     };
-
-    // Mock response object
     const mockRes = () => {
         const res = {};
         res.json = jest.fn().mockReturnValue(res);
@@ -45,11 +40,9 @@ describe('Authentication Controller Tests', () => {
     };
 
     beforeEach(() => {
-        // Clear all mocks before each test
         jest.clearAllMocks();
     });
 
-    // Register Controller Tests
     describe('Register Controller', () => {
         test('should register new user successfully', async () => {
             authenticationService.register.mockResolvedValue(mockUser);
@@ -81,7 +74,6 @@ describe('Authentication Controller Tests', () => {
         });
     });
 
-    // Login Controller Tests
     describe('Login Controller', () => {
         test('should login successfully', async () => {
             const mockToken = 'mock-jwt-token';
@@ -123,7 +115,6 @@ describe('Authentication Controller Tests', () => {
         });
     });
 
-    // Email Update Tests
     describe('Email Update Controller', () => {
         test('should update email successfully', async () => {
             const updatedUser = { ...mockUser, email: 'new@example.com' };
@@ -150,7 +141,6 @@ describe('Authentication Controller Tests', () => {
         });
     });
 
-    // Password Update Tests
     describe('Password Update Controller', () => {
         test('should update password successfully', async () => {
             authenticationService.updatePassword.mockResolvedValue(mockUser);
@@ -169,7 +159,6 @@ describe('Authentication Controller Tests', () => {
         });
     });
 
-    // Preferences Update Tests
     describe('Preferences Update Controller', () => {
         test('should update preferences successfully', async () => {
             const updatedUser = { 
@@ -202,7 +191,6 @@ describe('Authentication Controller Tests', () => {
         });
     });
 
-    // Delete Tests
     describe('Delete Controller', () => {
         test('should delete user successfully', async () => {
             authenticationService.deleteUser.mockResolvedValue(true);

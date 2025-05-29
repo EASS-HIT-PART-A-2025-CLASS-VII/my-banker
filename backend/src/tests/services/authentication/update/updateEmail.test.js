@@ -1,11 +1,9 @@
 const User = require('../../../../models/userModel');
 const updateEmail = require('../../../../services/authentication/update/updateEmail');
 
-// Mock User model
 jest.mock('../../../../models/userModel');
 
 describe('Update Email Service', () => {
-    // Mock user data
     const mockUser = {
         username: 'testuser',
         email: 'old@example.com',
@@ -29,7 +27,6 @@ describe('Update Email Service', () => {
     });
 
     it('should update email successfully', async () => {
-        // Setup mocks
         User.findOne.mockImplementation((query) => {
             if (query.username === 'testuser') return mockUser;
             if (query.email === 'new@example.com') return null;
@@ -37,10 +34,8 @@ describe('Update Email Service', () => {
         });
         mockUser.save.mockResolvedValue(mockUser);
 
-        // Execute test
         const result = await updateEmail('testuser', 'new@example.com');
 
-        // Verify results
         expect(User.findOne).toHaveBeenCalledWith({ username: 'testuser' });
         expect(mockUser.save).toHaveBeenCalled();
         expect(result).toEqual(expect.objectContaining({
@@ -50,34 +45,28 @@ describe('Update Email Service', () => {
     });
 
     it('should handle non-existent user', async () => {
-        // Setup mocks
         User.findOne.mockResolvedValue(null);
 
-        // Execute and verify error
         await expect(updateEmail('nonexistent', 'new@example.com'))
             .rejects
             .toThrow('User not found');
     });
 
     it('should handle duplicate email', async () => {
-        // Setup mocks
         User.findOne.mockImplementation((query) => {
             if (query.username === 'testuser') return mockUser;
             if (query.email === 'existing@example.com') return {};
             return null;
         });
 
-        // Execute and verify error
         await expect(updateEmail('testuser', 'existing@example.com'))
             .rejects
             .toThrow('Email already exists');
     });
 
     it('should handle missing new email', async () => {
-        // Setup mocks
         User.findOne.mockResolvedValue(mockUser);
 
-        // Execute and verify error
         await expect(updateEmail('testuser', null))
             .rejects
             .toThrow('New email is required');

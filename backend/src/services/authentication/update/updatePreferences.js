@@ -1,19 +1,10 @@
 const User = require('../../../models/userModel');
 
-/**
- * @function updatePreferences
- * @description Updates user investment preferences
- * @param {string} username - Current username
- * @param {Object} preferences - New preference values
- * @returns {Object} Updated user data without password
- */
 const updatePreferences = async (username, preferences) => {
     try {
-        // Find existing user
         const user = await User.findOne({ username });
         if (!user) throw new Error('User not found');
 
-        // List of valid preference fields
         const validPreferences = [
             'riskAversion',
             'volatilityTolerance',
@@ -27,7 +18,6 @@ const updatePreferences = async (username, preferences) => {
             'adviceOpenness'
         ];
 
-        // Update provided preferences
         for (const field of validPreferences) {
             if (preferences[field] !== undefined) {
                 const value = parseInt(preferences[field]);
@@ -38,10 +28,8 @@ const updatePreferences = async (username, preferences) => {
             }
         }
 
-        // Save changes
         await user.save();
 
-        // Return updated user data without password
         return {
             username: user.username,
             email: user.email,

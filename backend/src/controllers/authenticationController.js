@@ -8,28 +8,23 @@ const {
 } = require('../utils/jsonResponses/jsonResponses');
 
 /**
- * @function loginController
- * @description Handles user authentication and generates JWT token
+ * Authenticates user and generates JWT token
+ * Assumes req.body contains valid username and password strings
  */
 const loginController = async (req, res) => {
   try {
-    // Generate authentication token
     const token = await authenticationService.login(req.body.username, req.body.password);
 
-    // Return success response with token
     return res.json(successJsonResponse(token));
   } catch (error) {
-    // Handle authentication failure
     if (error.message === 'Invalid credentials') return res.json(unauthorizedJsonResponse(error.message));
-
-    // Handle server errors
     else return res.json(internalErrorJsonResponse(error.message));
   }
 };
 
 /**
- * @function registerController
- * @description Creates new user account
+ * Creates new user account with investment profile
+ * Assumes req.body contains all required user fields and preference ratings (1-10)
  */
 const registerController = async (req, res) => {
   try {
@@ -48,67 +43,53 @@ const registerController = async (req, res) => {
       monitoringFrequency: req.body.monitoringFrequency,
       adviceOpenness: req.body.adviceOpenness
     };
-    // Create new user
     const user = await authenticationService.register(userData);
 
-    // Return success response
     return res.json(successJsonResponse(user));
   } catch (error) {
-    // Handle duplicate user
     if (error.message === 'User already exists') return res.json(badRequestJsonResponse(error.message));
-
-    // Handle server errors
     else return res.json(internalErrorJsonResponse(error.message));
   }
 };
 
 /**
- * @function deleteUserController
- * @description Removes user account from system
+ * Removes user account and associated data
+ * Assumes req.body contains valid username string
  */
 const deleteUserController = async (req, res) => {
   try {
-    // Delete user account
     const user = await authenticationService.deleteUser(req.body);
 
-    // Return success response
     return res.json(successJsonResponse(user));
   } catch (error) {
-    // Handle non-existent user
     if (error.message === 'User not found') return res.json(notFoundJsonResponse(error.message));
-
-    // Handle server errors
     else return res.json(internalErrorJsonResponse(error.message));
   }
 };
 
 /**
- * @function updateUserController
- * @description Updates existing user information
+ * Updates all user's information
+ * Assumes req.body contains username and at least one updatable field
  */
 const updateUserController = async (req, res) => {
   try {
-    // Update user account
     const user = await authenticationService.updateUser(req.body);
 
-    // Return success response
     return res.json(successJsonResponse(user));
   } catch (error) {
-    // Handle non-existent user
     if (error.message === 'User not found') return res.json(notFoundJsonResponse(error.message));
-
-    // Handle server errors
     else return res.json(internalErrorJsonResponse(error.message));
   }
 };
 
 /**
- * @function updateEmailController
- * @description Updates user email address
+ * Updates user's email address
+ * Assumes req.body contains username and valid newEmail string
  */
 const updateEmailController = async (req, res) => {
   try {
     const { username, newEmail } = req.body;
+    
     if (!username || !newEmail) {
       return res.json(badRequestJsonResponse('Username and new email are required'));
     }
@@ -119,7 +100,7 @@ const updateEmailController = async (req, res) => {
     if (error.message === 'User not found') {
       return res.json(notFoundJsonResponse(error.message));
     }
-    if (error.message === 'Email already exists') {
+    else if (error.message === 'Email already exists') {
       return res.json(badRequestJsonResponse(error.message));
     }
     return res.json(internalErrorJsonResponse(error.message));
@@ -127,17 +108,19 @@ const updateEmailController = async (req, res) => {
 };
 
 /**
- * @function updatePasswordController
- * @description Updates user password
+ * Updates user's password with new hashed value
+ * Assumes req.body contains username and newPassword meeting security requirements
  */
 const updatePasswordController = async (req, res) => {
   try {
     const { username, newPassword } = req.body;
+
     if (!username || !newPassword) {
       return res.json(badRequestJsonResponse('Username and new password are required'));
     }
 
     const user = await authenticationService.updatePassword(username, newPassword);
+    
     return res.json(successJsonResponse(user));
   } catch (error) {
     if (error.message === 'User not found') {
@@ -148,8 +131,8 @@ const updatePasswordController = async (req, res) => {
 };
 
 /**
- * @function updatePreferencesController
- * @description Updates user investment preferences
+ * Updates user's investment preferences
+ * Assumes req.body contains username and preference values between 1-10
  */
 const updatePreferencesController = async (req, res) => {
   try {

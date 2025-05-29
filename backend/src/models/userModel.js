@@ -1,9 +1,5 @@
 const mongoose = require('mongoose');
 
-/**
- * @schema UserSchema
- * @description Schema definition for user authentication and profile data
- */
 const userSchema = new mongoose.Schema({
     username: { 
         type: String, 

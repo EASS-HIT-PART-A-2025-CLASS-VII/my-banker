@@ -1,31 +1,24 @@
-// Import required dependencies
 const axios = require('axios');
 
-// Setup axios mock
 jest.mock('axios');
 
-// Create Web3 mock object
 const mockWeb3 = {
   eth: { getBalance: jest.fn() },
   utils: { fromWei: jest.fn() }
 };
 
-// Mock Web3 constructor
 jest.mock('web3', () => ({
   Web3: jest.fn(() => mockWeb3)
 }));
 
-// Import Web3 and wallet data fetcher
 const { Web3 } = require('web3');
 const fetchEthereumWalletData = require('../../../externals/abstractLayersForAPI/fetchWalletData/fetchEthereumWalletData');
 
 describe('Ethereum Wallet Data Functions', () => {
-  // Reset mocks and set default behaviors
   beforeEach(() => {
     Web3.mockClear();
     mockWeb3.eth.getBalance.mockResolvedValue('2000000000000000000');
 
-    // Setup Wei to Ether conversion mock
     mockWeb3.utils.fromWei.mockImplementation((val) => {
       if (val === '2000000000000000000') return '2.0';
       if (val === '1000000000000000000') return '1.0';
@@ -36,7 +29,6 @@ describe('Ethereum Wallet Data Functions', () => {
   });
 
   it('should aggregate wallet data correctly', async () => {
-    // Mock Etherscan API response
     axios.get.mockResolvedValue({
       data: {
         status: '1',
@@ -53,10 +45,8 @@ describe('Ethereum Wallet Data Functions', () => {
       }
     });
 
-    // Execute wallet data fetch
     const walletData = await fetchEthereumWalletData('0xTestAddress');
 
-    // Verify balance
     expect(walletData.balance).toBe(2.0);
   });
 });

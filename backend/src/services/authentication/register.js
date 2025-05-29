@@ -1,13 +1,8 @@
 const bcrypt = require('bcryptjs');
 const User = require('../../models/userModel');
 
-/**
- * @function register
- * @description Creates new user account with all required profile data
- */
 const register = async (userData) => {
     try {
-        // Check for existing user
         const existingUser = await User.findOne({ 
             $or: [
                 { username: userData.username },
@@ -24,7 +19,6 @@ const register = async (userData) => {
 
         const hashedPassword = await bcrypt.hash(userData.password, 10);
 
-        // Create new user
         const newUser = new User({
             username: userData.username,
             password: hashedPassword,
@@ -41,10 +35,8 @@ const register = async (userData) => {
             adviceOpenness: userData.adviceOpenness || 5
         });
 
-        // Save user to database
         await newUser.save();
 
-        // Return user data without password
         return {
             username: userData.username,
             email: userData.email,

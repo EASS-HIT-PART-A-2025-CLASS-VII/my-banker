@@ -1,17 +1,11 @@
 const User = require('../../models/userModel');
 const bcrypt = require('bcryptjs');
 
-/**
- * @function updateUser
- * @description Updates user profile and credentials in database
- */
 const updateUser = async (username, updatedData) => {
     try {
-        // Find existing user
         const user = await User.findOne({ username });
         if (!user) throw new Error('User not found');
 
-        // Update basic info if provided
         if (updatedData.newUsername) {
             const existingUser = await User.findOne({ username: updatedData.newUsername });
             if (existingUser) throw new Error('Username already exists');
@@ -46,18 +40,13 @@ const updateUser = async (username, updatedData) => {
         profileFields.forEach(field => {
             if (updatedData[field] !== undefined) {
                 const value = parseInt(updatedData[field]);
-                if (value >= 1 && value <= 10) {
-                    user[field] = value;
-                } else {
-                    throw new Error(`${field} must be between 1 and 10`);
-                }
+                if (value >= 1 && value <= 10)  user[field] = value;
+               else throw new Error(`${field} must be between 1 and 10`);
             }
         });
 
-        // Save changes to database
         await user.save();
 
-        // Return updated user data without password
         return {
             username: user.username,
             email: user.email,

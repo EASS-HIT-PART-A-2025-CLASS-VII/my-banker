@@ -1,10 +1,6 @@
 const fetchEthereumWalletData = require('./fetchEthereumWalletData');
 const fetchBitcoinWalletData = require('./fetchBitcoinWalletData');
 
-/**
- * @function walletInformation
- * @description Provides functions to extract coins information.
- */
 async function fetchWalletData(walletAddress, coinType) {
   switch (coinType) {
     case 'ethereum':

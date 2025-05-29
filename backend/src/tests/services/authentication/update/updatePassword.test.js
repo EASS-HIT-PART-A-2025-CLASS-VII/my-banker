@@ -2,12 +2,10 @@ const bcrypt = require('bcryptjs');
 const User = require('../../../../models/userModel');
 const updatePassword = require('../../../../services/authentication/update/updatePassword');
 
-// Mock dependencies
 jest.mock('../../../../models/userModel');
 jest.mock('bcryptjs');
 
 describe('Update Password Service', () => {
-    // Mock user data
     const mockUser = {
         username: 'testuser',
         password: 'oldhashed',
@@ -33,15 +31,12 @@ describe('Update Password Service', () => {
     });
 
     it('should update password successfully', async () => {
-        // Setup mocks
         User.findOne.mockResolvedValue(mockUser);
         bcrypt.hash.mockResolvedValue('newhashed');
         mockUser.save.mockResolvedValue(mockUser);
 
-        // Execute test
         const result = await updatePassword('testuser', 'newpassword');
 
-        // Verify results
         expect(User.findOne).toHaveBeenCalledWith({ username: 'testuser' });
         expect(bcrypt.hash).toHaveBeenCalledWith('newpassword', 10);
         expect(mockUser.save).toHaveBeenCalled();
@@ -53,31 +48,25 @@ describe('Update Password Service', () => {
     });
 
     it('should handle non-existent user', async () => {
-        // Setup mock
         User.findOne.mockResolvedValue(null);
 
-        // Execute and verify error
         await expect(updatePassword('nonexistent', 'newpassword'))
             .rejects
             .toThrow('User not found');
     });
 
     it('should handle missing new password', async () => {
-        // Setup mock
         User.findOne.mockResolvedValue(mockUser);
 
-        // Execute and verify error
         await expect(updatePassword('testuser', null))
             .rejects
             .toThrow('New password is required');
     });
 
     it('should handle password hashing error', async () => {
-        // Setup mocks
         User.findOne.mockResolvedValue(mockUser);
         bcrypt.hash.mockRejectedValue(new Error('Hashing failed'));
 
-        // Execute and verify error
         await expect(updatePassword('testuser', 'newpassword'))
             .rejects
             .toThrow('Hashing failed');
