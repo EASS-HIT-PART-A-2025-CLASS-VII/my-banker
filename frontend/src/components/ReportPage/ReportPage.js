@@ -13,20 +13,19 @@ export default function ReportPage() {
     setError('');
     setLoading(true);
 
-    const token = localStorage.getItem('jwt_token');  // שליפת הטוקן
+    const token = localStorage.getItem('jwt_token');
 
     try {
       const response = await fetch('http://localhost:8000/report', {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`  // הוספת טוקן לכותרת
+          'Authorization': `Bearer ${token}`
         },
         body: JSON.stringify({ walletAddress, chain }),
       });
 
       if (!response.ok) {
-        // קבלת טקסט השגיאה מהשרת
         const errorText = await response.text();
         throw new Error(`Server error: ${errorText}`);
       }

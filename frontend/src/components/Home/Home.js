@@ -77,7 +77,6 @@ export default function LandingPage() {
       <section className="call-to-action">
         <h3>One Simple Step. Endless Financial Clarity.</h3>
         <p>My Banker is the easiest way to understand your crypto portfolio. Whether you're managing assets or exploring investments, our report gives you the insights you need.</p>
-        <button className="btn-primary">Start Now</button>
       </section>
 
       {/* Footer */}

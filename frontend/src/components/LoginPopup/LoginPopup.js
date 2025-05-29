@@ -33,7 +33,7 @@ export default function LoginPopup({ onClose, onSuccess }) {
                 onClose={() => setShowRegister(false)}
                 onRegisterSuccess={(msg) => {
                     setShowRegister(false);
-                    onSuccess(msg); // או אפשרות אחרת
+                    onSuccess(msg);
                 }}
             />
         );
