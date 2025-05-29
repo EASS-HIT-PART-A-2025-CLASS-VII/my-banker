@@ -1,59 +1,94 @@
-.profile-container {
-  background-color: #1B1F24;
-  color: white;
+.profile-page {
+  background-color: #0E1320;
+  color: #fff;
+  min-height: 100vh;
   padding: 2rem;
-  margin: 2rem auto;
-  max-width: 400px;
-  border-radius: 16px;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.profile-header {
   text-align: center;
+  margin-bottom: 2rem;
+}
+
+.avatar {
+  background: url('../../assets/images/default-profile.png') no-repeat center/cover;
+  width: 100px;
+  height: 100px;
+  margin: 0 auto 1rem;
+  border-radius: 50%;
+  border: 4px solid #F9B64D;
+}
+
+.username {
+  font-size: 1.8rem;
+  font-weight: bold;
+}
+
+.joined-date {
+  font-size: 0.9rem;
+  color: #ccc;
+}
+
+.stats-card {
+  background-color: #1B1F24;
+  padding: 1.5rem;
+  border-radius: 16px;
   box-shadow: 0 0 10px rgba(0,0,0,0.4);
-  font-family: sans-serif;
+  margin-bottom: 2rem;
+}
+
+.stats-grid {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 1rem;
+}
+
+.stat {
+  text-align: center;
+}
+
+.icon {
+  font-size: 2rem;
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
+.icon.orange { color: #F9B64D; }
+.icon.blue { color: #3ABEFF; }
+.icon.green { color: #00D26A; }
+
+.action-buttons {
   display: flex;
   flex-direction: column;
   align-items: center;
+  gap: 1rem;
 }
 
-.profile-image {
-  width: 120px;
-  height: 120px;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 3px solid #F9B64D;
-  margin-bottom: 1rem;
-}
-
-.profile-name {
-  font-size: 1.8rem;
-  margin-bottom: 1.5rem;
-}
-
-.btn-secondary,
-.btn-danger {
+.btn {
   padding: 12px 20px;
-  margin: 0.5rem 0;
-  width: 80%;
-  font-size: 1rem;
   border: none;
-  border-radius: 8px;
+  border-radius: 10px;
+  font-weight: bold;
   cursor: pointer;
-  transition: background-color 0.3s ease;
-  font-weight: 600;
+  width: 80%;
+  transition: 0.3s ease;
 }
 
-.btn-secondary {
+.update-btn {
   background-color: #F9B64D;
-  color: black;
+  color: #000;
 }
 
-.btn-secondary:hover {
+.update-btn:hover {
   background-color: #fbbf24;
 }
 
-.btn-danger {
-  background-color: #dc3545;
+.delete-btn {
+  background-color: #E63946;
   color: white;
 }
 
-.btn-danger:hover {
-  background-color: #c82333;
+.delete-btn:hover {
+  background-color: #C82333;
 }
