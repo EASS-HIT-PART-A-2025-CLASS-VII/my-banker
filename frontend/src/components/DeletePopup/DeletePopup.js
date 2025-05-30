@@ -1,6 +1,5 @@
 // components/ProfilePage/DeletePopup.js
 import React from "react";
-import '../Popup/Popup.css';
 
 export default function DeletePopup({ onClose }) {
   const handleDelete = async () => {

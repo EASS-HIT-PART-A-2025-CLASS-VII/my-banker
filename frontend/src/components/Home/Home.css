@@ -25,23 +25,37 @@
 }
 
 .nav-list {
-  list-style: none;
   display: flex;
-  gap: 24px;
+  gap: 1rem;
+  align-items: center;
   margin: 0;
   padding: 0;
+  list-style: none;
 }
 
 .nav-item {
-  cursor: pointer;
-  color: white;
-  transition: color 0.3s;
+  background-color: #F9B64D;
+  color: black;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-weight: 600;
+  min-width: 100px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: background-color 0.3s ease;
+}
+
+.nav-item svg {
+  width: 2em;
+  height: 2em;
 }
 
 .nav-item:hover {
-  color: #F9B64D;
+  background-color: #FBBF24;
 }
-
 
 /* Hero Section */
 .hero-section {

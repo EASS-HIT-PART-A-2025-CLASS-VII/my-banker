@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import './LoginPopup.css';
+import '../Popup/Popup.css';
 import RegisterPopup from "../RegisterPopup/RegisterPopup";
 
 export default function LoginPopup({ onClose, onSuccess }) {
@@ -57,7 +58,7 @@ export default function LoginPopup({ onClose, onSuccess }) {
                     onChange={e => setPassword(e.target.value)}
                 />
                 {error && <p className="error">{error}</p>}
-                <button onClick={handleLogin}>Login</button>
+                <button className="login-btn" onClick={handleLogin}>Login</button>
                 <button className="register-btn" onClick={() => setShowRegister(true)}>
                     Register
                 </button>

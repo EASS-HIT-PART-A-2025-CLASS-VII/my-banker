@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import './RegisterPopup.css';
+import '../Popup/Popup.css';
 
 const questions = [
   "How important is stability over high returns?",
@@ -65,9 +66,9 @@ const RegisterPopup = ({ onClose }) => {
     <div className="popup-overlay">
       <div className="popup">
         <button className="close-button" onClick={onClose}>&times;</button>
-
         {step === 0 ? (
           <div className="form-fields">
+            <h2>Register</h2>
             <input name="username" type="text" placeholder="Username" value={formData.username} onChange={handleInputChange} />
             <input name="email" type="email" placeholder="Email" value={formData.email} onChange={handleInputChange} />
             <input name="password" type="password" placeholder="Password" value={formData.password} onChange={handleInputChange} />
@@ -75,7 +76,8 @@ const RegisterPopup = ({ onClose }) => {
           </div>
         ) : (
           <div className="step-content">
-            <label>{questions[step - 1]}</label>
+            <img src="../../assets/images/answer-questions.png"/>
+            <h2>{questions[step - 1]}</h2>
             <input
               type="range"
               min="1"

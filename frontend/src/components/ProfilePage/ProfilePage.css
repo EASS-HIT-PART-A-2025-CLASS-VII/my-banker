@@ -90,7 +90,7 @@
   text-align: center;
 }
 
-.update-email,
+/*.update-email,
 .update-password {
   display: flex;
   align-items: center;
@@ -99,7 +99,7 @@
   width: 100%;
 }
 
-input[type="email"],
+.profile-page input[type="email"],
 input[type="password"] {
   flex: 2;
   padding: 12px 16px;
@@ -109,7 +109,7 @@ input[type="password"] {
   color: white;
   font-size: 1rem;
   height: 48px;
-}
+}*/
 
 .update-btn {
   flex: 1;

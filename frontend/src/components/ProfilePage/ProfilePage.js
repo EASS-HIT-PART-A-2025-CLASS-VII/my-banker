@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import './ProfilePage.css';
-import UpdatePopup from '../UpdatePopup/UpdatePopup';
 import DeletePopup from '../DeletePopup/DeletePopup';
 
 function ProfilePage() {

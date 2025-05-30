@@ -62,6 +62,7 @@ export default function LandingPage() {
           <ul className="nav-list">
             {!isAuthenticated ? (
               <li className="nav-item" style={{ cursor: 'pointer' }} onClick={() => setShowLogin(true)}>
+                <FontAwesomeIcon icon={faUserCircle} />
                 Login
               </li>
             ) : (
