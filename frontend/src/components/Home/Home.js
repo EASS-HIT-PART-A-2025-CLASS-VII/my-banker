@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import LoginPopup from "../LoginPopup/LoginPopup";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUserCircle } from '@fortawesome/free-solid-svg-icons';
 import { useNavigate } from "react-router-dom";
+import { jwtDecode } from "jwt-decode";
 import './Home.css';
 import accountingOfficeImage from '../../assets/images/accounting-office.png';
 import nycSkylineImage from '../../assets/images/nyc-skyline.png';
@@ -10,13 +11,39 @@ import businessmenHandshakeImage from '../../assets/images/businessmen-handshake
 
 export default function LandingPage() {
   const [showLogin, setShowLogin] = useState(false);
-  const [isAuthenticated, setIsAuthenticated] = useState(!!localStorage.getItem('jwt_token'));
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const token = localStorage.getItem('jwt_token');
+    
+    if (token) {
+      try {
+        const decodedToken = jwtDecode(token);  
+        const currentTime = Date.now() / 1000;  
+        if (decodedToken.exp < currentTime) {
+          localStorage.removeItem('jwt_token');
+          setIsAuthenticated(false);
+        } else {
+          setIsAuthenticated(true); 
+        }
+      } catch (error) {
+        console.error("Error decoding JWT:", error);
+        localStorage.removeItem('jwt_token'); 
+        setIsAuthenticated(false);
+      }
+    }
+  }, []);
 
   const handleLoginSuccess = (token) => {
     localStorage.setItem('jwt_token', token);
     setIsAuthenticated(true);
     setShowLogin(false);
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem('jwt_token');
+    setIsAuthenticated(false);
   };
 
   const goToProfile = () => {
@@ -38,9 +65,14 @@ export default function LandingPage() {
                 Login
               </li>
             ) : (
-              <li className="nav-item" title="Profile" style={{ cursor: 'pointer' }} onClick={goToProfile}>
-                <FontAwesomeIcon icon={faUserCircle} size="2x" />
-              </li>
+              <>
+                <li className="nav-item" title="Profile" style={{ cursor: 'pointer' }} onClick={goToProfile}>
+                  <FontAwesomeIcon icon={faUserCircle} size="2x" />
+                </li>
+                <li className="nav-item" style={{ cursor: 'pointer' }} onClick={handleLogout}>
+                  Logout
+                </li>
+              </>
             )}
           </ul>
         </nav>
