@@ -1,5 +1,6 @@
 // components/ProfilePage/DeletePopup.js
 import React from "react";
+import '../Popup/Popup.css';
 
 export default function DeletePopup({ onClose }) {
   const handleDelete = async () => {
@@ -27,9 +28,9 @@ export default function DeletePopup({ onClose }) {
   return (
     <div className="popup-overlay">
       <div className="popup">
+        <button className="close-button" onClick={onClose}>×</button>
         <h3>Are you sure you want to delete your account?</h3>
-        <button onClick={handleDelete} className="btn-danger">Yes, Delete</button>
-        <button onClick={onClose} className="close-button">Cancel</button>
+        <button onClick={handleDelete} className="btn">Yes, Delete</button>
       </div>
     </div>
   );

@@ -68,7 +68,7 @@ const RegisterPopup = ({ onClose }) => {
         <button className="close-button" onClick={onClose}>&times;</button>
         {step === 0 ? (
           <div className="form-fields">
-            <h2>Register</h2>
+            <h2>Create new account</h2>
             <input name="username" type="text" placeholder="Username" value={formData.username} onChange={handleInputChange} />
             <input name="email" type="email" placeholder="Email" value={formData.email} onChange={handleInputChange} />
             <input name="password" type="password" placeholder="Password" value={formData.password} onChange={handleInputChange} />
