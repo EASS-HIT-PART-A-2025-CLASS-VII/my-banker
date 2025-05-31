@@ -1,9 +1,13 @@
 import React, { useState } from 'react';
 import './ProfilePage.css';
 import DeletePopup from '../DeletePopup/DeletePopup';
+import UpdateEmailPopup from '../UpdateEmailPopup/UpdateEmailPopup';
+import UpdatePasswordPopup from '../UpdatePasswordPopup/UpdatePasswordPopup';
 
 function ProfilePage() {
   const [showDeletePopup, setShowDeletePopup] = useState(false);
+  const [showEmailPopup, setShowEmailPopup] = useState(false);
+  const [showPasswordPopup, setShowPasswordPopup] = useState(false);
   const [preferences, setPreferences] = useState({
     riskAversion: 5,
     volatilityTolerance: 5,
@@ -16,8 +20,6 @@ function ProfilePage() {
     monitoringFrequency: 5,
     adviceOpenness: 5
   });
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
 
   const handlePreferenceChange = (preference, value) => {
     setPreferences(prev => ({
@@ -48,59 +50,14 @@ function ProfilePage() {
     }
   };
 
-  const handleUpdateEmail = async () => {
-    try {
-      const response = await fetch('/api/auth/updateEmail', {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        },
-        body: JSON.stringify({
-          username: localStorage.getItem('username'),
-          newEmail: email
-        })
-      });
-      const data = await response.json();
-      if (data.status === 200) {
-        alert('Email updated successfully!');
-        setEmail('');
-      }
-    } catch (error) {
-      alert('Failed to update email');
-    }
-  };
-
-  const handleUpdatePassword = async () => {
-    try {
-      const response = await fetch('/api/auth/updatePassword', {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        },
-        body: JSON.stringify({
-          username: localStorage.getItem('username'),
-          newPassword: password
-        })
-      });
-      const data = await response.json();
-      if (data.status === 200) {
-        alert('Password updated successfully!');
-        setPassword('');
-      }
-    } catch (error) {
-      alert('Failed to update password');
-    }
-  };
-
   return (
     <div className="profile-page">
       <div className="profile-header">
-        <div className="avatar" />
-        <h1 className="username">Welcome, {localStorage.getItem('username')}</h1>
+        <button className="back-btn" onClick={() => navigate('/')}>
+          ←
+        </button>
+        <h1>About you</h1>
       </div>
-
       <div className="preferences-section">
         <h2>Investment Preferences</h2>
         <div className="preferences-grid">
@@ -117,43 +74,51 @@ function ProfilePage() {
             </div>
           ))}
         </div>
-        <button onClick={handleSavePreferences} className="btn save-btn">
+        <button onClick={handleSavePreferences} className="btn">
           Save Preferences
         </button>
       </div>
 
       <div className="account-section">
         <h2>Account Settings</h2>
-        <div className="update-email">
-          <input
-            type="email"
-            placeholder="New Email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
-          <button onClick={handleUpdateEmail} className="btn update-btn">
+        <div className="account-buttons">
+          <button onClick={() => setShowEmailPopup(true)} className="btn">
             Update Email
           </button>
-        </div>
-
-        <div className="update-password">
-          <input
-            type="password"
-            placeholder="New Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-          <button onClick={handleUpdatePassword} className="btn update-btn">
+          <button onClick={() => setShowPasswordPopup(true)} className="btn">
             Update Password
           </button>
+          <button onClick={() => setShowDeletePopup(true)} className="btn delete-btn">
+            Delete My Account
+          </button>
         </div>
-
-        <button onClick={() => setShowDeletePopup(true)} className="btn delete-btn">
-          Delete My Account
-        </button>
       </div>
 
-      {showDeletePopup && <DeletePopup onClose={() => setShowDeletePopup(false)} />}
+      {showEmailPopup && (
+        <UpdateEmailPopup
+          onClose={() => setShowEmailPopup(false)}
+          onSuccess={(message) => {
+            alert('Email updated successfully!');
+            setShowEmailPopup(false);
+          }}
+        />
+      )}
+
+      {showPasswordPopup && (
+        <UpdatePasswordPopup
+          onClose={() => setShowPasswordPopup(false)}
+          onSuccess={(message) => {
+            alert('Password updated successfully!');
+            setShowPasswordPopup(false);
+          }}
+        />
+      )}
+
+      {showDeletePopup && (
+        <DeletePopup
+          onClose={() => setShowDeletePopup(false)}
+        />
+      )}
     </div>
   );
 }
