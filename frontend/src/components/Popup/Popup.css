@@ -53,3 +53,16 @@
   margin-bottom: 1em;  
   color: #ffffff;
 }
+
+.popup .btn {
+  border: none;
+  font-weight: bold;
+  cursor: pointer;
+  background-color: #2D333B;
+  color: white;
+  margin-top: 1em;
+}
+
+.popup .btn:hover{
+  color: #2D333B;
+}

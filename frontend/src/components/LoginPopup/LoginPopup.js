@@ -58,8 +58,8 @@ export default function LoginPopup({ onClose, onSuccess }) {
                     onChange={e => setPassword(e.target.value)}
                 />
                 {error && <p className="error">{error}</p>}
-                <button className="login-btn" onClick={handleLogin}>Login</button>
-                <button className="register-btn" onClick={() => setShowRegister(true)}>
+                <button className="btn" onClick={handleLogin}>Login</button>
+                <button className="btn" onClick={() => setShowRegister(true)}>
                     Register
                 </button>
 

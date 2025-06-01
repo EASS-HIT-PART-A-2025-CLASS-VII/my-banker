@@ -16,20 +16,20 @@ export default function LandingPage() {
 
   useEffect(() => {
     const token = localStorage.getItem('jwt_token');
-    
+
     if (token) {
       try {
-        const decodedToken = jwtDecode(token);  
-        const currentTime = Date.now() / 1000;  
+        const decodedToken = jwtDecode(token);
+        const currentTime = Date.now() / 1000;
         if (decodedToken.exp < currentTime) {
           localStorage.removeItem('jwt_token');
           setIsAuthenticated(false);
         } else {
-          setIsAuthenticated(true); 
+          setIsAuthenticated(true);
         }
       } catch (error) {
         console.error("Error decoding JWT:", error);
-        localStorage.removeItem('jwt_token'); 
+        localStorage.removeItem('jwt_token');
         setIsAuthenticated(false);
       }
     }
@@ -101,9 +101,20 @@ export default function LandingPage() {
 
       {/* Image Strip */}
       <section className="image-strip">
-        <img src={accountingOfficeImage} alt="Office" />
-        <img src={nycSkylineImage} alt="NYC Skyline" />
-        <img src={businessmenHandshakeImage} alt="Handshake" />
+        <div className="image-quote-pair">
+          <img src={nycSkylineImage} alt="NYC Skyline" />
+          <div className="quote-content">
+            <h3>Professional Excellence</h3>
+            <p>With decades of experience in traditional finance and blockchain technology, we bring Wall Street expertise to your crypto investments. Our analysis combines time-tested financial principles with cutting-edge blockchain analytics.</p>
+          </div>
+        </div>
+        <div className="image-quote-pair">
+          <img src={businessmenHandshakeImage} alt="Handshake" />
+          <div className="quote-content">
+            <h3>Trust & Reliability</h3>
+            <p>We believe in building lasting relationships through transparency and reliability. Our automated analysis provides the same level of insight you'd expect from a private banking relationship, available 24/7.</p>
+          </div>
+        </div>
       </section>
 
       {/* Call to Action */}

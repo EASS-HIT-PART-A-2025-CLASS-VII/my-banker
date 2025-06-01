@@ -7,17 +7,6 @@
   color: white;
 }
 
-.popup .register-btn {
-  height: 3em; 
-  background-color: #F9B64D;
-  margin-top: 1em;  
-}
-
-.popup .login-btn {
-  margin-top: 3em;  
-  height: 3em; 
-  background-color: #3D4855; 
-}
 .popup .error {
   color: #F87171;
   font-size: 0.9rem;
