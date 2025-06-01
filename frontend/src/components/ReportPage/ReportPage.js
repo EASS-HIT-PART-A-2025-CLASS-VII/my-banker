@@ -46,8 +46,11 @@ export default function ReportPage() {
 
   return (
     <div className="report-page">
-      <header className="header">
-        <h1 className="title">Wallet Report</h1>
+      <header className="report-header">
+        <button className="back-btn" onClick={() => navigate('/')}>
+          ←
+        </button>
+        <h1>Wallet Report</h1>
       </header>
 
       <form className="report-form" onSubmit={handleSubmit}>
