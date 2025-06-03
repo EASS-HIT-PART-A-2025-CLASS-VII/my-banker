@@ -53,13 +53,45 @@ const RegisterPopup = ({ onClose }) => {
     }
   };
 
-  const handleSubmit = () => {
-    const dataToSubmit = {
-      ...formData,
-      preferences: answers
-    };
-    console.log("Submitting:", dataToSubmit);
-    onClose(); // Replace with actual submission logic
+  const handleSubmit = async () => {
+    try {
+      const preferences = {
+        riskAversion: answers[0],
+        volatilityTolerance: answers[1],
+        growthFocus: answers[2],
+        cryptoExperience: answers[3],
+        innovationTrust: answers[4],
+        impactInterest: answers[5],
+        diversification: answers[6],
+        holdingPatience: answers[7],
+        monitoringFrequency: answers[8],
+        adviceOpenness: answers[9]
+      };
+
+      const response = await fetch('http://localhost:8000/auth/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          username: formData.username,
+          email: formData.email,
+          password: formData.password,
+          preferences
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        onRegisterSuccess(data.token);
+        onClose();
+      } else {
+        setError(data.error || 'Registration failed');
+      }
+    } catch (err) {
+      setError('Network error: ' + err.message);
+    }
   };
 
   return (
@@ -76,7 +108,6 @@ const RegisterPopup = ({ onClose }) => {
           </div>
         ) : (
           <div className="step-content">
-            <img src="../../assets/images/answer-questions.png"/>
             <h2>{questions[step - 1]}</h2>
             <input
               type="range"

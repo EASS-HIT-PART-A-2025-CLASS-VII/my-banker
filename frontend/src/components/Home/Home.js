@@ -47,12 +47,22 @@ export default function LandingPage() {
   };
 
   const goToProfile = () => {
-    navigate('/profile');
-  };
+  const token = localStorage.getItem('jwt_token');
+  if (!token) {
+    setShowLogin(true);
+    return;
+  }
+  navigate('/profile');
+};
 
   const goToReport = () => {
-    navigate('/report');
-  };
+  const token = localStorage.getItem('jwt_token');
+  if (!token) {
+    setShowLogin(true);
+    return;
+  }
+  navigate('/report');
+};
 
   return (
     <div className="landing-page">
@@ -86,20 +96,18 @@ export default function LandingPage() {
         />
       )}
 
-      {/* Hero Section */}
       <section className="hero-section">
         <div className="hero-text">
           <h2>Your Financial Future Starts Here</h2>
           <p>Upload your crypto wallet address and get a professional, personalized financial report – crafted as if by your own private banker.</p>
           <p>Let's shape a brighter financial future, together. Let us help you make the right decisions with tailored insights you can trust.</p>
-          <button className="btn-primary" onClick={goToReport}>Get Your Report</button>
+          <button className="btn" onClick={goToReport}>Get Your Report</button>
         </div>
         <div className="hero-image">
           <img src={accountingOfficeImage} alt="Private Banker" />
         </div>
       </section>
 
-      {/* Image Strip */}
       <section className="image-strip">
         <div className="image-quote-pair">
           <img src={nycSkylineImage} alt="NYC Skyline" />
@@ -117,13 +125,11 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Call to Action */}
       <section className="call-to-action">
         <h3>One Simple Step. Endless Financial Clarity.</h3>
         <p>My Banker is the easiest way to understand your crypto portfolio. Whether you're managing assets or exploring investments, our report gives you the insights you need.</p>
       </section>
 
-      {/* Footer */}
       <footer className="footer">
         © {new Date().getFullYear()} My Banker. All rights reserved.
       </footer>
