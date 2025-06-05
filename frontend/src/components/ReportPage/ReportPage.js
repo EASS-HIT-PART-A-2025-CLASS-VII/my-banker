@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import './ReportPage.css';
 
 export default function ReportPage() {
+  const navigate = useNavigate();
   const [walletAddress, setWalletAddress] = useState('');
   const [chain, setChain] = useState('bitcoin');
   const [report, setReport] = useState(null);

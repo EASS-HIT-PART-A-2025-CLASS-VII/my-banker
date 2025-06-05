@@ -8,6 +8,7 @@ import './Home.css';
 import accountingOfficeImage from '../../assets/images/accounting-office.png';
 import nycSkylineImage from '../../assets/images/nyc-skyline.png';
 import businessmenHandshakeImage from '../../assets/images/businessmen-handshake.png';
+import logoImage from '../../assets/images/Logo.png';
 
 export default function LandingPage() {
   const [showLogin, setShowLogin] = useState(false);
@@ -67,7 +68,7 @@ export default function LandingPage() {
   return (
     <div className="landing-page">
       <header className="header">
-        <h1 className="title">My Banker</h1>
+        <img src={logoImage} alt="My Banker" className="logo" />
         <nav>
           <ul className="nav-list">
             {!isAuthenticated ? (

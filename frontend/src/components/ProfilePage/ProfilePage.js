@@ -6,6 +6,7 @@ import UpdateEmailPopup from '../UpdateEmailPopup/UpdateEmailPopup';
 import UpdatePasswordPopup from '../UpdatePasswordPopup/UpdatePasswordPopup';
 
 function ProfilePage() {
+  const navigate = useNavigate();
   const [showDeletePopup, setShowDeletePopup] = useState(false);
   const [showEmailPopup, setShowEmailPopup] = useState(false);
   const [showPasswordPopup, setShowPasswordPopup] = useState(false);

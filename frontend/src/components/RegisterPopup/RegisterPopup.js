@@ -17,6 +17,8 @@ const questions = [
 
 const RegisterPopup = ({ onClose }) => {
   const [step, setStep] = useState(0);
+  const [isSuccess, setIsSuccess] = useState(false);
+  const [error, setError] = useState('');
   const [formData, setFormData] = useState({
     username: '',
     email: '',
@@ -84,8 +86,7 @@ const RegisterPopup = ({ onClose }) => {
       const data = await response.json();
 
       if (response.ok) {
-        onRegisterSuccess(data.token);
-        onClose();
+        setIsSuccess(true);
       } else {
         setError(data.error || 'Registration failed');
       }
@@ -98,38 +99,53 @@ const RegisterPopup = ({ onClose }) => {
     <div className="popup-overlay">
       <div className="popup">
         <button className="close-button" onClick={onClose}>&times;</button>
-        {step === 0 ? (
-          <div className="form-fields">
-            <h2>Create new account</h2>
-            <input name="username" type="text" placeholder="Username" value={formData.username} onChange={handleInputChange} />
-            <input name="email" type="email" placeholder="Email" value={formData.email} onChange={handleInputChange} />
-            <input name="password" type="password" placeholder="Password" value={formData.password} onChange={handleInputChange} />
-            <input name="confirmPassword" type="password" placeholder="Confirm Password" value={formData.confirmPassword} onChange={handleInputChange} />
+        {isSuccess ? (
+          <div className="success-message">
+            <h2>hooray!</h2>
+            <p>Your account has been created successfully</p>
+            <button className="btn-primary" onClick={onClose}>
+              Continue
+            </button>
           </div>
         ) : (
-          <div className="step-content">
-            <h2>{questions[step - 1]}</h2>
-            <input
-              type="range"
-              min="1"
-              max="10"
-              value={answers[step - 1]}
-              onChange={handleRangeChange}
-              className="custom-range"
-            />
-          </div>
+          <>
+            {step === 0 ? (
+              <div className="form-fields">
+                <h2>Create new account</h2>
+                <input name="username" type="text" placeholder="Username" value={formData.username} onChange={handleInputChange} />
+                <input name="email" type="email" placeholder="Email" value={formData.email} onChange={handleInputChange} />
+                <input name="password" type="password" placeholder="Password" value={formData.password} onChange={handleInputChange} />
+                <input name="confirmPassword" type="password" placeholder="Confirm Password" value={formData.confirmPassword} onChange={handleInputChange} />
+              </div>
+            ) : (
+              <div className="step-content">
+                <h2>{questions[step - 1]}</h2>
+                <input
+                  type="range"
+                  min="1"
+                  max="10"
+                  value={answers[step - 1]}
+                  onChange={handleRangeChange}
+                  className="custom-range"
+                />
+              </div>
+            )}
+            <div className="button-group">
+              {step > 0 && (
+                <button className="btn-secondary" onClick={handleBack}>
+                  Back
+                </button>
+              )}
+              <button
+                className="btn-primary"
+                onClick={step === questions.length ? handleSubmit : handleNext}
+              >
+                {step === questions.length ? 'Submit' : 'Next'}
+              </button>
+            </div>
+            {error && <p className="error">{error}</p>}
+          </>
         )}
-
-        <div className="button-group">
-          {step > 0 && (
-            <button className="btn-secondary" onClick={handleBack}>
-              Back
-            </button>
-          )}
-          <button className="btn-primary" onClick={step === questions.length ? handleSubmit : handleNext}>
-            {step === questions.length ? 'Submit' : 'Next'}
-          </button>
-        </div>
       </div>
     </div>
   );
