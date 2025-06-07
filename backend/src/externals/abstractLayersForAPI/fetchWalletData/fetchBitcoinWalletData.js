@@ -91,7 +91,7 @@ async function fetchBitcoinWalletData(address) {
         });
 
         return {
-            coin: 'BTC',
+            coin: 'bitcoin',
             balance: parseFloat(balance),
             transactions: mappedTransactions,
         };

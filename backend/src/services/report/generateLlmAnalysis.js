@@ -2,27 +2,48 @@ const axios = require('axios');
 
 async function generateLlmAnalysis(walletInsightsInput, userPreferences) {
     const payload = {
-        model: 'mistral',
+        model: 'gemma3:4b',
         prompt: `
-            As a senior private banker at a global wealth management firm, analyze the client's portfolio exclusively using the provided JSON data. Compose a single polished paragraph for ultra-high-net-worth clients that integrates tax efficiency analysis with portfolio performance. 
-            Use the JSON object included under ${JSON.stringify(walletInsightsInput, null, 2)} as your exclusive data source. This data represents a comprehensive snapshot of the client’s investment portfolio and activity during a specific reporting period. You must extract, reference, and incorporate all numerical values and relevant facts from this data without altering, omitting, or reinterpreting any figures.
-            Additionally, use the data found under ${JSON.stringify(userPreferences, null, 2)} to consider the user preferences and tailor the response accordingly.
-            Mandatory inclusions:
-            - Realized capital gains/losses with tax liability calculations
-            - Tax-advantaged vs taxable asset allocation percentages
-            - Tax-loss harvesting opportunities from closed positions
-            - Dividend/coupon tax treatment across jurisdictions
-            - Carryforward losses and tax deferral strategies
-            - Fee structures impacting net tax-equivalent returns
+        You are a crypto tax advisor and investment analyst.
 
-            Use precise terminology: 
-            Tax alpha, basis points drag, tax lot accounting, wash sale implications, AMT exposure, step-up basis opportunities.
+        You will receive JSON-formatted transaction summary data from a user's crypto trading account.
 
-            Example structure (adapt to data):
-            "The portfolio generated $2.1M realized gains (15% LTCG rate) offset by $750k harvested losses, yielding net taxable income of $1.35M. Fixed income allocations (40% munis vs 60% corporates) reduced ordinary income tax exposure by 22%. Three closed equity positions present $385k carryforward losses. International holdings' $420k dividends qualify for 15% treaty rates versus 23.8% domestic rate. 0.45% management fees equate to 68bps post-tax drag at marginal rates. Current FIFO accounting suggests basis optimization through specific lot identification could defer $210k in gains."
+        Your task is to return only **short, practical, and data-driven insights** based on that data.  
+        Do NOT provide general advice. Do NOT assume missing data.  
+        Base your answer strictly on what is given.
 
-            Output ONLY the formal paragraph using exact JSON figures without disclaimers.
+        Respond in two sections:
 
+        ---
+
+        **Tax Insights** (Max 3 short bullet points)  
+        - Must refer to: realized gains/losses, fees, holding period, taxable events.  
+        - Use terms like: "capital loss", "offset future gains", "deductible fees", "short holding period", "FIFO impact", etc.
+
+        **Investment Advice** (Max 3 short bullet points)  
+        - Must refer to: trade frequency, loss-to-gain ratio, holding duration, etc.  
+        - Use terms like: "trading strategy", "accumulated fees", "short-term pattern", "rethink timing-based trades", etc.
+
+        ---
+
+        Use only the data provided. Do NOT reference stocks, bonds, or non-crypto markets.
+
+        Here are some good examples of valid sentences:
+
+        - "High frequency of short-term trades with low profitability suggests overtrading."
+        - "Realized losses may be used to offset future capital gains."
+        - "Average holding period is 0 days — this eliminates long-term tax benefits."
+        - "Fees are significant relative to gains — may be deductible."
+        - "High sell-to-buy ratio may reflect an unbalanced or reactive trading strategy."
+
+        ---
+
+        Now analyze this data:
+
+
+        ${JSON.stringify(walletInsightsInput, null, 2)}
+
+        ${JSON.stringify(userPreferences, null, 2)}
         `,
         stream: false
     };
