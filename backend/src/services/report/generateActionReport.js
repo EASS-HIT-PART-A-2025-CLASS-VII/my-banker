@@ -50,9 +50,9 @@ function generateActionReport(walletInfo) {
         avgHoldDurationDays: +avgHoldDuration.toFixed(2),
         longestHoldDays: +Math.max(...(holdingPeriods.length ? holdingPeriods : [0])).toFixed(2),
         shortestHoldDays: +Math.min(...(holdingPeriods.length ? holdingPeriods : [0])).toFixed(2),
-        avgTradeSize: +(tradingVolume / totalActions).toFixed(8),
-        maxTradeSize: +Math.max(...tradeSizes).toFixed(8),
-        minTradeSize: +Math.min(...tradeSizes).toFixed(8)
+        avgTradeSize: +(totalActions > 0 ? (tradingVolume / totalActions) : 0).toFixed(8),
+        maxTradeSize: +Math.max(...(tradeSizes.length ? tradeSizes : [0])).toFixed(8),
+        minTradeSize: +Math.min(...(tradeSizes.length ? tradeSizes : [0])).toFixed(8)
     };
 }
 

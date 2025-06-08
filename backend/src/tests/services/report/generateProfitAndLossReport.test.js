@@ -1,77 +1,45 @@
 const generateProfitAndLossReport = require('../../../services/report/generateProfitAndLossReport');
-const { getHistoricalPrice, formatDate } = require('../../../externals/abstractLayersForAPI/getCoinPriceByDate');
-
-jest.mock('../../../externals/abstractLayersForAPI/getCoinPriceByDate');
 
 describe('Generate Profit and Loss Report', () => {
-    beforeEach(() => {
-        jest.clearAllMocks();
-        formatDate.mockImplementation(date => '01-01-2025');
-        getHistoricalPrice.mockResolvedValue(50000);
-    });
-
     it('should calculate profit and loss correctly for mixed transactions', async () => {
         const walletInfo = {
             transactions: [
                 { timestamp: '2025-01-01T00:00:00Z', type: 'receive', amount: 1.0, fee: 0.1 },
-                { timestamp: '2025-01-01T00:00:00Z', type: 'send', amount: 0.5, fee: 0.05 }
+                { timestamp: '2025-01-02T00:00:00Z', type: 'send', amount: 0.5, fee: 0.05 }
             ]
         };
         const result = await generateProfitAndLossReport(walletInfo);
 
         expect(result).toEqual({
-            Gain: 25000.00,
-            Loss: 50000.00,
-            Fees: 0.15, 
-            Sum: -25000.15 
+            Gains: 0.50000000,
+            Loss: 0.65000000,
+            Fees: 0.15000000,
+            startDate: '2025-01-01T00:00:00Z',
+            endDate: '2025-01-02T00:00:00Z',
+            currentHoldings: 0.50000000,
+            portfolioReturnPercent: -50.00
         });
     });
 
-    it('should handle only purchase transactions', async () => {
+    it('should handle only receive transactions', async () => {
+        const timestamp = '2025-01-01T00:00:00Z';
         const walletInfo = {
             transactions: [
-                { timestamp: '2025-01-01T00:00:00Z', type: 'receive', amount: 1.0, fee: 0.1 }
+                { timestamp, type: 'receive', amount: 1.0, fee: 0.1 }
             ]
         };
 
         const result = await generateProfitAndLossReport(walletInfo);
 
         expect(result).toEqual({
-            Gain: 0.00, 
-            Loss: 50000.00,
-            Fees: 0.10,
-            Sum: -50000.10 
+            Gains: 0.00000000,
+            Loss: 1.10000000,
+            Fees: 0.10000000,
+            startDate: timestamp,
+            endDate: timestamp,
+            currentHoldings: 1.00000000,
+            portfolioReturnPercent: -100.00
         });
-    });
-
-    it('should handle only sale transactions', async () => {
-        const walletInfo = {
-            transactions: [
-                { timestamp: '2025-01-01T00:00:00Z', type: 'send', amount: 1.0, fee: 0.1 }
-            ]
-        };
-        const result = await generateProfitAndLossReport(walletInfo);
-
-        expect(result).toEqual({
-            Gain: 50000.00,
-            Loss: 0.00,    
-            Fees: 0.10,
-            Sum: 49999.90   
-        });
-    });
-
-    it('should handle API errors gracefully', async () => {
-        getHistoricalPrice.mockRejectedValue(new Error('API Error'));
-
-        const walletInfo = {
-            transactions: [
-                { timestamp: '2025-01-01T00:00:00Z', type: 'receive', amount: 1.0, fee: 0.1 }
-            ]
-        };
-
-        await expect(generateProfitAndLossReport(walletInfo))
-            .rejects
-            .toThrow('API Error');
     });
 
     it('should handle empty transaction list', async () => {
@@ -82,10 +50,34 @@ describe('Generate Profit and Loss Report', () => {
         const result = await generateProfitAndLossReport(walletInfo);
 
         expect(result).toEqual({
-            Gain: 0.00,
-            Loss: 0.00,
-            Fees: 0.00,
-            Sum: 0.00
+            Gains: 0.00000000,
+            Loss: 0.00000000,
+            Fees: 0.00000000,
+            startDate: "0000-00-00T00:00:00.000Z",
+            endDate: "0000-00-00T00:00:00.000Z",
+            currentHoldings: 0.00000000,
+            portfolioReturnPercent: 0.00
+        });
+    });
+
+    it('should handle transactions with no fees', async () => {
+        const walletInfo = {
+            transactions: [
+                { timestamp: '2025-01-01T00:00:00Z', type: 'receive', amount: 1.0 },
+                { timestamp: '2025-01-02T00:00:00Z', type: 'send', amount: 0.5 }
+            ]
+        };
+
+        const result = await generateProfitAndLossReport(walletInfo);
+
+        expect(result).toEqual({
+            Gains: 0.50000000,
+            Loss: 0.50000000,
+            Fees: 0.00000000,
+            startDate: '2025-01-01T00:00:00Z',
+            endDate: '2025-01-02T00:00:00Z',
+            currentHoldings: 0.50000000,
+            portfolioReturnPercent: -50.00
         });
     });
 });

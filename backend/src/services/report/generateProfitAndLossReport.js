@@ -8,8 +8,8 @@ async function generateProfitAndLossReport(walletInfo) {
         new Date(a.timestamp) - new Date(b.timestamp)
     );
 
-    const startDate = sortedTransactions[0]?.timestamp || new Date().toISOString();
-    const endDate = sortedTransactions[sortedTransactions.length - 1]?.timestamp || new Date().toISOString();
+    const startDate = sortedTransactions[0]?.timestamp || "0000-00-00T00:00:00.000Z";
+    const endDate = sortedTransactions[sortedTransactions.length - 1]?.timestamp || "0000-00-00T00:00:00.000Z";
 
     walletInfo.transactions.forEach(tx => {
         if (tx.type === "receive") {
