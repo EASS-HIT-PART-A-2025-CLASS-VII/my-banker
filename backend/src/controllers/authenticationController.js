@@ -154,6 +154,8 @@ const updatePreferencesController = async (req, res) => {
   }
 };
 
+
+
 module.exports = {
   loginController,
   registerController,

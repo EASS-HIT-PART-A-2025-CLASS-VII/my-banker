@@ -12,9 +12,11 @@ app.use(express.json());
 
 const authRoutes = require('./routes/authenticationRoute');
 const report = require('./routes/reportRoute');
+const user = require('./routes/userRoutes');
 
 app.use('/auth', authRoutes);
 app.use('/report', report);
+app.use('/user', user);
 
 app.get('/', (req, res) => {
   res.status(200).send('Server is running!');
