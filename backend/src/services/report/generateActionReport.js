@@ -39,7 +39,7 @@ function generateActionReport(walletInfo) {
         : 0;
 
     return {
-        coin: walletInfo.coin,
+        chain: walletInfo.coin,
         calculationMethod: "FIFO",
         totalActions,
         tradingVolume,

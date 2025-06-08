@@ -1,5 +1,3 @@
-const { getHistoricalPrice, formatDate } = require('../../externals/abstractLayersForAPI/getCoinPriceByDate');
-
 async function generateProfitAndLossReport(walletInfo) {
     let totalBuyAmount = 0;
     let totalSellAmount = 0;
@@ -10,23 +8,8 @@ async function generateProfitAndLossReport(walletInfo) {
         new Date(a.timestamp) - new Date(b.timestamp)
     );
 
-    const startDate = formatDate(sortedTransactions[0].timestamp);
-    const endDate = formatDate(sortedTransactions[sortedTransactions.length - 1].timestamp);
-
-    let startPrice = 0;
-    let endPrice = 0;
-
-     try {
-        startPrice = await getHistoricalPrice(walletInfo.coin, startDate);
-    } catch (error) {
-        console.error('Failed to get start price:', error);
-    }
-
-    try {
-        endPrice = await getHistoricalPrice(walletInfo.coin, endDate);
-    } catch (error) {
-        console.error('Failed to get end price:', error);
-    }
+    const startDate = sortedTransactions[0]?.timestamp || new Date().toISOString();
+    const endDate = sortedTransactions[sortedTransactions.length - 1]?.timestamp || new Date().toISOString();
 
     walletInfo.transactions.forEach(tx => {
         if (tx.type === "receive") {
@@ -40,9 +23,9 @@ async function generateProfitAndLossReport(walletInfo) {
     });
 
     const totalRealizedLoss = Math.abs(totalSellAmount - totalBuyAmount - totalFees);
-    const marketChangePercent = ((endPrice - startPrice) / startPrice) * 100;
-    const portfolioReturnPercent = (totalSellAmount / totalBuyAmount) * 100 - 100;
-    const performanceVsMarket = portfolioReturnPercent - marketChangePercent;
+
+    const portfolioReturnPercent = totalBuyAmount > 0 ? 
+        ((totalSellAmount - totalBuyAmount) / totalBuyAmount) * 100 : 0;
 
     return {
         Gains: +totalSellAmount.toFixed(8),
@@ -50,11 +33,8 @@ async function generateProfitAndLossReport(walletInfo) {
         Fees: +totalFees.toFixed(8),
         startDate,
         endDate,
-        startPrice_usd: +startPrice.toFixed(2),
-        endPrice_usd: +endPrice.toFixed(2),
-        marketChangePercent: +marketChangePercent.toFixed(2),
-        portfolioReturnPercent: +portfolioReturnPercent.toFixed(2),
-        performanceVsMarket: +performanceVsMarket.toFixed(2)
+        currentHoldings: +currentHoldings.toFixed(8),
+        portfolioReturnPercent: +portfolioReturnPercent.toFixed(2)
     };
 }
 

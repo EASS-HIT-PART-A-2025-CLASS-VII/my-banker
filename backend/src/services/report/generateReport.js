@@ -15,6 +15,7 @@ async function generateReport(username, walletAddress, chain) {
     const llmAnalysis = await generateLlmAnalysis(walletData, userPreferences);
 
     return {
+        balances: walletData.balances,
         actions: actions,
         profitAndLoss: pnl,
         insights: llmAnalysis,
