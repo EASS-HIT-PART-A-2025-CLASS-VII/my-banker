@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './ProfilePage.css';
 import DeletePopup from '../DeletePopup/DeletePopup';
@@ -22,6 +22,51 @@ function ProfilePage() {
     monitoringFrequency: 5,
     adviceOpenness: 5
   });
+  const [error, setError] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  const token = localStorage.getItem('jwt_token');
+  const username = localStorage.getItem('username');
+
+  useEffect(() => {
+    const fetchPreferences = async () => {
+      try {
+        if (!token || !username) {
+          setError('Authentication required');
+          navigate('/');
+          return;
+        }
+
+        const response = await fetch(`http://localhost:8000/user/preferences/${username}`, {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+
+        if (data.status === 200 && data.data?.message) {
+          setPreferences(data.data.message);
+          setError(null);
+        } else {
+          setError(data.error?.message || 'Failed to load preferences');
+        }
+      } catch (error) {
+        console.error('Fetch error:', error);
+        setError(`Failed to fetch preferences: ${error.message}`);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchPreferences();
+  }, [navigate]);
 
   const handlePreferenceChange = (preference, value) => {
     setPreferences(prev => ({
@@ -32,14 +77,14 @@ function ProfilePage() {
 
   const handleSavePreferences = async () => {
     try {
-      const response = await fetch('/api/auth/updatePreferences', {
+      const response = await fetch('http://localhost:8000/auth/updatePreferences', {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
+          'Authorization': `Bearer ${token}`
         },
         body: JSON.stringify({
-          username: localStorage.getItem('username'),
+          username: username,
           ...preferences
         })
       });

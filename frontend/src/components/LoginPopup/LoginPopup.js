@@ -20,6 +20,7 @@ export default function LoginPopup({ onClose, onSuccess }) {
             const data = await response.json();
             if (response.ok && data.data && data.data.message) {
                 onSuccess(data.data.message);
+                localStorage.setItem('username', username);
             } else {
                 setError(data.data?.message || "Login failed");
             }

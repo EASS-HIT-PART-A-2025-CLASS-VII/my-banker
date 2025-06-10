@@ -9,7 +9,7 @@ const {
 
 async function getUserPreferencesController(req, res) {
     try {
-        const { username } = req.params;
+        const username = req.params.username;
 
         if (!username) return res.json(badRequestJsonResponse('Username is required'));
 
