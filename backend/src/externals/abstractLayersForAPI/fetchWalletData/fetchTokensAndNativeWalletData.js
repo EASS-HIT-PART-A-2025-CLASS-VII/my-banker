@@ -18,7 +18,7 @@ async function initializeMoralis() {
     }
 }
 
-async function getBalances(address, chain) {
+async function getBalances(address, chain, symbol) {
     try {
         const result = { tokens: [], nativeBalance: null };
 
@@ -29,7 +29,7 @@ async function getBalances(address, chain) {
 
         if (nativeResponse.raw.balance && Number(nativeResponse.raw.balance) > 0) {
             result.nativeBalance = {
-                symbol: 'ETH',
+                symbol: symbol,
                 balance: Number(nativeResponse.raw.balance) / 1e18
             };
         }
@@ -69,16 +69,16 @@ async function getTransactions(address, chain) {
 
         const nativeTransactions = nativeResponse.raw.result.map(tx => {
             const isSender = tx.from_address.toLowerCase() === address.toLowerCase();
-            const amountEth = Number(tx.value) / 1e18;
-            const feeEth = Number(tx.transaction_fee);
+            const amountNative = Number(tx.value) / 1e18;
+            const feeNative = Number(tx.transaction_fee);
 
             return {
                 txid: tx.hash,
                 timestamp: tx.block_timestamp,
                 type: isSender ? "send" : "receive",
-                fee: isSender ? feeEth : 0,
-                amount: amountEth,
-                symbol: 'ETH',
+                fee: isSender ? feeNative : 0,
+                amount: amountNative,
+                symbol: symbol,
                 isNative: true
             };
         });
