@@ -12,7 +12,7 @@ async function generateReport(username, walletAddress, chain) {
 
     const actions = await generateActionReport(walletData);
     const pnl = await generateProfitAndLossReport(walletData);
-    const llmAnalysis = await generateLlmAnalysis(walletData, userPreferences);
+    const llmAnalysis = await generateLlmAnalysis(actions, pnl, userPreferences);
 
     return {
         balances: walletData.balances,

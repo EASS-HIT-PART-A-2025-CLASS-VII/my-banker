@@ -1,59 +1,77 @@
 function generateActionReport(walletInfo) {
-    let totalActions = walletInfo.transactions.length;
-    let tradingVolume = 0;
-    let buyActions = 0;
-    let sellActions = 0;
-    let tradeSizes = [];
-
-    const sortedTransactions = [...walletInfo.transactions].sort((a, b) => 
-        new Date(a.timestamp) - new Date(b.timestamp)
-    );
-
-    const firstTx = sortedTransactions[0];
-    const lastTx = sortedTransactions[sortedTransactions.length - 1];
-    const holdings = new Map(); 
-    let holdingPeriods = [];
+    const tokensMap = new Map();
 
     walletInfo.transactions.forEach(tx => {
-        tradingVolume += tx.amount;
-        tradeSizes.push(tx.amount);
+        const symbol = tx.symbol || 'UNKNOWN'; 
+
+        if (!tokensMap.has(symbol)) {
+            tokensMap.set(symbol, {
+                totalActions: 0,
+                tradingVolume: 0,
+                buyActions: 0,
+                sellActions: 0,
+                tradeSizes: [],
+                holdings: new Map(),
+                holdingPeriods: [],
+                firstTransactionDate: null,
+                lastTransactionDate: null
+            });
+        }
+
+        const tokenStats = tokensMap.get(symbol);
+
+        const timestamp = new Date(tx.timestamp);
+        tokenStats.totalActions++;
+        tokenStats.tradingVolume += tx.amount;
+        tokenStats.tradeSizes.push(tx.amount);
+
+        if (!tokenStats.firstTransactionDate || timestamp < new Date(tokenStats.firstTransactionDate)) {
+            tokenStats.firstTransactionDate = tx.timestamp;
+        }
+
+        if (!tokenStats.lastTransactionDate || timestamp > new Date(tokenStats.lastTransactionDate)) {
+            tokenStats.lastTransactionDate = tx.timestamp;
+        }
 
         if (tx.type === "receive") {
-            buyActions++;
-            const holdingStart = new Date(tx.timestamp);
-            holdings.set(tx.txid, holdingStart);
+            tokenStats.buyActions++;
+            tokenStats.holdings.set(tx.txid, timestamp);
         } else if (tx.type === "send") {
-            sellActions++;
-            for (let [buyTxId, buyDate] of holdings) {
-                const holdingEnd = new Date(tx.timestamp);
+            tokenStats.sellActions++;
+            for (let [buyTxId, buyDate] of tokenStats.holdings) {
+                const holdingEnd = timestamp;
                 const holdDays = (holdingEnd - buyDate) / (1000 * 60 * 60 * 24);
-                holdingPeriods.push(holdDays);
-                holdings.delete(buyTxId);
+                tokenStats.holdingPeriods.push(holdDays);
+                tokenStats.holdings.delete(buyTxId);
                 break; 
             }
         }
     });
 
-    const avgHoldDuration = holdingPeriods.length > 0 
-        ? holdingPeriods.reduce((a, b) => a + b, 0) / holdingPeriods.length 
-        : 0;
+    const report = {};
+    for (let [symbol, stats] of tokensMap.entries()) {
+        const avgHold = stats.holdingPeriods.length > 0
+            ? stats.holdingPeriods.reduce((a, b) => a + b, 0) / stats.holdingPeriods.length
+            : 0;
 
-    return {
-        chain: walletInfo.coin,
-        calculationMethod: "FIFO",
-        totalActions,
-        tradingVolume,
-        buyActions,
-        sellActions,
-        firstTransactionDate: firstTx ? firstTx.timestamp : null,
-        lastTransactionDate: lastTx ? lastTx.timestamp : null,
-        avgHoldDurationDays: +avgHoldDuration.toFixed(2),
-        longestHoldDays: +Math.max(...(holdingPeriods.length ? holdingPeriods : [0])).toFixed(2),
-        shortestHoldDays: +Math.min(...(holdingPeriods.length ? holdingPeriods : [0])).toFixed(2),
-        avgTradeSize: +(totalActions > 0 ? (tradingVolume / totalActions) : 0).toFixed(8),
-        maxTradeSize: +Math.max(...(tradeSizes.length ? tradeSizes : [0])).toFixed(8),
-        minTradeSize: +Math.min(...(tradeSizes.length ? tradeSizes : [0])).toFixed(8)
-    };
+        report[symbol] = {
+            calculationMethod: "FIFO",
+            totalActions: stats.totalActions,
+            tradingVolume: +stats.tradingVolume.toFixed(8),
+            buyActions: stats.buyActions,
+            sellActions: stats.sellActions,
+            firstTransactionDate: stats.firstTransactionDate,
+            lastTransactionDate: stats.lastTransactionDate,
+            avgHoldDurationDays: +avgHold.toFixed(2),
+            longestHoldDays: +Math.max(...(stats.holdingPeriods.length ? stats.holdingPeriods : [0])).toFixed(2),
+            shortestHoldDays: +Math.min(...(stats.holdingPeriods.length ? stats.holdingPeriods : [0])).toFixed(2),
+            avgTradeSize: +(stats.totalActions > 0 ? (stats.tradingVolume / stats.totalActions) : 0).toFixed(8),
+            maxTradeSize: +Math.max(...(stats.tradeSizes.length ? stats.tradeSizes : [0])).toFixed(8),
+            minTradeSize: +Math.min(...(stats.tradeSizes.length ? stats.tradeSizes : [0])).toFixed(8)
+        };
+    }
+
+    return report;
 }
 
 module.exports = generateActionReport;

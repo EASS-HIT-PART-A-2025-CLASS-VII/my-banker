@@ -53,7 +53,7 @@ async function getBalances(address, chain, symbol) {
     }
 }
 
-async function getTransactions(address, chain) {
+async function getTransactions(address, chain, symbol) {
     try {
         const nativeResponse = await Moralis.EvmApi.transaction.getWalletTransactions({
             chain: chain,
@@ -93,8 +93,7 @@ async function getTransactions(address, chain) {
                 type: isSender ? "send" : "receive",
                 fee: 0,
                 amount: amount,
-                symbol: tx.symbol || 'Unknown',
-                tokenAddress: tx.address,
+                symbol: tx.token_symbol || 'Unknown',
                 isNative: false
             };
         });
@@ -110,27 +109,27 @@ async function getTransactions(address, chain) {
     }
 }
 
-async function fetchTokensAndNativeWalletData(address, chain) {
+async function fetchTokensAndNativeWalletData(address, chain, symbol) {
     try {
         await initializeMoralis();
-        const balances = await getBalances(address, chain);
-        const transactions = await getTransactions(address, chain);
+        const balances = await getBalances(address, chain, symbol);
+        const transactions = await getTransactions(address, chain, symbol);
 
-        let coinSymbol;
+        let chainSymbol;
         switch (chain) {
-            case '0x1': coinSymbol = 'ethereum'; break;
-            case '0x89': coinSymbol = 'polygon'; break;
-            case '0xa86a': coinSymbol = 'avalanche'; break;
-            case '0xa4b1': coinSymbol = 'arbitrum'; break;
-            case '0x10': coinSymbol = 'optimism'; break;
-            case '0xfa': coinSymbol = 'fantom'; break;
-            case '0x38': coinSymbol = 'binancecoin'; break;
-            case '0xaa36a7': coinSymbol = 'sepolia'; break;
-            default: coinSymbol = 'Unknown';
+            case '0x1': chainSymbol = 'ethereum'; break;
+            case '0x89': chainSymbol = 'polygon'; break;
+            case '0xa86a': chainSymbol = 'avalanche'; break;
+            case '0xa4b1': chainSymbol = 'arbitrum'; break;
+            case '0x10': chainSymbol = 'optimism'; break;
+            case '0xfa': chainSymbol = 'fantom'; break;
+            case '0x38': chainSymbol = 'binancecoin'; break;
+            case '0xaa36a7': chainSymbol = 'sepolia'; break;
+            default: chainSymbol = 'Unknown';
         }
 
         return {
-            chain: coinSymbol,
+            chain: chainSymbol,
             balances: balances,
             transactions: transactions
         };
