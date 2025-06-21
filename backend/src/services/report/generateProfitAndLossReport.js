@@ -48,7 +48,7 @@ async function generateProfitAndLossReport(walletInfo) {
             fees: +stats.totalFees.toFixed(8),
             startDate: stats.firstDate,
             endDate: stats.lastDate,
-            returnPercent: +returnPercent.toFixed(2) + '%'
+            returnPercent: +Math.abs(returnPercent.toFixed(2)) + ' %'
         };
     }
 
