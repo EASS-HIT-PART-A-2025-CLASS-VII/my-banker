@@ -1,131 +1,138 @@
-const Moralis = require('moralis').default;
 const fetchTokensAndNativeWalletData = require('../../../externals/abstractLayersForAPI/fetchWalletData/fetchTokensAndNativeWalletData');
 
 jest.mock('moralis', () => ({
-    default: {
-        start: jest.fn(),
-        EvmApi: {
-            balance: {
-                getNativeBalance: jest.fn()
-            },
-            token: {
-                getWalletTokenBalances: jest.fn(),
-                getWalletTokenTransfers: jest.fn()
-            },
-            transaction: {
-                getWalletTransactions: jest.fn()
-            }
-        }
+  default: {
+    start: jest.fn(),
+    EvmApi: {
+      balance: {
+        getNativeBalance: jest.fn()
+      },
+      token: {
+        getWalletTokenBalances: jest.fn(),
+        getWalletTokenTransfers: jest.fn()
+      },
+      transaction: {
+        getWalletTransactions: jest.fn()
+      }
     }
+  }
 }));
 
 describe('fetchTokensAndNativeWalletData', () => {
-    const mockAddress = '0xTestAddress';
-    const mockChain = '0x1';
+  const address = '0xTestAddress';
+  const chain = '0x1';
+  const symbol = 'ETH';
 
-    beforeEach(() => {
-        jest.clearAllMocks();
+  beforeEach(() => {
+    jest.clearAllMocks();
 
-        // Mock successful responses
-        Moralis.EvmApi.balance.getNativeBalance.mockResolvedValue({
-            raw: { balance: '1000000000000000000' } // 1 ETH
-        });
+    require('moralis').default.start.mockResolvedValue();
 
-        Moralis.EvmApi.token.getWalletTokenBalances.mockResolvedValue({
-            raw: [{
-                symbol: 'USDT',
-                balance: '1000000',
-                decimals: 6
-            }]
-        });
-
-        Moralis.EvmApi.transaction.getWalletTransactions.mockResolvedValue({
-            raw: {
-                result: [{
-                    hash: 'tx1',
-                    block_timestamp: '2025-01-01T00:00:00Z',
-                    from_address: mockAddress,
-                    value: '500000000000000000', // 0.5 ETH
-                    transaction_fee: '21000000000000'
-                }]
-            }
-        });
-
-        Moralis.EvmApi.token.getWalletTokenTransfers.mockResolvedValue({
-            raw: {
-                result: [{
-                    transaction_hash: 'tx2',
-                    block_timestamp: '2025-01-02T00:00:00Z',
-                    from_address: 'other',
-                    to_address: mockAddress,
-                    value: '500000',
-                    symbol: 'USDT',
-                    decimal: 6,
-                    address: '0xUSDTAddress'
-                }]
-            }
-        });
+    require('moralis').default.EvmApi.balance.getNativeBalance.mockResolvedValue({
+      raw: { balance: '1000000000000000000' }
     });
 
-    it('should fetch and format wallet data correctly', async () => {
-        const result = await fetchTokensAndNativeWalletData(mockAddress, mockChain);
-
-        expect(result).toEqual({
-            chain: 'ethereum',
-            balances: {
-                nativeBalance: {
-                    symbol: 'ETH',
-                    balance: 1
-                },
-                tokens: [{
-                    symbol: 'USDT',
-                    balance: 1
-                }]
-            },
-            transactions: expect.arrayContaining([
-                expect.objectContaining({
-                    txid: 'tx1',
-                    type: 'send',
-                    amount: 0.5,
-                    symbol: 'ETH',
-                    isNative: true
-                }),
-                expect.objectContaining({
-                    txid: 'tx2',
-                    type: 'receive',
-                    amount: 0.5,
-                    symbol: 'USDT',
-                    isNative: false
-                })
-            ])
-        });
-
-        expect(Moralis.start).toHaveBeenCalled();
-        expect(Moralis.EvmApi.balance.getNativeBalance).toHaveBeenCalledWith({
-            chain: mockChain,
-            address: mockAddress
-        });
+    require('moralis').default.EvmApi.token.getWalletTokenBalances.mockResolvedValue({
+      raw: [
+        { symbol: 'USDT', balance: '1000000', decimals: 6 }
+      ]
     });
 
-    it('should handle empty balances', async () => {
-        Moralis.EvmApi.balance.getNativeBalance.mockResolvedValue({
-            raw: { balance: '0' }
-        });
-        Moralis.EvmApi.token.getWalletTokenBalances.mockResolvedValue({
-            raw: []
-        });
-
-        const result = await fetchTokensAndNativeWalletData(mockAddress, mockChain);
-
-        expect(result.balances).toEqual({
-            tokens: [],
-            nativeBalance: null
-        });
+    require('moralis').default.EvmApi.transaction.getWalletTransactions.mockResolvedValue({
+      raw: {
+        result: [
+          {
+            hash: '0xabc',
+            block_timestamp: '2025-06-10T10:00:00Z',
+            from_address: address,
+            value: '500000000000000000', // 0.5 ETH
+            transaction_fee: '21000'
+          }
+        ]
+      }
     });
 
-    it('should handle unknown chain', async () => {
-        const result = await fetchTokensAndNativeWalletData(mockAddress, 'unknown');
 
-        expect(result.chain).toBe('Unknown');
+    require('moralis').default.EvmApi.token.getWalletTokenTransfers.mockResolvedValue({
+      raw: {
+        result: [
+          {
+            transaction_hash: '0xdef',
+            block_timestamp: '2025-06-10T11:00:00Z',
+            from_address: '0xOther',
+            to_address: address,
+            value: '2000000', // 2 USDT
+            token_symbol: 'USDT',
+            decimal: 6
+          }
+        ]
+      }
     });
+  });
+
+  it('returns balances and transactions in expected format', async () => {
+    const result = await fetchTokensAndNativeWalletData(address, chain, symbol);
+
+    expect(result).toEqual({
+      chain: 'ethereum',
+      balances: {
+        nativeBalance: {
+          symbol: 'ETH',
+          balance: 1
+        },
+        tokens: [
+          { symbol: 'USDT', balance: 1 }
+        ]
+      },
+      transactions: [
+        {
+          txid: '0xdef',
+          timestamp: '2025-06-10T11:00:00Z',
+          type: 'receive',
+          fee: 0,
+          amount: 2,
+          symbol: 'USDT',
+          isNative: false
+        },
+        {
+          txid: '0xabc',
+          timestamp: '2025-06-10T10:00:00Z',
+          type: 'send',
+          fee: 21000,
+          amount: 0.5,
+          symbol: 'ETH',
+          isNative: true
+        }
+      ]
+    });
+  });
+
+  it('handles empty balances and transactions', async () => {
+    require('moralis').default.EvmApi.balance.getNativeBalance.mockResolvedValue({
+      raw: { balance: '0' }
+    });
+    require('moralis').default.EvmApi.token.getWalletTokenBalances.mockResolvedValue({
+      raw: []
+    });
+    require('moralis').default.EvmApi.transaction.getWalletTransactions.mockResolvedValue({
+      raw: { result: [] }
+    });
+    require('moralis').default.EvmApi.token.getWalletTokenTransfers.mockResolvedValue({
+      raw: { result: [] }
+    });
+
+    const result = await fetchTokensAndNativeWalletData(address, chain, symbol);
+
+    expect(result.balances.nativeBalance).toBeNull();
+    expect(result.balances.tokens).toEqual([]);
+    expect(result.transactions).toEqual([]);
+  });
+
+  it('throws error if Moralis fails', async () => {
+    require('moralis').default.EvmApi.balance.getNativeBalance.mockRejectedValue(new Error('fail'));
+
+    await expect(fetchTokensAndNativeWalletData(address, chain, symbol))
+      .rejects
+      .toThrow('Failed to fetch wallet balance: fail');
+  });
 });

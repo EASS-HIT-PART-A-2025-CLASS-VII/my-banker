@@ -134,7 +134,7 @@ async function fetchTokensAndNativeWalletData(address, chain, symbol) {
             transactions: transactions
         };
     } catch (error) {
-        throw new Error(`Failed to fetch wallet data for ${coinType}: ${error.message}`);
+        throw new Error(`${error.message}`);
     }
 }
 
