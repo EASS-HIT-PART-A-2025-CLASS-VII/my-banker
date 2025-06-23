@@ -9,13 +9,13 @@ export default function UpdateEmailPopup({ onClose, onSuccess }) {
         try {
             const response = await fetch("http://localhost:8000/auth/updateEmail", {
                 method: "PATCH",
-                headers: { 
+                headers: {
                     "Content-Type": "application/json",
                     "Authorization": `Bearer ${localStorage.getItem('token')}`
                 },
-                body: JSON.stringify({ 
+                body: JSON.stringify({
                     username: localStorage.getItem('username'),
-                    newEmail 
+                    newEmail
                 }),
             });
 
@@ -35,14 +35,20 @@ export default function UpdateEmailPopup({ onClose, onSuccess }) {
         <div className="popup-overlay">
             <div className="popup">
                 <button className="close-button" onClick={onClose}>×</button>
-                <h2>Update Email</h2>
-                <input
-                    type="email"
-                    placeholder="New Email"
-                    value={newEmail}
-                    onChange={e => setNewEmail(e.target.value)}
-                />
-                {error && <p className="error">{error}</p>}
+                
+                <h2>Update Email Address</h2>
+                
+                <div className="form-container">
+                    <input
+                        type="email"
+                        placeholder="Enter new email address"
+                        value={newEmail}
+                        onChange={e => setNewEmail(e.target.value)}
+                    />
+                    
+                    {error && <p className="error">{error}</p>}
+                </div>
+                
                 <button className="btn" onClick={handleUpdateEmail}>
                     Update Email
                 </button>

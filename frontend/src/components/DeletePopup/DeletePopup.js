@@ -1,4 +1,3 @@
-// components/ProfilePage/DeletePopup.js
 import React from "react";
 import '../Popup/Popup.css';
 
@@ -29,8 +28,17 @@ export default function DeletePopup({ onClose }) {
     <div className="popup-overlay">
       <div className="popup">
         <button className="close-button" onClick={onClose}>×</button>
-        <h3>Are you sure you want to delete your account?</h3>
-        <button onClick={handleDelete} className="btn">Yes, Delete</button>
+        <div className="delete-popup-content">
+          <h3>Delete Account</h3>
+          <p className="warning-text">
+            Are you sure you want to delete your account? This action cannot be undone and will permanently remove all your data.
+          </p>
+          <div className="button-group">
+            <button onClick={handleDelete} className="btn btn-danger">
+              Yes, Delete Account
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   );

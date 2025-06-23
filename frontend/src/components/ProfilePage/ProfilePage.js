@@ -66,7 +66,7 @@ function ProfilePage() {
     };
 
     fetchPreferences();
-  }, [navigate]);
+  }, [navigate, token, username]);
 
   const handlePreferenceChange = (preference, value) => {
     setPreferences(prev => ({
@@ -97,50 +97,155 @@ function ProfilePage() {
     }
   };
 
+  const formatLabel = (key) => {
+    return key.replace(/([A-Z])/g, ' $1')
+      .replace(/^./, str => str.toUpperCase())
+      .trim();
+  };
+
+  const getPreferenceDescription = (key) => {
+    const descriptions = {
+      riskAversion: "How cautious are you with investments?",
+      volatilityTolerance: "Comfort level with market fluctuations",
+      growthFocus: "Preference for growth vs. stability",
+      cryptoExperience: "Experience with cryptocurrency markets",
+      innovationTrust: "Trust in emerging financial technologies",
+      impactInterest: "Interest in sustainable/impact investing",
+      diversification: "Preference for portfolio diversification",
+      holdingPatience: "Long-term vs. short-term investment approach",
+      monitoringFrequency: "How often you check your investments",
+      adviceOpenness: "Openness to professional financial advice"
+    };
+    return descriptions[key] || "";
+  };
+
+  if (isLoading) {
+    return (
+      <div className="profile-page">
+        <div className="loading-container">
+          <div className="loading-spinner"></div>
+          <p>Loading your preferences...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="profile-page">
+        <div className="error-container">
+          <h2>Error Loading Profile</h2>
+          <p>{error}</p>
+          <button onClick={() => navigate('/')} className="btn btn-primary">
+            Return to Dashboard
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="profile-page">
       <div className="profile-header">
         <button className="back-btn" onClick={() => navigate('/')}>
           ←
         </button>
-        <h1>About you</h1>
+        <h1>Profile Settings</h1>
       </div>
-      <div className="preferences-section">
-        <h2>Investment Preferences</h2>
-        <div className="preferences-grid">
-          {Object.entries(preferences).map(([key, value]) => (
-            <div key={key} className="preference-item">
-              <label>{key.replace(/([A-Z])/g, ' $1').toLowerCase()}</label>
-              <input
-                type="range"
-                min="1"
-                max="10"
-                value={value}
-                onChange={(e) => handlePreferenceChange(key, parseInt(e.target.value))}
-              />
+
+      <div className="profile-container">
+        <div className="preferences-section">
+          <div className="section-header">
+            <div className="section-icon">
+              📈
             </div>
-          ))}
+            <h2>Investment Preferences</h2>
+            <p className="section-description">Customize your investment profile to receive personalized recommendations</p>
+          </div>
+          
+          <div className="preferences-grid">
+            {Object.entries(preferences).map(([key, value]) => (
+              <div key={key} className="preference-item">
+                <div className="preference-header">
+                  <label className="preference-label">{formatLabel(key)}</label>
+                  <div className="preference-value">{value}/10</div>
+                </div>
+                <p className="preference-description">{getPreferenceDescription(key)}</p>
+                
+                <div className="range-container">
+                  <input
+                    type="range"
+                    min="1"
+                    max="10"
+                    value={value}
+                    onChange={(e) => handlePreferenceChange(key, parseInt(e.target.value))}
+                    className="preference-slider"
+                  />
+                  <div className="range-labels">
+                    <span>Low</span>
+                    <span>Medium</span>
+                    <span>High</span>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+          
+          <div className="save-section">
+            <button 
+              onClick={handleSavePreferences}
+              className="btn btn-primary"
+            >
+              💾 Save Preferences
+            </button>
+          </div>
         </div>
-        <button onClick={handleSavePreferences} className="btn">
-          Save Preferences
-        </button>
-      </div>
 
-      <div className="account-section">
-        <h2>Account Settings</h2>
-        <div className="account-buttons">
-          <button onClick={() => setShowEmailPopup(true)} className="btn">
-            Update Email
-          </button>
-          <button onClick={() => setShowPasswordPopup(true)} className="btn">
-            Update Password
-          </button>
-          <button onClick={() => setShowDeletePopup(true)} className="btn delete-btn">
-            Delete My Account
-          </button>
+        <div className="account-section">
+          <div className="settings-group">
+            <div className="settings-group-header">
+              🛡️ <h3>Security</h3>
+            </div>
+            <div className="settings-buttons">
+              <button 
+                onClick={() => setShowEmailPopup(true)}
+                className="setting-btn"
+              >
+                📧
+                <div className="setting-info">
+                  <span className="setting-title">Update Email</span>
+                  <span className="setting-description">Change your email address</span>
+                </div>
+              </button>
+              
+              <button 
+                onClick={() => setShowPasswordPopup(true)}
+                className="setting-btn"
+              >
+                🔒
+                <div className="setting-info">
+                  <span className="setting-title">Change Password</span>
+                  <span className="setting-description">Update your account password</span>
+                </div>
+              </button>
+            </div>
+          </div>
+
+          <div className="danger-zone">
+            <div className="danger-header">
+              <h3>Danger Zone</h3>
+              <p>Irreversible and destructive actions</p>
+            </div>
+            <button 
+              onClick={() => setShowDeletePopup(true)}
+              className="btn btn-danger"
+            >
+              🗑️ Delete Account
+            </button>
+          </div>
         </div>
       </div>
-
+      
       {showEmailPopup && (
         <UpdateEmailPopup
           onClose={() => setShowEmailPopup(false)}

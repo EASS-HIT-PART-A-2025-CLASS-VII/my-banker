@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import './RegisterPopup.css';
-import '../Popup/Popup.css';
 
 const questions = [
   "How important is stability over high returns?",
@@ -40,11 +39,11 @@ const RegisterPopup = ({ onClose }) => {
 
   const handleNext = () => {
     if (step === 0) {
-      // Simple validation example
       if (!formData.username || !formData.email || !formData.password || formData.password !== formData.confirmPassword) {
-        alert("Please fill out all fields correctly.");
+        setError("Please fill out all fields correctly and ensure passwords match.");
         return;
       }
+      setError('');
     }
     setStep(step + 1);
   };
@@ -52,6 +51,7 @@ const RegisterPopup = ({ onClose }) => {
   const handleBack = () => {
     if (step > 0) {
       setStep(step - 1);
+      setError('');
     }
   };
 
@@ -95,57 +95,164 @@ const RegisterPopup = ({ onClose }) => {
     }
   };
 
+  const progressPercentage = ((step + 1) / (questions.length + 1)) * 100;
+
+  const getSliderBackground = (value) => {
+    const percentage = ((value - 1) / 9) * 100;
+    return `linear-gradient(to right, #F9B64D 0%, #F9B64D ${percentage}%, #e5e7eb ${percentage}%, #e5e7eb 100%)`;
+  };
+
   return (
-    <div className="popup-overlay">
-      <div className="popup">
-        <button className="close-button" onClick={onClose}>&times;</button>
-        {isSuccess ? (
-          <div className="success-message">
-            <h2>hooray!</h2>
-            <p>Your account has been created successfully</p>
-            <button className="btn-primary" onClick={onClose}>
-              Continue
-            </button>
-          </div>
-        ) : (
-          <>
-            {step === 0 ? (
-              <div className="form-fields">
-                <h2>Create new account</h2>
-                <input name="username" type="text" placeholder="Username" value={formData.username} onChange={handleInputChange} />
-                <input name="email" type="email" placeholder="Email" value={formData.email} onChange={handleInputChange} />
-                <input name="password" type="password" placeholder="Password" value={formData.password} onChange={handleInputChange} />
-                <input name="confirmPassword" type="password" placeholder="Confirm Password" value={formData.confirmPassword} onChange={handleInputChange} />
+    <div className="register-popup-overlay">
+      <div className="register-popup">
+        <div className="progress-bar">
+          <div 
+            className="progress-fill"
+            style={{ width: `${progressPercentage}%` }}
+          ></div>
+        </div>
+
+        <button 
+          className="close-button"
+          onClick={onClose}
+        >
+          ×
+        </button>
+
+        <div className="popup-content">
+          {isSuccess ? (
+            <div className="success-container">
+              <div className="success-icon">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
               </div>
-            ) : (
-              <div className="step-content">
-                <h2>{questions[step - 1]}</h2>
-                <input
-                  type="range"
-                  min="1"
-                  max="10"
-                  value={answers[step - 1]}
-                  onChange={handleRangeChange}
-                  className="custom-range"
-                />
-              </div>
-            )}
-            <div className="button-group">
-              {step > 0 && (
-                <button className="btn-secondary" onClick={handleBack}>
-                  Back
-                </button>
-              )}
-              <button
-                className="btn-primary"
-                onClick={step === questions.length ? handleSubmit : handleNext}
+              <h2 className="success-title">Welcome aboard! 🎉</h2>
+              <p className="success-description">
+                Your account has been created successfully. You're all set to start your investment journey.
+              </p>
+              <button 
+                className="btn btn-primary btn-full-width"
+                onClick={onClose}
               >
-                {step === questions.length ? 'Submit' : 'Next'}
+                Get Started
               </button>
             </div>
-            {error && <p className="error">{error}</p>}
-          </>
-        )}
+          ) : (
+            <>
+              {step === 0 ? (
+                <div className="form-section">
+                  <div className="section-header">
+                    <h2 className="section-title">Create Your Account</h2>
+                    <p className="section-subtitle">Join thousands of smart investors</p>
+                  </div>
+                  
+                  <div className="form-fields">
+                    <div className="form-row">
+                      <div className="form-group">
+                        <label className="form-label">Username</label>
+                        <input 
+                          name="username" 
+                          type="text" 
+                          placeholder="Choose a username"
+                          value={formData.username} 
+                          onChange={handleInputChange}
+                          className="form-input"
+                        />
+                      </div>
+                      
+                      <div className="form-group">
+                        <label className="form-label">Email</label>
+                        <input 
+                          name="email" 
+                          type="email" 
+                          placeholder="your@email.com"
+                          value={formData.email} 
+                          onChange={handleInputChange}
+                          className="form-input"
+                        />
+                      </div>
+                    </div>
+                    
+                    <div className="form-row">
+                      <div className="form-group">
+                        <label className="form-label">Password</label>
+                        <input 
+                          name="password" 
+                          type="password" 
+                          placeholder="Create password"
+                          value={formData.password} 
+                          onChange={handleInputChange}
+                          className="form-input"
+                        />
+                      </div>
+                      
+                      <div className="form-group">
+                        <label className="form-label">Confirm Password</label>
+                        <input 
+                          name="confirmPassword" 
+                          type="password" 
+                          placeholder="Confirm your password"
+                          value={formData.confirmPassword} 
+                          onChange={handleInputChange}
+                          className="form-input"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <div className="question-section">
+                  <div className="question-header">
+                    <div className="question-counter">Question {step} of {questions.length}</div>
+                    <h2 className="question-title">{questions[step - 1]}</h2>
+                  </div>
+                  
+                  <div className="range-container">
+                    <input
+                      type="range"
+                      min="1"
+                      max="10"
+                      value={answers[step - 1]}
+                      onChange={handleRangeChange}
+                      className="range-slider"
+                      style={{ background: getSliderBackground(answers[step - 1]) }}
+                    />
+                    
+                    <div className="range-labels">
+                      <span>Not at all</span>
+                      <span className="range-value">{answers[step - 1]}/10</span>
+                      <span>Extremely</span>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {error && (
+                <div className="error-message">
+                  <p className="error-text">{error}</p>
+                </div>
+              )}
+
+              <div className="button-group">
+                {step > 0 && (
+                  <button 
+                    className="btn btn-secondary"
+                    onClick={handleBack}
+                  >
+                    Back
+                  </button>
+                )}
+                <button
+                  className="btn btn-primary"
+                  onClick={step === questions.length ? handleSubmit : handleNext}
+                >
+                  {step === questions.length ? 'Create Account' : 'Continue'}
+                </button>
+              </div>
+            </>
+          )}
+        </div>
       </div>
     </div>
   );

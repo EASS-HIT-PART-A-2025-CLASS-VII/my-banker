@@ -15,13 +15,13 @@ export default function UpdatePasswordPopup({ onClose, onSuccess }) {
         try {
             const response = await fetch("http://localhost:8000/auth/updatePassword", {
                 method: "PATCH",
-                headers: { 
+                headers: {
                     "Content-Type": "application/json",
                     "Authorization": `Bearer ${localStorage.getItem('token')}`
                 },
-                body: JSON.stringify({ 
+                body: JSON.stringify({
                     username: localStorage.getItem('username'),
-                    newPassword 
+                    newPassword
                 }),
             });
 
@@ -41,20 +41,26 @@ export default function UpdatePasswordPopup({ onClose, onSuccess }) {
         <div className="popup-overlay">
             <div className="popup">
                 <button className="close-button" onClick={onClose}>×</button>
-                <h2>Update Password</h2>
-                <input
-                    type="password"
-                    placeholder="New Password"
-                    value={newPassword}
-                    onChange={e => setNewPassword(e.target.value)}
-                />
-                <input
-                    type="password"
-                    placeholder="Confirm Password"
-                    value={confirmPassword}
-                    onChange={e => setConfirmPassword(e.target.value)}
-                />
-                {error && <p className="error">{error}</p>}
+                
+                <h2>Change Password</h2>
+                
+                <div className="form-container">
+                    <input
+                        type="password"
+                        placeholder="Enter new password"
+                        value={newPassword}
+                        onChange={e => setNewPassword(e.target.value)}
+                    />
+                    <input
+                        type="password"
+                        placeholder="Confirm new password"
+                        value={confirmPassword}
+                        onChange={e => setConfirmPassword(e.target.value)}
+                    />
+                    
+                    {error && <p className="error">{error}</p>}
+                </div>
+                
                 <button className="btn" onClick={handleUpdatePassword}>
                     Update Password
                 </button>

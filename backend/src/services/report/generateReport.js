@@ -19,7 +19,6 @@ async function generateReport(username, walletAddress, chain) {
         actions: actions,
         profitAndLoss: pnl,
         insights: llmAnalysis,
-        transactions: walletData.transactions,
     };
 }
 
