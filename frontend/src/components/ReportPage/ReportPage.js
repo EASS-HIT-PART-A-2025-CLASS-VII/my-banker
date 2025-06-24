@@ -201,7 +201,7 @@ export default function ReportPage() {
   return (
     <div className="report-page">
       <header className="report-header">
-        <div className="header-content">
+        <div className="report-header-content">
           <button className="back-btn" onClick={() => navigate('/')}>
             ←
           </button>
@@ -352,10 +352,6 @@ export default function ReportPage() {
           )}
         </div>
       )}
-
-      <footer className="footer">
-        © {new Date().getFullYear()} My Banker. All rights reserved.
-      </footer>
     </div>
   );
 }

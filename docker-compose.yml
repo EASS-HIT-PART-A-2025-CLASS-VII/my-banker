@@ -10,10 +10,10 @@ services:
       - mongo
       - ollama
     environment:
-      - MONGO_URI=mongodb://mongo:27017/my-banker
-      - OLLAMA_API=http://ollama:11434
-      - JWT_SECRET=201fc9a67ef78be4d958f91bbad9f7d6c56ffdd923125b2e319318015474c130
-      - MORALIS_API_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJub25jZSI6IjY5MjAxMzM4LWFkNGQtNGU5OS05ZmQwLTZhODU0Yzk4MTZhYSIsIm9yZ0lkIjoiNDUxMTI2IiwidXNlcklkIjoiNDY0MTcyIiwidHlwZUlkIjoiNGQ4ZTc2YzQtZGE2MC00MDc5LTllZGEtN2RmODM4ODAzZDAwIiwidHlwZSI6IlBST0pFQ1QiLCJpYXQiOjE3NDkxMjc2OTksImV4cCI6NDkwNDg4NzY5OX0.oJEOZkLNZxxND_pmWDio4mJEiLEo6jaABsAb7LvJV1c
+      - MONGO_URI=${MONGO_URI}
+      - OLLAMA_API=${OLLAMA_API}
+      - JWT_SECRET=${JWT_SECRET}
+      - MORALIS_API_KEY=${MORALIS_API_KEY}
     volumes:
       - ./backend:/usr/src/app/backend
     restart: unless-stopped
@@ -26,7 +26,7 @@ services:
     ports:
       - "3000:80"
     environment:
-      - REACT_APP_API_URL=http://backend:8000
+      - REACT_APP_API_URL=${REACT_APP_API_URL}
     depends_on:
       - backend
     restart: unless-stopped
