@@ -236,6 +236,24 @@ The project is correctly set up when:
 
 ---
 
+### 🔐 Generating Your Own JWT Secret
+
+**Recommended method:** Generate a 64-character secure secret using:
+
+**Using OpenSSL**
+```bash
+openssl rand -hex 32
+```
+
+**Using Node.js**
+```bash
+node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
+```
+
+Copy the output and replace the `JWT_SECRET` value in your `.env` file.
+
+---
+
 ## 📊 Performance Expectations
 
 - **Startup time:** 2-3 minutes for initial setup

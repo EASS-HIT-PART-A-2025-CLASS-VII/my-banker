@@ -23,7 +23,6 @@ const updateUser = async (username, updatedData) => {
             user.email = updatedData.email;
         }
 
-        // Update profile parameters if provided
         const profileFields = [
             'riskAversion',
             'volatilityTolerance',

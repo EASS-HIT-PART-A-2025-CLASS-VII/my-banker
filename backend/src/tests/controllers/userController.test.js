@@ -32,14 +32,11 @@ describe('User Controller', () => {
         };
 
         it('should return preferences for valid username', async () => {
-            // Arrange
             mockReq.params.username = 'testuser';
             getUserPreferencesByUsername.mockResolvedValue(mockPreferences);
 
-            // Act
             await getUserPreferencesController(mockReq, mockRes);
 
-            // Assert
             expect(getUserPreferencesByUsername).toHaveBeenCalledWith('testuser');
             expect(mockRes.json).toHaveBeenCalledWith({
                 status: 200,
@@ -51,10 +48,8 @@ describe('User Controller', () => {
         });
 
         it('should return bad request when username is missing', async () => {
-            // Act
             await getUserPreferencesController(mockReq, mockRes);
 
-            // Assert
             expect(mockRes.json).toHaveBeenCalledWith({
                 status: 400,
                 error: {
@@ -65,7 +60,6 @@ describe('User Controller', () => {
 
             expect(getUserPreferencesByUsername).not.toHaveBeenCalled();
         });
-
 
         it('should handle service errors', async () => {
             mockReq.params.username = 'testuser';

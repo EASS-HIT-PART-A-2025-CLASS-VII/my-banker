@@ -5,10 +5,6 @@ const {
     successJsonResponse,
 } = require('../utils/jsonResponses/jsonResponses');
 
-/**
- * Generates investment analysis report for a blockchain wallet
- * Assumes req.body contains walletAddress and chain strings, and req.user contains authenticated username
- */
 const reportController = async (req, res) => {
     try {
         const { walletAddress, chain } = req.body;

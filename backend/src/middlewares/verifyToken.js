@@ -1,10 +1,6 @@
 const jwt = require('jsonwebtoken');
 const JWT_SECRET = process.env.JWT_SECRET;
 
-/**
- * Verifies JWT token and attaches decoded user data to request
- * Assumes request headers contain 'Authorization: Bearer <token>' and JWT_SECRET is configured
- */
 const verifyToken = (req, res, next) => {
   const authHeader = req.headers.authorization;
 

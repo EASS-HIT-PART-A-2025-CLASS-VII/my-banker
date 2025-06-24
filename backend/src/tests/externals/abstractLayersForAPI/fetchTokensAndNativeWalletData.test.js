@@ -45,7 +45,7 @@ describe('fetchTokensAndNativeWalletData', () => {
             hash: '0xabc',
             block_timestamp: '2025-06-10T10:00:00Z',
             from_address: address,
-            value: '500000000000000000', // 0.5 ETH
+            value: '500000000000000000',
             transaction_fee: '21000'
           }
         ]
@@ -61,7 +61,7 @@ describe('fetchTokensAndNativeWalletData', () => {
             block_timestamp: '2025-06-10T11:00:00Z',
             from_address: '0xOther',
             to_address: address,
-            value: '2000000', // 2 USDT
+            value: '2000000',
             token_symbol: 'USDT',
             decimal: 6
           }

@@ -7,10 +7,6 @@ const {
   successJsonResponse,
 } = require('../utils/jsonResponses/jsonResponses');
 
-/**
- * Authenticates user and generates JWT token
- * Assumes req.body contains valid username and password strings
- */
 const loginController = async (req, res) => {
   try {
     const token = await authenticationService.login(req.body.username, req.body.password);
@@ -22,10 +18,6 @@ const loginController = async (req, res) => {
   }
 };
 
-/**
- * Creates new user account with investment profile
- * Assumes req.body contains all required user fields and preference ratings (1-10)
- */
 const registerController = async (req, res) => {
   try {
     const userData = {
@@ -52,10 +44,6 @@ const registerController = async (req, res) => {
   }
 };
 
-/**
- * Removes user account and associated data
- * Assumes req.body contains valid username string
- */
 const deleteUserController = async (req, res) => {
   try {
     const user = await authenticationService.deleteUser(req.body);
@@ -67,10 +55,6 @@ const deleteUserController = async (req, res) => {
   }
 };
 
-/**
- * Updates all user's information
- * Assumes req.body contains username and at least one updatable field
- */
 const updateUserController = async (req, res) => {
   try {
     const user = await authenticationService.updateUser(req.body);
@@ -82,10 +66,6 @@ const updateUserController = async (req, res) => {
   }
 };
 
-/**
- * Updates user's email address
- * Assumes req.body contains username and valid newEmail string
- */
 const updateEmailController = async (req, res) => {
   try {
     const { username, newEmail } = req.body;
@@ -107,10 +87,6 @@ const updateEmailController = async (req, res) => {
   }
 };
 
-/**
- * Updates user's password with new hashed value
- * Assumes req.body contains username and newPassword meeting security requirements
- */
 const updatePasswordController = async (req, res) => {
   try {
     const { username, newPassword } = req.body;
@@ -130,10 +106,6 @@ const updatePasswordController = async (req, res) => {
   }
 };
 
-/**
- * Updates user's investment preferences
- * Assumes req.body contains username and preference values between 1-10
- */
 const updatePreferencesController = async (req, res) => {
   try {
     const { username, ...preferences } = req.body;
@@ -153,8 +125,6 @@ const updatePreferencesController = async (req, res) => {
     return res.json(internalErrorJsonResponse(error.message));
   }
 };
-
-
 
 module.exports = {
   loginController,
