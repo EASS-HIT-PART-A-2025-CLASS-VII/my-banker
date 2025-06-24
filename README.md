@@ -41,219 +41,207 @@ It aims to provide a personalized financial assistant that analyzes user data an
 
 ## 📸 Screenshots
 
-![Home Page](readmeFiles/HomePage.png)  
+### Home Page
+![Home Page](readmeFiles/HomePageScreenshot.JPG)
+
+### Login
+![Login](readmeFiles/LoginScreenshot.JPG)
+
+### Registration
+![Register](readmeFiles/RegisterScreenshot.JPG)
+
+### Profile Page
+![Profile Page](readmeFiles/ProfilePageScreenshot.JPG)
+
+### Report Generation
+![Report Page 1](readmeFiles/ReportPageScreenshot1.JPG)
+![Report Page 2](readmeFiles/ReportPageScreenshot2.JPG)
+![Report Page 3](readmeFiles/ReportPageScreenshot3.JPG)
 
 ---
 
-## ⚙️ Environment Variables & Configuration
+## 🚀 Quick Start Guide
 
-### 🔒 Required Variables
+### Prerequisites Verification
 
-You must set the following environment variables in your `docker-compose.yml`.
+Ensure the following are installed and running:
+- Docker and Docker Compose
+- Git
+- Internet connection for downloading dependencies
 
-### 🛠️ How to Configure
-
-Find the `environment:` section under the `backend` service in your `docker-compose.yml` file.  
-Replace the placeholder values with your actual configuration:
-
-```yaml
-environment:
-  - MONGO_URI=mongodb://mongo:27017/my-banker         # MongoDB connection string
-  - OLLAMA_API=http://ollama:11434                    # Ollama service endpoint
-  - JWT_SECRET=YOUR_SECURE_JWT_SECRET_HERE            # 64-character hex secret for JWT
-  - MORALIS_API_KEY=YOUR_MORALIS_API_KEY_HERE         # Moralis API key
-```
-
----
-
-## 📝 Variable Reference Table
-
-| Variable          | Required | Description                          | Example Value (for reference)         |
-|------------------|----------|--------------------------------------|---------------------------------------|
-| `MONGO_URI`      | Yes      | MongoDB connection string            | `mongodb://mongo:27017/my-banker`     |
-| `OLLAMA_API`     | Yes      | Ollama service URL                   | `http://ollama:11434`                 |
-| `JWT_SECRET`     | Yes      | 64-character hex secret for JWT      | `201fc9a67ef78be4d958f91bbad9f7d6...` |
-| `MORALIS_API_KEY`| Yes      | Moralis Web3 API key                 | `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ` |
-
----
-
-### 🔐 Generating JWT Secret
-
-**Recommended method:** Generate a 64-character secure secret using:
-
-**Using OpenSSL**
-```bash
-openssl rand -hex 32
-```
-
-**Using Node.js**
-```bash
-node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
-```
-
-Copy the output and paste it as your `JWT_SECRET` value.
-
----
-
-## 🚀 Installation & Setup
-
-### 📦 Prerequisites
-
-- **Docker** installed on your machine  
-- **Node.js** (if running without Docker)  
-- **Git** for version control  
-
-### 🔄 Clone the Repository
+### Step 1: Clone Repository
 
 ```bash
 git clone https://github.com/EASS-HIT-PART-A-2025-CLASS-VII/my-banker
 cd my-banker
 ```
 
----
+### Step 2: Create Environment Configuration
 
-### 🐳 Run with Docker
+**CRITICAL:** Create a `.env` file in the root directory with these exact values:
 
-**Build and start all services:**
+```env
+MONGO_URI=mongodb://mongo:27017/my-banker
+OLLAMA_API=http://ollama:11434
+JWT_SECRET=YOUR_SECURE_JWT_SECRET_HERE
+MORALIS_API_KEY=YOUR_MORALIS_API_KEY_HERE
+REACT_APP_API_URL=http://backend:8000
+```
+
+### Step 3: Build and Start All Services
 
 ```bash
+docker-compose up --build -d
+```
+
+**Wait for all containers to be ready** (approximately 2-3 minutes for initial setup).
+
+### Step 4: Install AI Model (First Time Only)
+
+After containers are running, execute:
+
+```bash
+docker exec -it ollama ollama run gemma3:4b
+```
+
+**Important:** Wait for the model download to complete before proceeding.
+
+### Step 5: Verify Installation
+
+Check that all services are running:
+
+```bash
+docker-compose ps
+```
+
+Expected output should show all services as "Up".
+
+### Step 6: Access the Application
+
+- **Frontend (Main App):** http://localhost:3000
+- **Backend API:** http://localhost:8000
+
+---
+
+## 🧪 Testing and Validation
+
+### Run Complete Test Suite
+
+```bash
+npx jest
+```
+
+### Expected Test Results
+
+The following output indicates successful setup:
+
+```
+Test Suites: 14 passed, 14 total
+Tests:       58 passed, 58 total
+Snapshots:   0 total
+Time:        4.704 s, estimated 5 s
+Ran all test suites.
+```
+
+## 🔧 Troubleshooting Common Issues
+
+### Container Issues
+
+If containers fail to start:
+
+```bash
+# Clean up and restart
+docker-compose down
+docker system prune -f
 docker-compose up --build
 ```
 
-The backend will be accessible at:  
-[http://localhost:8000](http://localhost:8000)
+### Port Conflicts
 
-The frontend will be accessible at:  
-[http://localhost:3000](http://localhost:3000)
-
----
-
-### 🚀 Run Without Docker
-
-**Install dependencies:**
+If ports 3000 or 8000 are in use:
 
 ```bash
-npm install
-cd backend && npm install
-cd ../frontend && npm install
+# Check port usage
+netstat -tulpn | grep :3000
+netstat -tulpn | grep :8000
+
+# Kill processes using these ports if necessary
+sudo kill -9 $(lsof -t -i:3000)
+sudo kill -9 $(lsof -t -i:8000)
 ```
 
-**Start the backend:**
+### AI Model Issues
+
+If Gemma model fails to load:
 
 ```bash
-cd backend
-npm start
-```
-
-**Start the frontend:**
-
-```bash
-cd frontend
-npm start
+# Retry model installation
+docker exec -it ollama ollama pull gemma3:4b
+docker exec -it ollama ollama run gemma3:4b
 ```
 
 ---
 
-## 📡 RESTful API Usage
+## 📡 API Testing Guide
 
-**Base URL:**  
-`http://localhost:8000`
+### Authentication Test
 
-### Authentication
-
-- **How to authenticate:**  
-  - Use JWT in the `Authorization` header: `Bearer <token>`  
-  - Obtain a token via `/auth/login`
-
----
-
-### Endpoints
-
-| Method | Endpoint                        | Description                                 | Authentication |
-|--------|----------------------------------|---------------------------------------------|----------------|
-| POST   | `/auth/login`                    | User login                                  | No             |
-| POST   | `/auth/register`                 | User registration                           | No             |
-| PATCH  | `/auth/update`                   | Update user info                            | Yes (JWT)      |
-| PATCH  | `/auth/updateEmail`              | Update user email                           | Yes (JWT)      |
-| PATCH  | `/auth/updatePassword`           | Update user password                        | Yes (JWT)      |
-| PATCH  | `/auth/updatePreferences`        | Update user preferences                     | Yes (JWT)      |
-| DELETE | `/auth/delete`                   | Delete user account                         | Yes (JWT)      |
-| POST   | `/report`                        | Generate a personalized report              | Yes (JWT)      |
-| GET    | `/user/preferences/:username`    | Get user preferences by username            | Yes (JWT)      |
-
----
-
-### Example Requests
-
-**1. User Login**
 ```bash
+# Register a test user
+curl -X POST http://localhost:8000/auth/register \
+-H "Content-Type: application/json" \
+-d '{"username":"testuser", "password":"testpass123", "email":"test@example.com"}'
+
+# Login and get token
 curl -X POST http://localhost:8000/auth/login \
 -H "Content-Type: application/json" \
--d '{"username":"user1", "password":"pass123"}'
+-d '{"username":"testuser", "password":"testpass123"}'
 ```
 
-**2. Generate Report**
+### Report Generation Test
+
 ```bash
+# Generate a report (replace TOKEN with actual JWT from login)
 curl -X POST http://localhost:8000/report \
--H "Authorization: Bearer <your-token>" \
+-H "Authorization: Bearer TOKEN" \
 -H "Content-Type: application/json" \
--d '{"walletAddress":"0x123...", "chain":"ethereum"}'
-```
-
-**3. Get User Preferences**
-```bash
-curl -X GET http://localhost:8000/user/preferences/user1 \
--H "Authorization: Bearer <your-token>"
+-d '{"walletAddress":"0x742c1Db5C2F4F1A4E1C6B1A4B5E6F1C1D1E1F1A1", "chain":"ethereum"}'
 ```
 
 ---
 
-### Example Responses
+## 🎯 Success Criteria
 
-**Successful Login**
-```json
-{
-  "status": 200,
-  "data": {
-    "type": "Success",
-    "message": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
-  }
-}
-```
+The project is correctly set up when:
 
-**Error Response**
-```json
-{
-  "status": 401,
-  "error": {
-    "type": "Unauthorized",
-    "message": "Invalid credentials"
-  }
-}
-```
+1. ✅ All Docker containers are running (`docker-compose ps` shows "Up" status)
+2. ✅ Frontend is accessible at http://localhost:3000
+3. ✅ Backend API responds at http://localhost:8000
+4. ✅ All 58 tests pass with `npx jest`
+5. ✅ User registration and login work via API
+6. ✅ Report generation endpoint responds (may require valid wallet address)
+7. ✅ Gemma 3 AI model is loaded and responding
 
 ---
 
-### Error Handling
+## 🔍 Environment Variables Reference
 
-| Code | Message               |
-|------|-----------------------|
-| 400  | Bad Request           |
-| 401  | Unauthorized          |
-| 404  | Not Found             |
-| 500  | Internal Server Error |
-
-> You can use tools like **Postman** or **Swagger** to test the endpoints interactively.
+| Variable               | Purpose                          | Value                               |
+|-----------------------|----------------------------------|-------------------------------------|
+| `MONGO_URI`           | Database connection              | `mongodb://mongo:27017/my-banker`   |
+| `OLLAMA_API`          | AI service endpoint              | `http://ollama:11434`               |
+| `JWT_SECRET`          | Authentication security          | Pre-configured secure token         |
+| `MORALIS_API_KEY`     | Blockchain data access           | Pre-configured API key              |
+| `REACT_APP_API_URL`   | Frontend-to-backend connection   | `http://backend:8000`               |
 
 ---
 
-## 🧪 Testing
+## 📊 Performance Expectations
 
-To run tests:
-
-```bash
-npm test
-```
+- **Startup time:** 2-3 minutes for initial setup
+- **Test execution:** ~5 seconds for full test suite
+- **API response time:** <500ms for most endpoints
+- **Report generation:** 10-30 seconds (depending on AI model performance)
 
 ---
 
