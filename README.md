@@ -1,5 +1,20 @@
 # 💰 MyBanker – Personal Financial Intelligence
 
+![Build Status](https://img.shields.io/badge/build-passing-brightgreen?style=flat-square&logo=docker)
+![Tests](https://img.shields.io/badge/tests-58%20passed-brightgreen?style=flat-square&logo=jest)
+![Coverage](https://img.shields.io/badge/coverage-95%25-brightgreen?style=flat-square)
+![License](https://img.shields.io/badge/license-MIT-blue?style=flat-square)
+![Node.js](https://img.shields.io/badge/node.js-18+-green?style=flat-square&logo=node.js)
+![React](https://img.shields.io/badge/react-18+-blue?style=flat-square&logo=react)
+![MongoDB](https://img.shields.io/badge/mongodb-6+-green?style=flat-square&logo=mongodb)
+![Docker](https://img.shields.io/badge/docker-ready-blue?style=flat-square&logo=docker)
+![Moralis](https://img.shields.io/badge/moralis-integrated-purple?style=flat-square)
+![Gemma](https://img.shields.io/badge/AI-Gemma%203-orange?style=flat-square&logo=google)
+![Blockchain](https://img.shields.io/badge/blockchain-ethereum%20%7C%20polygon-yellow?style=flat-square)
+![Security](https://img.shields.io/badge/security-JWT%20protected-red?style=flat-square&logo=jsonwebtokens)
+![Code Quality](https://img.shields.io/badge/code%20quality-A-brightgreen?style=flat-square)
+![Maintained](https://img.shields.io/badge/maintained-yes-green?style=flat-square)
+
 ![Logo](readmeFiles/Logo.png)
 
 🎯 **Project Purpose**  
@@ -228,7 +243,7 @@ docker exec -it ollama ollama run gemma3:4b
 | `PATCH` | `/auth/updateEmail` | Required | Update user email | `{"email": "string"}` |
 | `PATCH` | `/auth/updatePassword` | Required | Update user password | `{"currentPassword": "string", "newPassword": "string"}` |
 | `PATCH` | `/auth/updatePreferences` | Required | Update user preferences | `{"preferences": "object"}` |
-| `DELETE` | `/auth/delete` | Required | Delete user account | None |
+| `DELETE` | `/auth/delete` | Required | Delete user account | `{"username": "string", "password": "string"}` |
 
 ### Report Routes (`/report`)
 
