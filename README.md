@@ -6,6 +6,12 @@
 This project was created for the Engineering of Advanced Software Solutions course at HIT.  
 It aims to provide a personalized financial assistant that analyzes user data and delivers comprehensive reports — as if written by a private banker and senior accountant.
 
+## 🎥 Project Overview Video
+
+[![Watch Project Demo](https://img.shields.io/badge/▶️_Watch-Project_Demo-red?style=for-the-badge&logo=youtube)](https://www.youtube.com/watch?v=8hyL6tPBt8c)
+
+*Click the button above to watch a comprehensive walkthrough of the MyBanker project, including features demonstration and setup guide.*
+
 ---
 
 ## 🛠️ Tech Stack
@@ -88,7 +94,35 @@ MORALIS_API_KEY=YOUR_MORALIS_API_KEY_HERE
 REACT_APP_API_URL=http://backend:8000
 ```
 
-### Step 3: Build and Start All Services
+### Step 3: Get Moralis API Key
+
+🔗 **[Sign up for Moralis and get your API key here](https://admin.moralis.io/register)**
+
+1. Visit the Moralis website and create a free account
+2. Navigate to your dashboard
+3. Create a new project or use an existing one
+4. Copy your Web3 API Key from the project settings
+5. You'll need this key for the next step
+
+### Step 4: Generating Your Own JWT Secret 🔐
+
+**Recommended method:** Generate a 64-character secure secret using:
+
+**Using OpenSSL**
+```bash
+openssl rand -hex 32
+```
+
+**Using Node.js**
+```bash
+node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
+```
+
+Copy the output and replace the `JWT_SECRET` value in your `.env` file.
+
+---
+
+### Step 5: Build and Start All Services
 
 ```bash
 docker-compose up --build -d
@@ -96,7 +130,7 @@ docker-compose up --build -d
 
 **Wait for all containers to be ready** (approximately 2-3 minutes for initial setup).
 
-### Step 4: Install AI Model (First Time Only)
+### Step 6: Install AI Model (First Time Only)
 
 After containers are running, execute:
 
@@ -106,7 +140,7 @@ docker exec -it ollama ollama run gemma3:4b
 
 **Important:** Wait for the model download to complete before proceeding.
 
-### Step 5: Verify Installation
+### Step 7: Verify Installation
 
 Check that all services are running:
 
@@ -116,7 +150,7 @@ docker-compose ps
 
 Expected output should show all services as "Up".
 
-### Step 6: Access the Application
+### Step 8: Access the Application
 
 - **Frontend (Main App):** http://localhost:3000
 - **Backend API:** http://localhost:8000
@@ -233,24 +267,6 @@ The project is correctly set up when:
 | `JWT_SECRET`          | Authentication security          | Pre-configured secure token         |
 | `MORALIS_API_KEY`     | Blockchain data access           | Pre-configured API key              |
 | `REACT_APP_API_URL`   | Frontend-to-backend connection   | `http://backend:8000`               |
-
----
-
-### 🔐 Generating Your Own JWT Secret
-
-**Recommended method:** Generate a 64-character secure secret using:
-
-**Using OpenSSL**
-```bash
-openssl rand -hex 32
-```
-
-**Using Node.js**
-```bash
-node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
-```
-
-Copy the output and replace the `JWT_SECRET` value in your `.env` file.
 
 ---
 
