@@ -216,6 +216,39 @@ docker exec -it ollama ollama run gemma3:4b
 
 ---
 
+## 📡 API Endpoints Reference
+
+### Authentication Routes (`/auth`)
+
+| Method | Endpoint | Authentication | Description | Request Body |
+|--------|----------|----------------|-------------|--------------|
+| `POST` | `/auth/login` | None | User login | `{"username": "string", "password": "string"}` |
+| `POST` | `/auth/register` | None | User registration | `{"username": "string", "password": "string", "email": "string"}` |
+| `PATCH` | `/auth/update` | Required | Update user info | `{"field": "value"}` |
+| `PATCH` | `/auth/updateEmail` | Required | Update user email | `{"email": "string"}` |
+| `PATCH` | `/auth/updatePassword` | Required | Update user password | `{"currentPassword": "string", "newPassword": "string"}` |
+| `PATCH` | `/auth/updatePreferences` | Required | Update user preferences | `{"preferences": "object"}` |
+| `DELETE` | `/auth/delete` | Required | Delete user account | None |
+
+### Report Routes (`/report`)
+
+| Method | Endpoint | Authentication | Description | Request Body |
+|--------|----------|----------------|-------------|--------------|
+| `POST` | `/report` | Required | Generate financial report | `{"walletAddress": "string", "chain": "string"}` |
+
+### User Routes (`/user`)
+
+| Method | Endpoint | Authentication | Description | Request Body |
+|--------|----------|----------------|-------------|--------------|
+| `GET` | `/user/preferences/:username` | Required | Get user preferences | None (username in URL) |
+
+### Authentication Header Format
+
+For protected routes, include the JWT token in the Authorization header:
+```
+Authorization: Bearer YOUR_JWT_TOKEN_HERE
+```
+
 ## 📡 API Testing Guide
 
 ### Authentication Test
